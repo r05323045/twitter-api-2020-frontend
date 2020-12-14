@@ -40,7 +40,7 @@ $lightblue: #00B7EF;
   margin: auto;
   max-width: 540px;
   .container {
-    margin-top: 30%;
+    padding-top: 30%;
     .logo {
       height: 50px;
       margin-bottom: 50px;
