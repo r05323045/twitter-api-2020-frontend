@@ -9,6 +9,16 @@
           <div class="time">3小時</div>
         </div>
         <div class="content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis</div>
+        <div class="action">
+          <div class="comment">
+            <i class="fas fa-comment"></i>
+            <span class="number">3</span>
+          </div>
+          <div class="like">
+            <i class="fas fa-heart"></i>
+            <span class="number">10</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -27,6 +37,7 @@ $orange: #f46524;
 $deeporange: #F34A16;
 $lightgray: #f6f8fa;
 $dark: #2c3e50;
+$lightdark: #919191;
 .tweet-list {
   width: 100%;
   .list-item {
@@ -39,7 +50,7 @@ $dark: #2c3e50;
       height: 40px;
       min-width: 40px;
       border-radius: 50%;
-      background: #919191;
+      background: $lightdark;
     }
     .tweet-wrapper {
       .info {
@@ -47,7 +58,7 @@ $dark: #2c3e50;
         flex-direction: row;
         font-size: 10px;
         font-weight: 700;
-        color: #919191;
+        color: $lightdark;
         .name {
           font-size: 12px;
           font-weight: 700;
@@ -65,6 +76,42 @@ $dark: #2c3e50;
         margin-top: 5px;
         font-size: 12px;
         text-align: left;
+      }
+      .action {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: row;
+        font-size: 12px;
+        color: $lightdark;
+        font-weight: 500;
+        .fas  {
+          color: #ffffff;
+          text-shadow: -1px 0 $lightdark, 0 1px $lightdark, 1px 0 $lightdark, 0 -1px $lightdark;
+        }
+        .like {
+          cursor: pointer;
+          margin-left: 30px;
+          transition: ease-in 0.2s;
+          &:hover {
+            .fas {
+              color: $deeporange;
+              text-shadow: -1px 0 #ffffff, 0 1px  #ffffff, 1px 0  #ffffff, 0 -1px #ffffff;
+            }
+          }
+        }
+        .comment {
+          cursor: pointer;
+          transition: ease-in 0.2s;
+          &:hover {
+            .fas {
+              color: $lightdark;
+              text-shadow: -1px 0 #ffffff, 0 1px  #ffffff, 1px 0  #ffffff, 0 -1px #ffffff;
+            }
+          }
+        }
+        .number {
+          margin: 0 5px;
+        }
       }
     }
   }
