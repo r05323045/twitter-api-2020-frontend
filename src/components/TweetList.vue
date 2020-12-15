@@ -45,12 +45,22 @@ $lightdark: #919191;
     flex-direction: row;
     padding: 15px;
     border-bottom: #eee solid 1px;
+    cursor: pointer;
+    transition: ease-in 0.2s;
+    &:hover {
+      backdrop-filter: brightness(.95);
+    }
     .avatar {
       margin-right: 15px;
       height: 40px;
       min-width: 40px;
       border-radius: 50%;
-      background: $lightdark;
+      background: url(https://source.unsplash.com/collection/4389261/100x100) no-repeat center;
+      background-size: 100%;
+      cursor: pointer;
+      &:hover {
+        filter: brightness(.9);
+      }
     }
     .tweet-wrapper {
       .info {
@@ -64,9 +74,17 @@ $lightdark: #919191;
           font-weight: 700;
           margin-right: 5px;
           color: $dark;
+          cursor: pointer;
+          &:hover {
+            text-decoration: underline;
+          }
         }
         .account {
           margin-right: 5px;
+          cursor: pointer;
+          &:hover {
+            text-decoration: underline;
+          }
         }
         .time {
           margin-left: 5px;

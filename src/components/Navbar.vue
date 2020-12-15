@@ -35,6 +35,7 @@ export default {
 $orange: #f46524;
 $deeporange: #F34A16;
 $lightgray: #eee;
+$lightdark: #919191;
 .nav {
   height: 100%;
   align-items: flex-start;
@@ -72,6 +73,7 @@ $lightgray: #eee;
     border-radius: 30px;
     transition: ease-in 0.2s;
     &:hover {
+      box-shadow: 0 0 3px 1px $lightdark;
       background-color: $deeporange;
     }
   }

@@ -31,8 +31,9 @@ export default {
 </script>
 
 <style lang="scss">
-$orange: #f46524;
-$deeporange: #F34A16;
+$orange:#f46524;
+$deeporange:#F34A16;
+$lightdark:#919191;
 .main {
   height: 100%;
   width: 100%;
@@ -60,7 +61,11 @@ $deeporange: #F34A16;
         min-height: 40px;
         min-width: 40px;
         border-radius: 50%;
-        background: #919191;
+        background: $lightdark;
+        cursor: pointer;
+        &:hover {
+          box-shadow: 0 0 3px 1px $lightdark;
+        }
       }
       .content {
         padding-top: 10px;
@@ -74,7 +79,7 @@ $deeporange: #F34A16;
       ::placeholder {
         font-size: 16px;
         font-weight: 500;
-        color: #919191;
+        color: $lightdark;
       }
       .btn-tweet {
         position: absolute;

@@ -35,6 +35,7 @@ export default {
 $orange: #f46524;
 $deeporange: #F34A16;
 $lightgray: #f6f8fa;
+$lightdark: #919191;
 .recommend-users {
   padding: 0 30px 30px 30px;
   border-left: 2px solid #eee;
@@ -54,12 +55,21 @@ $lightgray: #f6f8fa;
       display: flex;
       flex-direction: row;
       align-items: center;
+      cursor: pointer;
+      transition: ease-in 0.2s;
+      &:hover {
+        backdrop-filter: brightness(.95);
+      }
       .avatar {
         margin-right: 15px;
         height: 40px;
         width: 40px;
         border-radius: 50%;
-        background: #919191;
+        background: $lightdark;
+        cursor: pointer;
+        &:hover {
+          box-shadow: 0 0 3px 1px $lightdark;
+        }
       }
       .info {
         display: flex;
@@ -67,11 +77,19 @@ $lightgray: #f6f8fa;
         .name {
           font-size: 12px;
           font-weight: 700;
+          cursor: pointer;
+          &:hover {
+            text-decoration: underline;
+          }
         }
         .account {
           font-size: 10px;
           font-weight: 700;
-          color: #919191;
+          color: $lightdark;
+          cursor: pointer;
+          &:hover {
+            text-decoration: underline;
+          }
         }
       }
       .btn-follow {
@@ -98,6 +116,7 @@ $lightgray: #f6f8fa;
         border-radius: 30px;
         transition: ease-in 0.2s;
         &:hover {
+          box-shadow: 0 0 3px 1px $lightdark;
           background-color: $orange;
           color: #ffffff;
         }

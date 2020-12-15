@@ -36,6 +36,7 @@ $orange: #f46524;
 $deeporange: #F34A16;
 $lightgray: #f6f8fa;
 $lightblue: #00B7EF;
+$lightdark: #919191;
 .signin {
   margin: auto;
   max-width: 540px;
@@ -57,9 +58,12 @@ $lightblue: #00B7EF;
       input {
         border-radius: 0;
         border: none;
-        border-bottom: 2px solid #919191;
+        border-bottom: 2px solid $lightdark;
         background: $lightgray;
         margin-top: 15px;
+        &:hover {
+          box-shadow: 0 0 3px 1px $lightdark;
+        }
       }
       ::placeholder {
         font-size: 1px;
@@ -74,6 +78,7 @@ $lightblue: #00B7EF;
         transition: ease-in 0.2s;
         &:hover {
           background-color: $deeporange;
+          box-shadow: 0 0 3px 1px $lightdark;
         }
       }
     }
