@@ -1,7 +1,7 @@
 <template>
   <div class="recommend-users">
-    <div class="container list-group list-group-flush">
-      <div class="list-group-item title">跟隨誰</div>
+    <div class="title">跟隨誰</div>
+    <div class="list-group">
       <div class="list-group-item">
         <div class="avatar"></div>
         <div class="info">
@@ -18,8 +18,8 @@
         </div>
         <button class="btn btn-follow unfollow">跟隨</button>
       </div>
-      <div class="list-group-item more">顯示更多</div>
     </div>
+    <div class="footer">顯示更多</div>
   </div>
 </template>
 
@@ -32,89 +32,136 @@ export default {
 </script>
 
 <style lang="scss">
-$orange: #f46524;
+$orange: #FF6600;
 $deeporange: #F34A16;
-$lightgray: #f6f8fa;
+$lightgray: #F5F8FA;
+$lightdark: #657786;
+$divider: #E6ECF0;
 .recommend-users {
-  padding: 0 30px 30px 30px;
-  border-left: 2px solid #eee;
-  .container {
-    margin-left: 0;
-    max-width: 400px;
-    width: 80%;
-    border-radius: 10px;
-    .title {
-      line-height: 50%;
-      text-align: left;
-      font-weight: 700;
-      font-size: 14px;
-    }
+  width: 100%;
+  max-width: 350px;
+  max-height: 517px;
+  margin: 15px 82px 0 30px;
+  border-radius: 14px;
+  background: $lightgray;
+  .title {
+    margin-top: 10px;
+    text-align: left;
+    padding: 0px 0 0 15px; 
+    font-size: 18px;
+    line-height: 26px;
+    height: 36px;
+    font-weight: 700;
+  }
+  .list-group {
+    border: none;
     .list-group-item {
-      background: $lightgray;
+      position: relative;
+      border: none;
+      border-radius: 0;
+      border-top: 1px solid $divider;
+      border-bottom: 1px solid $divider;
+      height: 70px;
+      padding: 10px 15px 0 15px;
+      background: none;
       display: flex;
       flex-direction: row;
-      align-items: center;
+      align-items: flex-start;
+      cursor: pointer;
+      transition: ease-in 0.2s;
+      &:hover {
+        backdrop-filter: brightness(.95);
+      }
       .avatar {
-        margin-right: 15px;
-        height: 40px;
-        width: 40px;
+        margin-right: 10px;
+        height: 50px;
+        width: 50px;
         border-radius: 50%;
-        background: #919191;
+        background: $lightdark;
+        cursor: pointer;
+        &:hover {
+          box-shadow: 0 0 3px 1px $lightdark;
+        }
       }
       .info {
+        margin-top: 8px;
         display: flex;
         flex-direction: column;
         .name {
-          font-size: 12px;
+          margin-bottom: 3px;
+          font-size: 15px;
+          line-height: 15px;
           font-weight: 700;
+          cursor: pointer;
+          &:hover {
+            text-decoration: underline;
+          }
         }
         .account {
-          font-size: 10px;
+          font-size: 15px;
+          line-height: 15px;
           font-weight: 700;
-          color: #919191;
+          color: $lightdark;
+          cursor: pointer;
+          &:hover {
+            text-decoration: underline;
+          }
         }
       }
       .btn-follow {
+        width: 100%;
+        max-width: 92px;
+        position: absolute;
+        top: 20px;
+        right: 15px;
         height: 30px;
-        margin-left: auto;
         background: $orange;
-        font-size: 12px;
+        font-size: 15px;
+        line-height: 15px;
         font-weight: 700;
         color: #ffffff;
-        border-radius: 30px;
+        border-radius: 100px;
         transition: ease-in 0.2s;
         &:hover {
           background-color: $deeporange;
         }
       }
       .btn-follow.unfollow {
+        width: 100%;
+        max-width: 62px;
         height: 30px;
+        line-height: 15px;
         margin-left: auto;
         border: 1px solid $orange ;
         background: none;
-        font-size: 12px;
+        font-size: 15px;
         font-weight: 700;
         color: $orange;
         border-radius: 30px;
         transition: ease-in 0.2s;
         &:hover {
+          box-shadow: 0 0 3px 1px $lightdark;
           background-color: $orange;
           color: #ffffff;
         }
       }
     }
-    .more {
-      line-height: 50%;
-      text-align: left;
-      font-weight: 700;
-      font-size: 12px;
-      color: $orange;
-      cursor: pointer;
-      transition: ease-in 0.2s;
-      &:hover {
-        text-decoration: underline;
-        color: $deeporange;
-      }
+  }
+  .footer {
+    margin-bottom: auto;
+    height: 22px;
+    line-height: 22px;
+    max-width: 60px;
+    margin: 12px 0 12px 15px;
+    text-align: left;
+    font-weight: normal;
+    font-size: 15px;
+    color: $orange;
+    cursor: pointer;
+    transition: ease-in 0.2s;
+    &:hover {
+      text-decoration: underline;
+      color: $deeporange;
     }
   }
 }

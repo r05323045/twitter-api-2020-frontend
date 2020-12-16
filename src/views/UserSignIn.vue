@@ -7,13 +7,15 @@
       <div class="title">登入 Alphitter</div>
       <form>
         <div class="form-group">
-          <input type="text" ref="account" class="form-control" placeholder="帳號">
-          <input type="text" class="form-control" placeholder="密碼" required>
+          <label class="account" v-show="!accountFocus">帳號</label>
+          <input type="text" ref="account" @focus="checkFocus('account')" @blur="checkBlur('account')" class="form-control">
+          <label class="password" v-show="!passwordFocus">密碼</label>
+          <input type="text" class="form-control" @focus="checkFocus('password')" @blur="checkBlur('password')" required>
         </div>
         <button class="btn btn-signin" type="submit">登入</button>
       </form>
       <div  class="link">
-        <span @click="$router.push('/signup')">註冊 Alphitter</span> &bull;
+        <span @click="$router.push('/signup')">註冊 Alphitter</span>&bull;
         <span @click="$router.push('/admin/signin')">後台登入</span>
       </div>
     </div>
@@ -23,69 +25,121 @@
 <script>
 
 export default {
+  data () {
+    return {
+      accountFocus: false,
+      passwordFocus: false
+    }
+  },
   created () {
     this.$nextTick(() => {
       this.$refs.account.focus()
     })
+  },
+  methods: {
+    checkFocus (params) {
+      if (params === 'account') {
+        this.accountFocus = true
+        this.passwordFocus = false
+      } else if (params === 'password') {
+        this.accountFocus = false
+        this.passwordFocus = true
+      }
+    },
+    checkBlur (params) {
+      if (params === 'account') {
+        this.accountFocus = false
+      } else if (params === 'password') {
+        this.passwordFocus = false
+      }
+    }
   }
 }
 </script>
 
 <style lang="scss">
-$orange: #f46524;
+$orange: #FF6600;
 $deeporange: #F34A16;
-$lightgray: #f6f8fa;
-$lightblue: #00B7EF;
+$lightgray: #F5F8FA;
+$lightblue: #0099FF;
+$lightdark: #657786;
 .signin {
   margin: auto;
   max-width: 540px;
   .container {
-    padding-top: 30%;
+    padding-top: 60px;
     .logo {
+      margin-bottom: 30px;
       height: 50px;
-      margin-bottom: 50px;
       img {
         height: 100%;
       }
     }
     .title {
-      font-size: 16px;
-      font-weight: 700;
+      margin: auto;
+      width: 152px;
+      font-size: 23px;
+      line-height: 33.3px;
+      height: 33px;
+      font-weight: bold;
+      color: #1C1C1C;
     }
     form {
-      margin: 15px 0 30px 0;
-      input {
-        border-radius: 0;
-        border: none;
-        border-bottom: 2px solid #919191;
-        background: $lightgray;
-        margin-top: 15px;
+      margin: 20px 0 41px 0;
+      .form-group {
+        margin-bottom: 30px;
+        position: relative;
+        .account {
+          position: absolute;
+          left: 10px;
+          top: 5px;
+          height: 15px;
+        }
+        .password {
+          position: absolute;
+          left: 10px;
+          top: 75px;
+        }
+        input {
+          height: 50px;
+          border-radius: 0 0 4px 4px;
+          border: none;
+          border-bottom: 2px solid $lightdark;
+          background: $lightgray;
+          margin-top: 20px;
+          &:hover {
+            box-shadow: 0 0 3px 1px $lightdark;
+          }
+        }
       }
       ::placeholder {
         font-size: 1px;
       }
       .btn-signin {
         background: $orange;
-        font-size: 14px;
-        font-weight: 700;
+        font-size: 18px;
+        height: 50px;
+        font-weight: bold;
         color: #ffffff;
         width: 100%;
-        border-radius: 30px;
+        border-radius: 50px;
         transition: ease-in 0.2s;
         &:hover {
           background-color: $deeporange;
+          box-shadow: 0 0 3px 1px $lightdark;
         }
       }
     }
     .link {
+      height: 26px;
       display: flex;
       justify-content: flex-end;
-      font-size: 12px;
+      font-size: 18px;
       color: $lightblue;
       span {
         margin: 0 2px;
         text-decoration: underline;
-        font-weight: 700;
+        font-weight: bold;
         cursor: pointer;
         transition: ease-in 0.2s;
         &:hover {
