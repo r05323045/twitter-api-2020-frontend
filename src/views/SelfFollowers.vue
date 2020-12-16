@@ -12,6 +12,7 @@ import SelfUserFollowers from "./../components/SelfUserFollowers"
 import Navbar from "./../components/Navbar"
 import RecommendUsers from "./../components/RecommendUsers"
 export default {
+  name: 'SelfFollowers',
   components: {
     Navbar,
     SelfUserFollowers,
