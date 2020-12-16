@@ -1,7 +1,7 @@
 <template>
   <div class="main row">
-    <Navbar class="col-3"></Navbar>
-    <div class="col-5 container">
+    <Navbar></Navbar>
+    <div class="container">
       <div class="title">首頁</div>
       <hr>
       <div class="post-tweet">
@@ -37,7 +37,6 @@ $lightdark:#919191;
 .main {
   height: 100%;
   width: 100%;
-  padding-top: 30px;
   .col-5.container {
     padding: 0;
     .title {
