@@ -1,6 +1,7 @@
 <template>
   <div class="main row">
     <Navbar></Navbar>
+    <!--
     <div class="container">
       <div class="title">首頁</div>
       <hr>
@@ -11,20 +12,21 @@
       </div>
       <TweetList></TweetList>
     </div>
-    <RecommendUsers class="col-4"></RecommendUsers>
+    -->
+    <RecommendUsers></RecommendUsers>
   </div>
 </template>
 
 <script>
 import Navbar from '@/components/Navbar.vue'
 import RecommendUsers from '@/components/RecommendUsers.vue'
-import TweetList from '@/components/TweetList.vue'
+//import TweetList from '@/components/TweetList.vue'
 export default {
   name: 'Main',
   components: {
     Navbar,
     RecommendUsers,
-    TweetList
+    //TweetList
   }
 }
 

@@ -41,12 +41,12 @@ $deeporange: #F34A16;
 $lightgray: #eee;
 $lightdark: #919191;
 .nav {
-  max-width: 378px;
+  margin: 0px 40px 0 103px;
+  padding-top: 4px;
+  max-width: 235px;
   width: 100%;
   height: 100%;
-  border-right: 2px solid $lightgray;
   .logo {
-    margin: 4px 0 0 103px;
     height: 50px;
     width: 50px;
     img {
@@ -57,11 +57,10 @@ $lightdark: #919191;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin: 24px 0 0 111px;
+    margin-top: 24px;
     width: 100%;
     .nav-item {
       width: 100%;
-      max-width: 235px;
       display: flex;
       align-items: center;
       height: 60px;
@@ -99,9 +98,7 @@ $lightdark: #919191;
     }
   }
   .logout {
-    margin-left: 103px;
     width: 100%;
-    max-width: 235px;
     height: 60px;
     position: absolute;
     bottom: 0;
