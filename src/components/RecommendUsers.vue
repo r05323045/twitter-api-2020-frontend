@@ -40,12 +40,14 @@ $divider: #E6ECF0;
 .recommend-users {
   width: 100%;
   max-width: 350px;
+  max-height: 517px;
   margin: 15px 82px 0 30px;
   border-radius: 14px;
   background: $lightgray;
   .title {
+    margin-top: 10px;
     text-align: left;
-    padding: 10px 0 0 15px; 
+    padding: 0px 0 0 15px; 
     font-size: 18px;
     line-height: 26px;
     height: 36px;
@@ -59,7 +61,7 @@ $divider: #E6ECF0;
       border-radius: 0;
       border-top: 1px solid $divider;
       border-bottom: 1px solid $divider;
-      height: 75px;
+      height: 70px;
       padding: 10px 15px 0 15px;
       background: none;
       display: flex;
@@ -147,9 +149,9 @@ $divider: #E6ECF0;
   }
   .footer {
     margin-bottom: auto;
-    width: 60px;
     height: 22px;
     line-height: 22px;
+    max-width: 60px;
     margin: 12px 0 12px 15px;
     text-align: left;
     font-weight: normal;

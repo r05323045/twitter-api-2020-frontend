@@ -21,7 +21,8 @@ html, body {
   max-width: 1440px;
   height: 100%;
   margin: auto;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: Noto Sans TC;
+  font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
