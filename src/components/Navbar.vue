@@ -46,6 +46,7 @@ $lightdark: #919191;
   max-width: 235px;
   width: 100%;
   height: 100%;
+  position: relative;
   .logo {
     height: 50px;
     width: 50px;

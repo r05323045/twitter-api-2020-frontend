@@ -19,6 +19,7 @@ html, body {
 }
 #app {
   max-width: 1440px;
+  max-height: 1200px;
   height: 100%;
   margin: auto;
   font-family: Noto Sans TC;

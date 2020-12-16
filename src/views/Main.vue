@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <!--<Navbar></Navbar>-->
+    <Navbar></Navbar>
     <div class="container">
       <div class="title">首頁</div>
       <div class="post-tweet">
@@ -11,19 +11,19 @@
       <div class="divider"></div>
       <TweetList></TweetList>
     </div>
-    <!--<RecommendUsers></RecommendUsers>-->
+    <RecommendUsers></RecommendUsers>
   </div>
 </template>
 
 <script>
-//import Navbar from '@/components/Navbar.vue'
-//import RecommendUsers from '@/components/RecommendUsers.vue'
+import Navbar from '@/components/Navbar.vue'
+import RecommendUsers from '@/components/RecommendUsers.vue'
 import TweetList from '@/components/TweetList.vue'
 export default {
   name: 'Main',
   components: {
-    //Navbar,
-    //RecommendUsers,
+    Navbar,
+    RecommendUsers,
     TweetList
   }
 }
@@ -40,8 +40,8 @@ $divider: #E6ECF0;
   width: 100%;
   display: flex;
   flex-direction: row;
-  border: 1px solid $divider;
   .container {
+    border: 1px solid $divider;
     max-width: 600px;
     padding: 0;
     .title {
