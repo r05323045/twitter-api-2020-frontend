@@ -137,7 +137,7 @@ $divider: #E6ECF0;
         font-size: 15px;
         font-weight: 700;
         color: $orange;
-        border-radius: 30px;
+        border-radius: 100px;
         transition: ease-in 0.2s;
         &:hover {
           box-shadow: 0 0 3px 1px $lightdark;

@@ -39,6 +39,8 @@ $dark: #2c3e50;
 $lightdark: #657786;
 $divider: #E6ECF0;
 .tweet-list {
+  max-height: calc(100vh - 194px);
+  overflow-y: scroll;
   width: 100%;
   .list-item {
     margin: 10px 0 10px 0;
