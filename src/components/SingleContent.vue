@@ -28,7 +28,7 @@
     </div>
     
     <div class="replies"> 
-      <img src="./../asset/cyan_bg_.jpg" alt="">
+      <img src="./../asset/elephant.png" alt="">
       <div class="reply-content">
         <div class="title">
           <span class="name">Apple</span>
