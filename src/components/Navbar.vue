@@ -38,8 +38,7 @@ export default {
 <style lang="scss">
 $orange: #FF6600;
 $deeporange: #F34A16;
-$lightgray: #eee;
-$lightdark: #919191;
+$lightdark: #9197A3;
 .nav {
   margin: 0px 40px 0 103px;
   padding-top: 4px;
@@ -94,6 +93,9 @@ $lightdark: #919191;
           box-shadow: 0 0 3px 1px $lightdark;
           background-color: $deeporange;
           color: #ffffff;
+        }
+        &:focus {
+          outline: 0;
         }
       }
     }

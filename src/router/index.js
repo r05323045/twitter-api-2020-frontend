@@ -11,13 +11,18 @@ const routes = [
   },
   {
     path: '/regist',
-    name: "SignUp",
+    name: 'SignUp',
     component: () => import('@/views/SignUp.vue')
   },
   {
     path: '/user/self/follower',
-    name: "SelfFollowers",
+    name: 'SelfFollowers',
     component: () => import('@/views/SelfFollowers.vue')
+  },
+  {
+    path: '/user/self',
+    name: 'UserProfile',
+    component: () => import('@/views/UserProfile.vue')
   },
   // {
   //   path: '/setting',

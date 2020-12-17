@@ -8,7 +8,7 @@
           <div class="name">Pizza Hut</div>
           <div class="account">@pizzahut</div>
         </div>
-        <button class="btn btn-follow">正在跟隨</button>
+        <button class="btn btn-follow unfollow">正在跟隨</button>
       </div>
       <div v-for="i in 5" :key="i" class="list-group-item">
         <div class="avatar"></div>
@@ -16,7 +16,7 @@
           <div class="name">Pizza Hut</div>
           <div class="account">@pizzahut</div>
         </div>
-        <button class="btn btn-follow unfollow">跟隨</button>
+        <button class="btn btn-follow">跟隨</button>
       </div>
     </div>
     <div class="footer">顯示更多</div>
@@ -35,7 +35,7 @@ export default {
 $orange: #FF6600;
 $deeporange: #F34A16;
 $lightgray: #F5F8FA;
-$lightdark: #657786;
+$bitdark: #657786;
 $divider: #E6ECF0;
 .recommend-users {
   width: 100%;
@@ -77,10 +77,10 @@ $divider: #E6ECF0;
         height: 50px;
         width: 50px;
         border-radius: 50%;
-        background: $lightdark;
+        background: $bitdark;
         cursor: pointer;
         &:hover {
-          box-shadow: 0 0 3px 1px $lightdark;
+          filter: brightness(.9);
         }
       }
       .info {
@@ -101,14 +101,14 @@ $divider: #E6ECF0;
           font-size: 15px;
           line-height: 15px;
           font-weight: 700;
-          color: $lightdark;
+          color: $bitdark;
           cursor: pointer;
           &:hover {
             text-decoration: underline;
           }
         }
       }
-      .btn-follow {
+      .btn-follow.unfollow {
         width: 100%;
         max-width: 92px;
         position: absolute;
@@ -126,7 +126,7 @@ $divider: #E6ECF0;
           background-color: $deeporange;
         }
       }
-      .btn-follow.unfollow {
+      .btn-follow {
         width: 100%;
         max-width: 62px;
         height: 30px;
@@ -140,7 +140,7 @@ $divider: #E6ECF0;
         border-radius: 100px;
         transition: ease-in 0.2s;
         &:hover {
-          box-shadow: 0 0 3px 1px $lightdark;
+          box-shadow: 0 0 3px 1px $bitdark;
           background-color: $orange;
           color: #ffffff;
         }

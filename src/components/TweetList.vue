@@ -36,15 +36,15 @@ $orange: #FF6600;
 $deeporange: #F34A16;
 $lightgray: #f6f8fa;
 $dark: #2c3e50;
-$lightdark: #657786;
+$bitdark: #657786;
 $divider: #E6ECF0;
 .tweet-list {
   max-height: calc(100vh - 194px);
   overflow-y: scroll;
   width: 100%;
   .list-item {
-    margin: 10px 0 10px 0;
-    height: 136px;
+    padding: 10px 0 10px 0;
+    height: 146px;
     border-bottom: 1px solid $divider;
     display: flex;
     flex-direction: row;
@@ -55,9 +55,7 @@ $divider: #E6ECF0;
       backdrop-filter: brightness(.95);
     }
     .avatar {
-      position: absolute;
-      top: 3px;
-      left: 15px;
+      margin: 3px 0 0 15px;
       height: 50px;
       min-width: 50px;
       border-radius: 100px;
@@ -69,7 +67,7 @@ $divider: #E6ECF0;
       }
     }
     .tweet-wrapper {
-      margin-left: 75px;
+      margin-left: 25px;
       .info {
         height: 22px;
         line-height: 22px;
@@ -86,7 +84,7 @@ $divider: #E6ECF0;
           }
         }
         .account-and-post-time {
-          color: $lightdark;
+          color: $bitdark;
           cursor: pointer;
           &:hover {
             text-decoration: underline;
@@ -108,12 +106,12 @@ $divider: #E6ECF0;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        color: $lightdark;
+        color: $bitdark;
         .fas  {
           width: 15px;
           height: 15px;
           color: #ffffff;
-          text-shadow: -1px 0 $lightdark, 0 1px $lightdark, 1px 0 $lightdark, 0 -1px $lightdark;
+          text-shadow: -1px 0 $bitdark, 0 1px $bitdark, 1px 0 $bitdark, 0 -1px $bitdark;
         }
         .comment {
           display: flex;
@@ -125,7 +123,7 @@ $divider: #E6ECF0;
           transition: ease-in 0.2s;
           &:hover {
             .fas {
-              color: $lightdark;
+              color: $bitdark;
               text-shadow: -1px 0 #ffffff, 0 1px  #ffffff, 1px 0  #ffffff, 0 -1px #ffffff;
             }
           }
