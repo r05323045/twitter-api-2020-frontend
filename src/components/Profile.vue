@@ -12,7 +12,14 @@
     <div class="user-info">
       <div class="cover-photo"></div>
       <div class="avatar"></div>
-      <button class="btn-edit">編輯個人資料</button>
+      <button v-show="isSelf" class="btn-edit">編輯個人資料</button>
+
+      <div class="other-button-wrapper">
+        <div class="btn-messege"><i class="far fa-envelope"></i></div>
+        <div class="btn-noti"><i class="far fa-bell"></i></div>
+        <button class="btn-follow unfollow">正在跟隨</button>
+      </div>
+
       <div class="name">John Doe</div>
       <div class="account">@heyjohn</div>
       <div class="intro">Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint.</div>
@@ -45,7 +52,8 @@ export default {
   },
   data () {
     return {
-      tabOption: '推文'
+      tabOption: '推文',
+      isSelf: false
     }
   },
   methods: {
@@ -116,9 +124,8 @@ $bitdark: #657786;
       top: 125px;
     }
     .btn-edit {
-      position: absolute;
-      top: 210px;
-      right: 15px;
+      float: right;
+      margin: 10px 15px 0 0;
       width: 100%;
       max-width: 122px;
       height: 40px;
@@ -137,6 +144,69 @@ $bitdark: #657786;
       }
       &:focus {
         outline: 0;
+      }
+    }
+    .other-button-wrapper {
+      margin: 10px 15px 0 0;
+      height: 40px;
+      width: 192px;
+      float: right;
+      display: flex;
+      flex-direction: row;
+      .btn-messege {
+        width: 40px;
+        height: 40px;
+        border: 1px solid $orange;
+        margin-right: 10px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 40px;
+        vertical-align: center;
+        color: $orange;
+        font-size: 20px;
+        cursor: pointer;
+        transition: ease-in 0.2s;
+        &:hover {
+          background-color: $orange;
+          color: #ffffff;
+        }
+      }
+      .btn-noti {
+        width: 40px;
+        height: 40px;
+        border: 1px solid $orange;
+        margin-right: 10px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 40px;
+        vertical-align: center;
+        color: $orange;
+        font-size: 20px;
+        cursor: pointer;
+        transition: ease-in 0.2s;
+        &:hover {
+          background-color: $orange;
+          color: #ffffff;
+        }
+      }
+      .btn-follow {
+        width: 100%;
+        max-width: 92px;
+        height: 40px;
+        background: $orange;
+        border: 1px solid $orange;
+        border-radius: 100px;
+        color: #ffffff;
+        transition: ease-in 0.2s;
+        font-weight: bold;
+        font-size: 15px;
+        line-height: 15px;
+        &:hover {
+          background-color: $deeporange;
+        }
+        &:focus {
+          outline: 0;
+        }
       }
     }
     .name {
