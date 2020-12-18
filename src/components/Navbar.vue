@@ -4,20 +4,28 @@
       <img src="https://media.cakeresume.com/image/upload/s--S9Jdcf0R--/c_pad,fl_png8,h_400,w_400/v1548316744/ribjsyna9cm9tm4pkv63.png">
     </div>
     <div class="nav-item-wrapper">
-      <div class="nav-item" @click="$router.push('/')">
+      <div v-if="!isAdmin" class="nav-item" @click="$router.push('/')">
         <i class="fas fa-home"></i>
         首頁
       </div>
-      <div class="nav-item" @click="$router.push('/profile')">
+      <div v-if="!isAdmin" class="nav-item" @click="$router.push('/profile')">
         <i class="far fa-user"></i>
         個人資料
       </div>
-      <div class="nav-item" @click="$router.push('/setting')">
+      <div v-if="!isAdmin" class="nav-item" @click="$router.push('/setting')">
         <i class="fas fa-cog"></i>
         設定
       </div>
-      <div class="nav-item">
+      <div v-if="!isAdmin" class="nav-item">
         <button class="btn-tweet">推文</button>
+      </div>
+      <div v-if="isAdmin" class="nav-item" @click="$router.push('/admin/main')">
+        <i class="fas fa-cog"></i>
+        推文清單
+      </div>
+      <div v-if="isAdmin" class="nav-item" @click="$router.push('/admin/users')">
+        <i class="fas fa-cog"></i>
+        使用者列表
       </div>
     </div>
     <div class="logout">
@@ -30,7 +38,12 @@
 <script>
 
 export default {
-  name: 'Navbar'
+  name: 'Navbar',
+  data () {
+    return {
+      isAdmin: true
+    }
+  }
 }
 
 </script>

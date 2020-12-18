@@ -4,7 +4,10 @@
       <div class="logo">
         <img src="https://media.cakeresume.com/image/upload/s--S9Jdcf0R--/c_pad,fl_png8,h_400,w_400/v1548316744/ribjsyna9cm9tm4pkv63.png">
       </div>
-      <div class="title">登入 Alphitter</div>
+      <div class="title">
+        <span v-if="!isAdmin">登入 Alphitter</span>
+        <span v-if="isAdmin">後台登入</span>
+      </div>
       <form>
         <div class="form-group">
           <label class="account" v-show="!accountFocus">帳號</label>
@@ -15,8 +18,10 @@
         <button class="btn btn-signin" type="submit">登入</button>
       </form>
       <div  class="link">
-        <span @click="$router.push('/signup')">註冊 Alphitter</span>&bull;
-        <span @click="$router.push('/admin/signin')">後台登入</span>
+        <span v-if="!isAdmin" @click="$router.push('/signup')">註冊 Alphitter</span>
+        <p v-if="!isAdmin">&bull;</p>
+        <span v-if="!isAdmin" @click="$router.push('/admin/signin')">後台登入</span>
+        <span v-if="isAdmin" @click="$router.push('/signin')">前台登入</span>
       </div>
     </div>
   </div>
@@ -28,7 +33,8 @@ export default {
   data () {
     return {
       accountFocus: false,
-      passwordFocus: false
+      passwordFocus: false,
+      isAdmin: true
     }
   },
   created () {
@@ -63,6 +69,7 @@ $deeporange: #F34A16;
 $lightgray: #F5F8FA;
 $lightblue: #0099FF;
 $lightdark: #657786;
+$bitdark: #657786;
 .signin {
   margin: auto;
   max-width: 540px;
@@ -85,7 +92,7 @@ $lightdark: #657786;
       color: #1C1C1C;
     }
     form {
-      margin: 20px 0 41px 0;
+      margin: 20px 0 40px 0;
       .form-group {
         margin-bottom: 30px;
         position: relative;
@@ -94,15 +101,23 @@ $lightdark: #657786;
           left: 10px;
           top: 5px;
           height: 15px;
+          font-weight: 500;
+          font-size: 15px;
+          line-height: 15px;
+          color: $bitdark;
         }
         .password {
           position: absolute;
           left: 10px;
           top: 75px;
+          font-weight: 500;
+          font-size: 15px;
+          line-height: 15px;
+          color: $bitdark;
         }
         input {
           height: 50px;
-          border-radius: 0 0 4px 4px;
+          border-radius: 0 0 2px 2px; //should be reivew
           border: none;
           border-bottom: 2px solid $lightdark;
           background: $lightgray;
@@ -111,9 +126,6 @@ $lightdark: #657786;
             box-shadow: 0 0 3px 1px $lightdark;
           }
         }
-      }
-      ::placeholder {
-        font-size: 1px;
       }
       .btn-signin {
         background: $orange;

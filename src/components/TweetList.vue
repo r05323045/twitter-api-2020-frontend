@@ -67,7 +67,7 @@ $divider: #E6ECF0;
       }
     }
     .tweet-wrapper {
-      margin-left: 25px;
+      margin-left: 10px;
       .info {
         height: 22px;
         line-height: 22px;

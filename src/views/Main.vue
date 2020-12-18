@@ -41,13 +41,14 @@ $divider: #E6ECF0;
   display: flex;
   flex-direction: row;
   .container {
-    border: 1px solid $divider;
+    border-left: 1px solid $divider;
+    border-right: 1px solid $divider;
     max-width: 600px;
     padding: 0;
     .title {
-      border: 1px solid $divider;
-      height: 54px;
-      padding: 14px 0 14px 15px;
+      border-bottom: 1px solid $divider;
+      height: 55px;
+      padding: 15px 0 15px 15px;
       line-height: 26px;
       font-size: 18px;
       font-weight: 700;
@@ -57,7 +58,6 @@ $divider: #E6ECF0;
       display:flex;
       flex-direction: row;
       height: 120px;
-      border: 1px solid $divider;
       position: relative;
       .avatar {
         position: absolute;
@@ -113,10 +113,10 @@ $divider: #E6ECF0;
         }
       }
     }
-      .divider {
-        height: 10px;
-        background-color: $divider;
-      }
+    .divider {
+      height: 10px;
+      background-color: $divider;
+    }
   }
 }
 </style>

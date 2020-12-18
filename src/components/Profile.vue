@@ -29,13 +29,13 @@
       </div>
     </div>
     <div class="tab">
-      <div class="item" :class="{ active: tabOption==='推文' }" @click.prevent="selectTab">
+      <div class="item" :class="{ active: tabOption === '推文' }" @click.prevent="selectTab">
         <span class="text">推文</span>
       </div>
-      <div class="item" :class="{ active: tabOption==='推文與回覆' }" @click="selectTab">
+      <div class="item" :class="{ active: tabOption === '推文與回覆' }" @click="selectTab">
         <span class="text">推文與回覆</span>
       </div>
-      <div class="item" :class="{ active: tabOption==='喜歡的內容' }" @click="selectTab">
+      <div class="item" :class="{ active: tabOption === '喜歡的內容' }" @click="selectTab">
         <span class="text">喜歡的內容</span>
       </div>
     </div>
@@ -84,6 +84,7 @@ $bitdark: #657786;
       height: 15px;
       width: 15px;
       margin: 15px 0 0 15px;
+      cursor: pointer;
     }
     .simple-info {
       margin: 5px 0 0 50px;

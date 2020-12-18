@@ -31,19 +31,45 @@ const routes = [
   // },
   {
     path: '/signin',
-    name: 'UserSignIn',
     component: () => import('@/views/UserSignIn.vue')
   },
   {
     path: '/reply_list',
     name: 'SingleTweet',
     component: () => import('@/views/SingleTweet.vue')
-  }
+  },
   // {
   //   path: '/tweet',
   //   name: 'NewPopUp.vue',
   //   component: () => import()
   // }
+  {
+    path: '/admin',
+    component: () => import('@/views/Admin.vue'),
+    children: [
+      {
+        path: '',
+        redirect: 'main'
+      },
+      {
+        path: 'signin',
+        component: () => import('@/views/UserSignIn.vue')
+      },
+      {
+        path: 'main',
+        component: () => import('@/views/admin/AdminMain.vue')
+      },
+      {
+        path: 'users',
+        name: 'AdminUsers',
+        component: () => import('@/views/admin/AdminUsers.vue')
+      }
+    ]
+  },
+  {
+    path: '*',
+    component: () => import('@/views/NotFound.vue')
+  }
 ]
 
 const router = new VueRouter({
