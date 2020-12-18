@@ -11,19 +11,19 @@
             <div class="name">John Doe</div>
             <div class="account">@heyjohn</div>
             <div class="action">
-              <div class="comment">
-                <span class="comment-icon"><i class="fas fa-comment"></i></span>
+              <div class="reply-wrapper">
+                <div class="icon reply"></div>
                 <span class="number">1.5k</span>
               </div>
-              <div class="like">
-                <span class="like-icon"><i class="fas fa-heart"></i></span>
+              <div class="like-wrapper">
+                <div class="icon like"></div>
                 <span class="number">20k</span>
               </div>
             </div>
             <div class="number-followers">
               <div>
-                <span>34個</span><span class="following">跟隨中</span>
-                <span>59個</span><span class="follower">跟隨者</span>
+                <span>34 個</span><span class="following">跟隨中</span>
+                <span>59 位</span><span class="follower">跟隨者</span>
               </div>
             </div>
           </div>
@@ -133,23 +133,35 @@ $divider: #E6ECF0;
               color: #F6F7F8;
               text-shadow: -1px 0 $bitdark, 0 1px $bitdark, 1px 0 $bitdark, 0 -1px $bitdark;
             }
-            .comment {
+            .reply-wrapper {
               margin-right: 15px;
-              .comment-icon {
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              .icon.reply {
                 width: 19.75px;
                 height: 19.75px;
+                mask: url(../../assets/icon_reply.svg) no-repeat center;
+                mask-size: contain;
+                background-color: $bitdark;
               }
               .number {
-                margin-left: 7.5px;
+                margin-left: 7.15px;
                 font-weight: 500;
                 font-size: 15px;
                 line-height: 15px;
               }
             }
-            .like {
-              .like-icon {
+            .like-wrapper {
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              .icon.like {
                 width: 19.75px;
                 height: 19.75px;
+                mask: url(../../assets/icon_like.svg) no-repeat center;
+                mask-size: contain;
+                background-color: $bitdark;
               }
               .number {
                 margin-left: 6.95px;

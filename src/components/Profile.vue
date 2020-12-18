@@ -2,7 +2,7 @@
   <div class="profile">
     <div class="header">
       <div class="arrow">
-        <i class="fas fa-arrow-left"></i>
+        <div class="icon back"></div>
       </div>
       <div class="simple-info">
         <div class="name">John Doe</div>
@@ -15,8 +15,12 @@
       <button v-show="isSelf" class="btn-edit">編輯個人資料</button>
 
       <div class="other-button-wrapper">
-        <div class="btn-messege"><i class="far fa-envelope"></i></div>
-        <div class="btn-noti"><i class="far fa-bell"></i></div>
+        <div class="btn-messege">
+          <div class="icon messege"></div>
+        </div>
+        <div class="btn-noti">
+          <div class="icon subscribe"></div>
+        </div>
         <button class="btn-follow unfollow">正在跟隨</button>
       </div>
 
@@ -81,13 +85,23 @@ $bitdark: #657786;
     display: flex;
     flex-direction: row;
     .arrow {
-      height: 15px;
-      width: 15px;
+      height: 24px;
+      width: 24px;
       margin: 15px 0 0 15px;
-      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .icon.back {
+        width: 17px;
+        height: 14px;
+        mask: url(../assets/icon_back.svg) no-repeat center;
+        mask-size: contain;
+        background-color: #000000;
+        cursor: pointer;
+      }
     }
     .simple-info {
-      margin: 5px 0 0 50px;
+      margin: 5px 0 0 40px;
       text-align: left;
       .name {
         height: 24px;
@@ -160,16 +174,26 @@ $bitdark: #657786;
         border: 1px solid $orange;
         margin-right: 10px;
         border-radius: 50%;
-        text-align: center;
-        line-height: 40px;
-        vertical-align: center;
         color: $orange;
         font-size: 20px;
         cursor: pointer;
         transition: ease-in 0.2s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         &:hover {
           background-color: $orange;
           color: #ffffff;
+          .icon.messege {
+            background-color: #ffffff;
+          }
+        }
+        .icon.messege {
+          width: 20px;
+          height: 18px;
+          mask: url(../assets/icon_messege.svg) no-repeat center;
+          mask-size: contain;
+          background-color: $orange;
         }
       }
       .btn-noti {
@@ -178,16 +202,38 @@ $bitdark: #657786;
         border: 1px solid $orange;
         margin-right: 10px;
         border-radius: 50%;
-        text-align: center;
-        line-height: 40px;
-        vertical-align: center;
-        color: $orange;
-        font-size: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         cursor: pointer;
         transition: ease-in 0.2s;
         &:hover {
           background-color: $orange;
-          color: #ffffff;
+          .icon.subscribe {
+            background-color: #ffffff;
+            mask: url(../assets/icon_subscribed.svg) no-repeat center;
+          }
+        }
+        .icon.subscribe {
+          width: 23.9px;
+          height: 21.9px;
+          mask: url(../assets/icon_subscribe.svg) no-repeat center;
+          mask-size: contain;
+          background-color: $orange;
+        }
+      }
+      .btn-noti.already {
+        background-color: $orange;
+        &:hover {
+          background-color: #ffffff;
+          .icon.subscribe {
+            background-color: $orange;
+            mask: url(../assets/icon_subscribe.svg) no-repeat center;
+          }
+        }
+        .icon.subscribe {
+          mask: url(../assets/icon_subscribed.svg) no-repeat center;
+          background-color: #ffffff;
         }
       }
       .btn-follow {

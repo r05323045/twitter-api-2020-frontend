@@ -4,7 +4,8 @@
     <div class="container">
       <div class="title">推文清單</div>
       <div class="tweet-list">
-        <div v-for="i in 7" :key="i" class="list-item" :class="{ first: i === 1 }">
+        <div v-for="i in 10" :key="i" class="list-item" :class="{ first: i === 1 }">
+          <div class="icon cross"></div>
           <div class="avatar"></div>
           <div class="tweet-wrapper">
             <div class="info">
@@ -70,6 +71,17 @@ $divider: #E6ECF0;
         &:hover {
           backdrop-filter: brightness(.95);
         }
+        .icon.cross {
+          cursor: pointer;
+          position: absolute;
+          top: 19.5px;
+          right: 19.5px;
+          width: 15px;
+          height: 15px;
+          mask: url(../../assets/icon_cross.svg) no-repeat center;
+          mask-size: contain;
+          background-color: $bitdark;
+        }
         .avatar {
           margin: 3px 0 0 15px;
           height: 50px;
@@ -111,9 +123,9 @@ $divider: #E6ECF0;
             margin-top: 6px;
             font-size: 15px;
             font-weight: 500;
-            font-size: 15px;
             line-height: 22px;
             text-align: left;
+            max-width: 902px;
           }
         }
       }
