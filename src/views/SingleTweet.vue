@@ -22,6 +22,7 @@
 
 <style lang="scss">
   .page-container {
+    height: 100%;
     display: flex;
     flex-direction: row;
   } 

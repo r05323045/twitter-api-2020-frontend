@@ -1,27 +1,35 @@
 <template>
   <div class="nav flex-column">
     <div class="logo">
-      <img src="https://media.cakeresume.com/image/upload/s--S9Jdcf0R--/c_pad,fl_png8,h_400,w_400/v1548316744/ribjsyna9cm9tm4pkv63.png">
+      <div class="icon logo"></div>
     </div>
     <div class="nav-item-wrapper">
-      <div class="nav-item" @click="$router.push('/')">
-        <i class="fas fa-home"></i>
+      <div v-if="!isAdmin" class="nav-item" @click="$router.push('/')">
+        <div class="icon index"></div>
         首頁
       </div>
-      <div class="nav-item" @click="$router.push('/profile')">
-        <i class="far fa-user"></i>
+      <div v-if="!isAdmin" class="nav-item" @click="$router.push('/user/self')">
+        <div class="icon user"></div>
         個人資料
       </div>
-      <div class="nav-item" @click="$router.push('/setting')">
-        <i class="fas fa-cog"></i>
+      <div v-if="!isAdmin" class="nav-item" @click="$router.push('/setting')">
+        <div class="icon cog"></div>
         設定
       </div>
-      <div class="nav-item">
+      <div v-if="!isAdmin" class="nav-item">
         <button class="btn-tweet">推文</button>
       </div>
+      <div v-if="isAdmin" class="nav-item" @click="$router.push('/admin/main')">
+        <div class="icon index"></div>
+        推文清單
+      </div>
+      <div v-if="isAdmin" class="nav-item" @click="$router.push('/admin/users')">
+        <div class="icon user"></div>
+        使用者列表
+      </div>
     </div>
-    <div class="logout">
-      <i class="fas fa-sign-out-alt fa-rotate-180"></i>
+    <div class="logout-wrapper">
+      <div class="icon logout"></div>
       登出
     </div>
   </div>
@@ -30,7 +38,12 @@
 <script>
 
 export default {
-  name: 'Navbar'
+  name: 'Navbar',
+  data () {
+    return {
+      isAdmin: false
+    }
+  }
 }
 
 </script>
@@ -38,8 +51,7 @@ export default {
 <style lang="scss">
 $orange: #FF6600;
 $deeporange: #F34A16;
-$lightgray: #eee;
-$lightdark: #919191;
+$lightdark: #9197A3;
 .nav {
   margin: 0px 40px 0 103px;
   padding-top: 4px;
@@ -50,8 +62,11 @@ $lightdark: #919191;
   .logo {
     height: 50px;
     width: 50px;
-    img {
+    .icon.logo {
+      background-color: $orange;
+      width: 100%;
       height: 100%;
+      mask: url(../assets/icon_logo.svg) no-repeat center;
     }
   }
   .nav-item-wrapper {
@@ -71,11 +86,26 @@ $lightdark: #919191;
       transition: ease-in 0.2s;
       &:hover {
         color: $orange;
+        .icon {
+          background-color: $orange;
+        }
       }
-      i {
-        width: 24px;
+      .icon {
+        background-color: #000000;
+        width: 100%;
+        height: 100%;
         max-height: 24px;
+        max-width: 24px;
         margin-right: 20px;
+      }
+      .icon.index {
+        mask: url(../assets/icon_index.svg) no-repeat center;
+      }
+      .icon.user {
+        mask: url(../assets/icon_user.svg) no-repeat center;
+      }
+      .icon.cog {
+        mask: url(../assets/icon_cog.svg) no-repeat center;
       }
       .btn-tweet {
         border: none;
@@ -95,10 +125,13 @@ $lightdark: #919191;
           background-color: $deeporange;
           color: #ffffff;
         }
+        &:focus {
+          outline: 0;
+        }
       }
     }
   }
-  .logout {
+  .logout-wrapper {
     width: 100%;
     height: 60px;
     position: absolute;
@@ -112,9 +145,16 @@ $lightdark: #919191;
     transition: ease-in 0.2s;
     &:hover {
       color: $orange;
+      .icon.logout {
+        background-color: $orange;
+      }
     }
-    i {
-      width: 24px;
+    .icon.logout {
+      mask: url(../assets/icon_logout.svg) no-repeat center;
+      background-color: #000000;
+      width: 100%;
+      height: 100%;
+      max-width: 24px;
       max-height: 24px;
       margin-right: 20px;
     }
