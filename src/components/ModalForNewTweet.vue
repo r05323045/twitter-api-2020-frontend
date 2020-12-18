@@ -2,7 +2,7 @@
   <div class="modal">
     <div class="modal-content">
       <div class="modal-header">
-        <img src="./../asset/exit.png" alt="">
+        <img @click.stop.prevent="cancelModalClick()" src="./../asset/exit.png" alt="">
       </div>
       <hr>
       <div class="modal-body">
@@ -18,7 +18,12 @@
 
 <script>
 export default {
-  name: 'Modal'
+  name: 'ModalForNewTweet',
+  methods: {
+    cancelModalClick() {
+      this.$emit('after-click-cross')
+    }
+  }
 }
 </script>
 

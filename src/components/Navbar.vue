@@ -15,18 +15,31 @@
       <i class="fas fa-cog"></i>
       設定
     </div>
-    <button class="btn btn-tweet">推文</button>
+    <button class="btn btn-tweet" @click.prevent.stop="clickSignal()">推文</button>
     <div class="nav-item logout">
       <i class="fas fa-sign-out-alt fa-rotate-180"></i>
       登出
     </div>
   </div>
+  
 </template>
 
 <script>
-
+// import ModalForNewTweet from './../components/ModalForNewTweet'
 export default {
-  name: 'Navbar'
+  name: 'Navbar',
+  components:{
+    // ModalForNewTweet
+  },
+  data (){
+    
+  },
+  methods: {
+    clickSignal() {
+      this.$emit("after-click-new-tweet")
+    }
+
+  },
 }
 
 </script>

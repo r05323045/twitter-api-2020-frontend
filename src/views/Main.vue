@@ -1,6 +1,6 @@
 <template>
   <div class="main row">
-    <Navbar class="col-3"></Navbar>
+    <Navbar @after-click-new-tweet="afterClickNewTweet" class="col-3"></Navbar>
     <div class="col-5 container">
       <div class="title">首頁</div>
       <hr>
@@ -12,20 +12,42 @@
       <TweetList></TweetList>
     </div>
     <RecommendUsers class="col-4"></RecommendUsers>
+    <ModalForNewTweet v-if="showModal" name="example" @after-click-cross="afterClickCross">this is a modal</ModalForNewTweet>
   </div>
+  
+  
 </template>
 
 <script>
 import Navbar from '@/components/Navbar.vue'
 import RecommendUsers from '@/components/RecommendUsers.vue'
 import TweetList from '@/components/TweetList.vue'
+import ModalForNewTweet from './../components/ModalForNewTweet'
+
+
 export default {
   name: 'Main',
+  
   components: {
     Navbar,
     RecommendUsers,
-    TweetList
-  }
+    TweetList,
+    ModalForNewTweet 
+  },
+  data (){
+    return {
+      showModal: false
+    }
+  },
+  methods: {
+    afterClickCross() {
+      this.showModal = false
+    },
+    afterClickNewTweet() {
+      this.showModal = true
+    }
+  },
+  
 }
 
 </script>
