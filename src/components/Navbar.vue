@@ -8,7 +8,7 @@
         <div class="icon index"></div>
         首頁
       </div>
-      <div v-if="!isAdmin" class="nav-item" @click="$router.push('/profile')">
+      <div v-if="!isAdmin" class="nav-item" @click="$router.push('/user/self')">
         <div class="icon user"></div>
         個人資料
       </div>

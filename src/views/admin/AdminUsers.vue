@@ -77,12 +77,17 @@ $divider: #E6ECF0;
         flex-direction: row;
         margin-bottom: 15px;
         .user-card {
+          cursor: pointer;
           margin: 0px 15px 0px 0;
           width: 245px;
           height: 314px;
           position: relative;
           background: #F6F7F8;
           border-radius: 10px;
+          transition: ease-in 0.2s;
+          &:hover {
+            box-shadow: 0 0 3px 2px $lightdark;
+          }
           .cover-photo {
             width: 100%;
             max-width: 245px;
@@ -105,6 +110,7 @@ $divider: #E6ECF0;
             margin-right: auto;
             left: 0;
             right: 0;
+            border: 4px solid #FFFFFF;
           }
           .name {
             margin-top: 33px;
