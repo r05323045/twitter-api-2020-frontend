@@ -13,10 +13,11 @@ const routes = [
     name: 'Main',
     component: () => import('@/views/Main.vue')
   },
+  
   {
-    path: '/regist',
-    name: 'SignUp',
-    component: () => import('@/views/SignUp.vue')
+    path: '/signup',
+    name: "UserSignUp",
+    component: () => import('@/views/UserSignUp.vue')
   },
   {
     path: '/user/self/follower',
@@ -28,11 +29,16 @@ const routes = [
     name: 'UserProfile',
     component: () => import('@/views/UserProfile.vue')
   },
-  // {
-  //   path: '/setting',
-  //   name: 'Setting',
-  //   component: () => import('@/views/Setting.vue')
-  // },
+  {
+    path: '/user/self/following',
+    name: "SelfFollowing",
+    component: () => import('@/views/SelfFollowers.vue')
+  },
+  {
+    path: '/setting',
+    name: 'Setting',
+    component: () => import('@/views/Setting.vue')
+  },
   {
     path: '/signin',
     component: () => import('@/views/UserSignIn.vue')
@@ -42,11 +48,6 @@ const routes = [
     name: 'SingleTweet',
     component: () => import('@/views/SingleTweet.vue')
   },
-  // {
-  //   path: '/tweet',
-  //   name: 'NewPopUp.vue',
-  //   component: () => import()
-  // }
   {
     path: '/admin',
     component: () => import('@/views/Admin.vue'),
@@ -72,11 +73,13 @@ const routes = [
   },
   {
     path: '*',
+    name: 'NotFound',
     component: () => import('@/views/NotFound.vue')
   }
 ]
 
 const router = new VueRouter({
+  linkExactActiveClass: 'active',
   routes
 })
 
