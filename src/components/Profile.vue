@@ -111,7 +111,7 @@ $bitdark: #657786;
     .cover-photo {
       height: 200px;
       background: url(https://images.unsplash.com/photo-1587502537147-2ba64a62e3d3?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2017&q=80) no-repeat center;
-      background-size: 100%;
+      background-size: cover;
     }
     .avatar {
       width: 100%;
