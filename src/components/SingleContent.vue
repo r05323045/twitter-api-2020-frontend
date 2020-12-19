@@ -7,13 +7,13 @@
     <hr>
     <div class="self-content">
       <div class="self-info">
-        <img src="./../asset/johnny.jpg" alt="">
+        <img class="self-photo" src="./../asset/elephant.png" alt="">
         <div class="wrap">
           <span class="name">Apple</span>
           <span class="account">@apple</span>
         </div>
       </div> 
-      <p>Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum.</p>
+      <p class="tweet-content">Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum.</p>
       <span class="time">上午 10:05・2020年6月10日</span>
     </div>
     <hr>
@@ -23,35 +23,143 @@
     </div>
     <hr>
     <div class="icons">
-      <img class="conversation" src="./../asset/conversation@2x.png" alt="">
+      <img class="conversation" src="./../asset/conversation@2x.png" alt="" @click="afterClickNewReply">
       <img class="heart" src="./../asset/heart@2x.png" alt="">
     </div>
     
-    <div class="replies"> 
-      <img src="./../asset/elephant.png" alt="">
-      <div class="reply-content">
-        <div class="title">
-          <span class="name">Apple</span>
-          <span class="account">@apple</span>
-          <span class="time">・13小時</span>
+    <div class="replies">
+      <div class="single-reply">  
+        <img src="./../asset/elephant.png" alt="">
+        <div class="reply-content">
+          <div class="title">
+            <span class="name">Apple</span>
+            <span class="account">@apple</span>
+            <span class="time">・13小時</span>
+          </div>
+          <span class="to-whom">回覆 @apple</span>
+          <p class="reply-item">Great</p>
         </div>
-        <span class="to-whom">回覆 @apple</span>
-        <p class="reply-item">Great</p>
       </div>
+      <div class="single-reply">  
+        <img src="./../asset/elephant.png" alt="">
+        <div class="reply-content">
+          <div class="title">
+            <span class="name">Apple</span>
+            <span class="account">@apple</span>
+            <span class="time">・13小時</span>
+          </div>
+          <span class="to-whom">回覆 @apple</span>
+          <p class="reply-item">Great</p>
+        </div>
+      </div>
+      <div class="single-reply">  
+        <img src="./../asset/elephant.png" alt="">
+        <div class="reply-content">
+          <div class="title">
+            <span class="name">Apple</span>
+            <span class="account">@apple</span>
+            <span class="time">・13小時</span>
+          </div>
+          <span class="to-whom">回覆 @apple</span>
+          <p class="reply-item">Great</p>
+        </div>
+      </div> 
+      <div class="single-reply">  
+        <img src="./../asset/elephant.png" alt="">
+        <div class="reply-content">
+          <div class="title">
+            <span class="name">Apple</span>
+            <span class="account">@apple</span>
+            <span class="time">・13小時</span>
+          </div>
+          <span class="to-whom">回覆 @apple</span>
+          <p class="reply-item">Great</p>
+        </div>
+      </div> 
+      <div class="single-reply">  
+        <img src="./../asset/elephant.png" alt="">
+        <div class="reply-content">
+          <div class="title">
+            <span class="name">Apple</span>
+            <span class="account">@apple</span>
+            <span class="time">・13小時</span>
+          </div>
+          <span class="to-whom">回覆 @apple</span>
+          <p class="reply-item">Great</p>
+        </div>
+      </div> 
+      <div class="single-reply">  
+        <img src="./../asset/elephant.png" alt="">
+        <div class="reply-content">
+          <div class="title">
+            <span class="name">Apple</span>
+            <span class="account">@apple</span>
+            <span class="time">・13小時</span>
+          </div>
+          <span class="to-whom">回覆 @apple</span>
+          <p class="reply-item">Great</p>
+        </div>
+      </div> 
+      <div class="single-reply">  
+        <img src="./../asset/elephant.png" alt="">
+        <div class="reply-content">
+          <div class="title">
+            <span class="name">Apple</span>
+            <span class="account">@apple</span>
+            <span class="time">・13小時</span>
+          </div>
+          <span class="to-whom">回覆 @apple</span>
+          <p class="reply-item">Great</p>
+        </div>
+      </div> 
+      <div class="single-reply">  
+        <img src="./../asset/elephant.png" alt="">
+        <div class="reply-content">
+          <div class="title">
+            <span class="name">Apple</span>
+            <span class="account">@apple</span>
+            <span class="time">・13小時</span>
+          </div>
+          <span class="to-whom">回覆 @apple</span>
+          <p class="reply-item">Great</p>
+        </div>
+      </div> 
     </div>
-
+    <ModalForReplyTweet v-if='showNewReplyModal' @after-click-cross="afterClickCross" />
   </div>
 </template>
 <script>
+import ModalForReplyTweet from './../components/ModalForReplyTweet'
 export default {
-  
+  components: {
+    ModalForReplyTweet
+  },
+  data() {
+    return {
+      showNewReplyModal: false 
+    }
+  },
+  methods: {
+   afterClickCross() {
+      this.showNewReplyModal = false
+    },
+    afterClickNewReply() {
+      this.showNewReplyModal = true
+      console.log('afterClickReplyTweet')
+    }
+  },
 }
 </script>
 
 <style lang='scss'>
   .main {
-    hr {margin: 0;}
     width: 600px;
+    height: 100%; 
+    border-right: 1px solid #E6ECF0;
+    border-left: 1px solid #E6ECF0;
+    display: flex;
+    flex-direction: column;
+    padding: 0;    
     .upper {
       // outline: red solid;
       height: 55px;
@@ -67,13 +175,12 @@ export default {
         font-style: normal;
         font-weight: bold;
         font-size: 18px;
-        line-height: 26px;
+        line-height: 55px;
         align-self: center;
       }
     }
-
+    hr {margin: 0;}
     .self-content {
-      // border-top: ;
       width: 100%;
       // outline: red solid;
       display: flex;
@@ -83,11 +190,11 @@ export default {
         flex-direction: row;
         align-items: flex-start;
         // outline: red solid;
-        img {
+        .self-photo {
           width: 50px;
           height: 50px;
           border-radius: 50%;
-          margin: 13px 10px 41px 15px;
+          margin: 13px 10px 15px 15px;
           object-fit: cover;
           // outline: red solid;
         }
@@ -119,7 +226,7 @@ export default {
           }
         }
       }
-      p {
+      .tweet-content {
         width: 510px;
         height: auto;
         font-family: Noto Sans TC;
@@ -131,7 +238,7 @@ export default {
         margin: 0 75px 0 15px;
       }
       .time {
-        width: 510px;
+        width: 600px;
         height: auto;
         // outline: red solid;
         font-family: Noto Sans TC;
@@ -141,12 +248,12 @@ export default {
         line-height: 22px;
         color: #657786;
         text-align: start;
-        margin: 15px 0 15px 15px;
+        margin: 15px;
       }
     }
     .counts {
       // outline: red solid;
-      margin: 20px 0 20px 20px;
+      margin: 20px;
       text-align: start;
       font-family: Noto Sans TC;
       font-style: normal;
@@ -162,48 +269,53 @@ export default {
       flex-direction: row;
       
       // outline: red solid;
-      margin: 21px 0 21px 17px;
+      margin: 21px 17px 21px 17px;
       .heart, .conversation {
         height: 25px;
         width: 25px;
         // outline: red solid;
         margin: 0 155px 0 0;
       }
-      
-
-
-      
+      .heart {
+        margin-right: 377px;
+      }
     }
     .replies {
-      height: 105px;
+      overflow-y: scroll;
+      height: 100%;
       width: 100%;
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       background: #FFFFFF;
-      border: 1px solid #E6ECF0;
-      box-sizing: border-box;
-      img {
-        height: 50px;
-        width: 50px;
-        border-radius: 50%;
-        margin: 18px 10px 37px 15px; 
-      }
-      .reply-content {
-        margin: 15px 0 0 0;
-        text-align: start;
-        .title {
-          margin-bottom: 4px;
-          .name {
-            margin-right: 5px;
+      border-top: 1px solid #E6ECF0;
+      border-bottom: 1px solid #E6ECF0;
+      // box-sizing: border-box;
+      .single-reply {
+        display:flex;
+        flex-direction: row;
+        border-bottom: 1px solid #E6ECF0;
+        img {
+          height: 50px;
+          width: 50px;
+          border-radius: 50%;
+          margin: 18px 10px 37px 15px; 
+        }
+        .reply-content {
+          margin: 15px 0 0 0;
+          text-align: start;
+          .title {
+            margin-bottom: 4px;
+            .name {
+              margin-right: 5px;
+            }
+            
           }
-          .account {}
-          .time {}
-        }
-        .to-whom {
-          margin-bottom: 5px;
-        }
-        .reply-item {
-          margin-bottom: 15px;
+          .to-whom {
+            margin-bottom: 5px;
+          }
+          .reply-item {
+            margin-bottom: 15px;
+          }
         }
       }
     }

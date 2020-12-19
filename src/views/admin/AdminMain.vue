@@ -80,6 +80,7 @@ $divider: #E6ECF0;
           mask: url(../../assets/icon_cross.svg) no-repeat center;
           mask-size: contain;
           background-color: $bitdark;
+
           cursor: pointer;
           transition: ease-in 0.2s;
           &:hover {

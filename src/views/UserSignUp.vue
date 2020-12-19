@@ -5,15 +5,16 @@
         <img src="https://media.cakeresume.com/image/upload/s--S9Jdcf0R--/c_pad,fl_png8,h_400,w_400/v1548316744/ribjsyna9cm9tm4pkv63.png">
       </div>
       <div class="title">建立你的帳號</div>
-      <form>
+      <form @submit.stop.prevent="handleSubmit">
         <div class="form-label-group mb-2">
           <!-- <label for="account">帳號</label> -->
           <input
             id="account"
             name="account"
+            v-model="account"
             type="text"
             class="form-control"
-            placeholder="name"
+            placeholder="account"
             autocomplete="accountname"
             required
             autofocus
@@ -25,10 +26,11 @@
           <input
             id="name"
             name="name"
+            v-model="name"
             type="text"
             class="form-control"
             placeholder="name"
-            autocomplete="username"
+            autocomplete="name"
             required
             
           >
@@ -39,6 +41,7 @@
           <input
             id="email"
             name="email"
+            v-model="email"
             type="email"
             class="form-control"
             placeholder="email"
@@ -52,10 +55,11 @@
           <input
             id="password"
             name="password"
+            v-model="password"
             type="password"
             class="form-control"
             placeholder="Password"
-            autocomplete="new-password"
+            autocomplete="password"
             required
           >
         </div>
@@ -65,10 +69,11 @@
           <input
             id="password-check"
             name="passwordCheck"
+            v-model="passwordCheck"
             type="password"
             class="form-control"
-            placeholder="Password"
-            autocomplete="new-password"
+            placeholder="Password Check"
+            autocomplete="password"
             required
           >
         </div>
@@ -85,11 +90,32 @@
 <script>
 
 export default {
-  created () {
-    this.$nextTick(() => {
-      this.$refs.account.focus()
-    })
+  name: 'UserSignUp',
+  data() {
+    return {
+      account: '',
+      name: '',
+      email: '',
+      password:'',
+      passwordConfirm: '', 
+    }
+  },
+  methods: {
+    // handleSubmit (e) {
+
+      // const data = JSON.stringify({
+      //   account: this.account,
+      //   name: this.name,
+      //   email: this.email,
+      //   password: this.password,
+      //   passwordCheck: this.passwordCheck
+      // })
+      // console.log('data', data)
+      //需api串接
+
+    // },
   }
+
 }
 </script>
 
@@ -103,6 +129,7 @@ $lightblue: #00B7EF;
   max-width: 540px;
   .container {
     margin-top: 60px;
+    height: 100%;
     padding: 0;
     .logo {
       height: 50px;

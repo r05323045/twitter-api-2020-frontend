@@ -2,7 +2,7 @@
   <div class="modal">
     <div class="modal-content">
       <div class="modal-header">
-        <img src="./../asset/exit.png" alt="">
+        <img src="./../asset/exit.png" alt="" @click.stop.prevent="cancelModalClick">
         <span class="title">編輯個人資料</span>
         <button class="save">儲存</button>
       </div>
@@ -32,7 +32,13 @@
 
 <script>
 export default {
-  name: 'Modal'
+  name: 'Modal',
+
+  methods: {
+    cancelModalClick() {
+      this.$emit('after-click-cross')
+    }
+  }
 }
 </script>
 

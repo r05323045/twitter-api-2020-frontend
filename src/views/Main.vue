@@ -13,19 +13,24 @@
     </div>
     <RecommendUsers></RecommendUsers>
   </div>
+  
+  
 </template>
 
 <script>
 import Navbar from '@/components/Navbar.vue'
 import RecommendUsers from '@/components/RecommendUsers.vue'
 import TweetList from '@/components/TweetList.vue'
+
+
+
 export default {
   name: 'Main',
   components: {
     Navbar,
     RecommendUsers,
-    TweetList
-  }
+    TweetList,
+  },
 }
 
 </script>

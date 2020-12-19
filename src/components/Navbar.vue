@@ -28,17 +28,31 @@
         使用者列表
       </div>
     </div>
+
     <div class="logout-wrapper" @click="logout">
       <div class="icon logout"></div>
       登出
     </div>
+    <ModalForNewTweet v-if="showNewTweetModal" name="ModalForNewTweet" @after-click-cross="afterClickCross">this is a modal</ModalForNewTweet>
   </div>
+  
 </template>
 
 <script>
+
+
 import { mapState } from 'vuex'
+import ModalForNewTweet from './../components/ModalForNewTweet'
 export default {
   name: 'Navbar',
+  components: {
+    ModalForNewTweet
+  },
+  data () {
+    return {
+      showNewTweetModal: false
+    }
+  },
   computed: {
     ...mapState(['currentUser', 'isAuthenticated'])
   },
@@ -46,6 +60,13 @@ export default {
     logout () {
       this.$store.commit('revokeAuthentication')
       this.$router.push('/signin')
+    },
+    afterClickCross() {
+      this.showNewTweetModal = false
+    },
+    afterClickNewTweet() {
+      this.showNewTweetModal = true
+      console.log('afterClickNewTweet')
     }
   }
 }

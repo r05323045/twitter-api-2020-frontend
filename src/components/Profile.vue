@@ -12,7 +12,9 @@
     <div class="user-info">
       <div class="cover-photo"></div>
       <div class="avatar"></div>
-      <button v-show="isSelf" class="btn-edit">編輯個人資料</button>
+
+      <button v-show="isSelf" class="btn-edit" @click="afterClickEditProfile">編輯個人資料</button>
+
 
       <div class="other-button-wrapper">
         <div class="btn-messege">
@@ -44,26 +46,42 @@
       </div>
     </div>
     <TweetList></TweetList>
+<ModalForEditProfile v-if="showEditProfileModal" @after-click-cross=" afterClickCross" />
+
   </div>
 </template>
 
 <script>
 import TweetList from '@/components/TweetList.vue'
+import ModalForEditProfile from '@/components/ModalForEditProfile.vue'
 export default {
   name: 'Profile',
   components: {
-    TweetList
+    TweetList,
+    ModalForEditProfile
+
+
   },
   data () {
     return {
       tabOption: '推文',
-      isSelf: false
+      isSelf: false,
+      showEditProfileModal: false,
     }
   },
   methods: {
     selectTab (event) {
       this.tabOption = event.target.children[0] ? event.target.children[0].innerText : event.target.innerText
-    }
+
+    },
+    afterClickEditProfile() {
+      this.showEditProfileModal = true
+      console.log('showEditProfileModal')
+    },
+     afterClickCross() {
+      this.showEditProfileModal = false
+    },
+
   }
 }
 

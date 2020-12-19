@@ -10,6 +10,7 @@
 import Navbar from '@/components/Navbar.vue'
 import RecommendUsers from '@/components/RecommendUsers.vue'
 import Profile from '@/components/Profile.vue'
+
 export default {
   name: 'UserProfile',
   components: {

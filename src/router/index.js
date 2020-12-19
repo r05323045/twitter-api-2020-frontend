@@ -72,6 +72,7 @@ const routes = [
       },
       {
         path: 'main',
+
         component: () => import('@/views/admin/AdminMain.vue'),
         beforeEnter: authorizeIsAdmin
       },
