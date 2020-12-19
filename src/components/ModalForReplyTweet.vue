@@ -2,13 +2,13 @@
   <div class="modal">
     <div class="modal-content">
       <div class="modal-header">
-        <img src="./../asset/exit.png" alt="">
+        <img src="./../asset/exit.png" alt="" @click="cancelModalClick">
       </div>
       <hr>
       <div class="modal-body">
         <div class="content-of-other">
           <div class="other-info">
-            <img src="./../asset/cyan_bg_.jpg" alt="">
+            <img src="./../asset/elephant.png" alt="">
             <div class="text-wrap">
 
               <div class="title-wrap">
@@ -30,7 +30,7 @@
         
 
         <div class="content-of-mine">
-          <img class="photo-of-mine" src="./../asset/cyan_bg_.jpg" alt="">
+          <img class="photo-of-mine" src="./../asset/elephant.png" alt="">
           <textarea class="tweet-content" type="textarea" placeholder="推你的回覆" name="" id=""></textarea>
           <button>推文</button>
         </div>
@@ -42,7 +42,13 @@
 
 <script>
 export default {
-  name: 'Modal'
+  name: 'ModalForReplyTweet',
+  
+  methods: {
+  cancelModalClick() {
+      this.$emit('after-click-cross')
+    }
+  }
 }
 </script>
 
@@ -60,9 +66,9 @@ export default {
     
     .modal-content {
       position: absolute;
-      right: 420px;
-      left: 20%;
-      // top: 54px;
+      
+      left: 50%;
+      top: 54px;
       width: 600px;
       height: 450px;
       border-radius: 14px;

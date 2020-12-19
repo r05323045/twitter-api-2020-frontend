@@ -1,17 +1,19 @@
 <template>
   <div class="modal">
     <div class="modal-content">
+
       <div class="modal-header">
-        <img @click.stop.prevent="cancelModalClick()" src="./../asset/exit.png" alt="">
+        <img class='cross'  @click.stop.prevent="cancelModalClick()" src="./../asset/exit.png" alt="">
       </div>
+      
       <hr>
       <div class="modal-body">
-        
-          <img class="photo" src="" alt="">
-          <textarea class="tweet-content" type="textarea" placeholder="有什麼新鮮事嗎?" name="" id=""></textarea>
-          <button>推文</button>
-        
+        <!-- <hr class="line"> -->
+        <img class="photo" src="./../asset/elephant.png" alt="">
+        <textarea class="tweet-content" type="textarea" placeholder="有什麼新鮮事嗎?" name="" id=""></textarea>
+        <button>推文</button>
       </div>
+
     </div>
   </div>
 </template>
@@ -27,46 +29,58 @@ export default {
 }
 </script>
 
-<style lang='scss'>
+<style lang="scss">
   .modal {
     position: fixed;
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
+    // z-index: 100;
     display: flex;
     align-items: center;
     background: rgba(0, 0, 0, 0.4);
-    
-    
+        
     .modal-content {
       position: absolute;
-      right: 420px;
-      left: 420px;
+      left: 50%;
       top: 54px;
       width: 600px;
       height: 300px;
       border-radius: 14px;
-      border: 1px solid #C4C4C4;
+      // border: 1px solid #C4C4C4;
+      transform: translate(-50%, 0);
       // outline: blue solid;
-      hr {
-        height: 1px;
-        margin: 0;
-      }
+      
       .modal-header {
         height: 54px;
-        // outline: red solid;
-        img {
+        width: 600px;
+        
+        margin: 0;
+        padding: 19.5px auto 19.5px 19.5px;
+        // outline: red solid 100px;
+        .cross {
+          line-height: 54px;
           height: 15px;
           width: 15px;
-          padding: 19.5px auto 19.5px 19.5px;
+          
+          // outline: solid red;
+
         }
       }
+
+      hr {
+        width: 1px;
+        color: #C4C4C4;
+        margin: 0;
+
+      }
+
       .modal-body {
         position: relative;
         // outline: black solid ;
         height: 245px;
-        img {
+        .photo {
           width: 50px;
           height: 50px;
           border-radius: 50%;

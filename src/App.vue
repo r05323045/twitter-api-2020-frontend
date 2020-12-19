@@ -19,13 +19,16 @@ html, body {
 }
 #app {
   max-width: 1440px;
+  max-height: 100vh;
+  overflow-y: hidden;
   height: 100%;
   margin: auto;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: Noto Sans TC;
+  font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #1C1C1C;
 }
 
 #nav {

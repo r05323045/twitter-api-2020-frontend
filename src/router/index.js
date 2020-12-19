@@ -5,6 +5,10 @@ Vue.use(VueRouter)
 
 const routes = [
   {
+    path: '',
+    redirect: 'main'
+  },
+  {
     path: '/main',
     name: 'Main',
     component: () => import('@/views/Main.vue')
@@ -17,8 +21,13 @@ const routes = [
   },
   {
     path: '/user/self/follower',
-    name: "SelfFollowers",
+    name: 'SelfFollowers',
     component: () => import('@/views/SelfFollowers.vue')
+  },
+  {
+    path: '/user/self',
+    name: 'UserProfile',
+    component: () => import('@/views/UserProfile.vue')
   },
   {
     path: '/user/self/following',
@@ -32,13 +41,35 @@ const routes = [
   },
   {
     path: '/signin',
-    name: 'UserSignIn',
     component: () => import('@/views/UserSignIn.vue')
   },
   {
     path: '/reply_list',
     name: 'SingleTweet',
     component: () => import('@/views/SingleTweet.vue')
+  },
+  {
+    path: '/admin',
+    component: () => import('@/views/Admin.vue'),
+    children: [
+      {
+        path: '',
+        redirect: 'main'
+      },
+      {
+        path: 'signin',
+        component: () => import('@/views/UserSignIn.vue')
+      },
+      {
+        path: 'main',
+        component: () => import('@/views/admin/AdminMain.vue')
+      },
+      {
+        path: 'users',
+        name: 'AdminUsers',
+        component: () => import('@/views/admin/AdminUsers.vue')
+      }
+    ]
   },
   {
     path: '*',

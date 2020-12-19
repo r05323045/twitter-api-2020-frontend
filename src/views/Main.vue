@@ -1,18 +1,18 @@
 <template>
-  <div class="main row">
-    <Navbar @after-click-new-tweet="afterClickNewTweet" class="col-3"></Navbar>
-    <div class="col-5 container">
+  <div class="main">
+    <Navbar  ></Navbar>
+    <div class="container">
       <div class="title">首頁</div>
-      <hr>
       <div class="post-tweet">
         <div class="avatar"></div>
         <textarea class="content" placeholder="有什麼新鮮事？"></textarea>
         <button class="btn btn-tweet">推文</button>
       </div>
+      <div class="divider"></div>
       <TweetList></TweetList>
     </div>
-    <RecommendUsers class="col-4"></RecommendUsers>
-    <ModalForNewTweet v-if="showModal" name="example" @after-click-cross="afterClickCross">this is a modal</ModalForNewTweet>
+    <RecommendUsers></RecommendUsers>
+    
   </div>
   
   
@@ -22,99 +22,107 @@
 import Navbar from '@/components/Navbar.vue'
 import RecommendUsers from '@/components/RecommendUsers.vue'
 import TweetList from '@/components/TweetList.vue'
-import ModalForNewTweet from './../components/ModalForNewTweet'
+
 
 
 export default {
   name: 'Main',
-  
   components: {
     Navbar,
     RecommendUsers,
     TweetList,
-    ModalForNewTweet 
   },
-  data (){
-    return {
-      showModal: false
-    }
-  },
-  methods: {
-    afterClickCross() {
-      this.showModal = false
-    },
-    afterClickNewTweet() {
-      this.showModal = true
-    }
-  },
-  
 }
 
 </script>
 
 <style lang="scss">
-$orange: #f46524;
+$orange: #FF6600;
 $deeporange: #F34A16;
+$lightdark: #9197A3;
+$divider: #E6ECF0;
 .main {
   height: 100%;
   width: 100%;
-  padding-top: 30px;
-  .col-5.container {
+  display: flex;
+  flex-direction: row;
+  .container {
+    border-left: 1px solid $divider;
+    border-right: 1px solid $divider;
+    max-width: 600px;
     padding: 0;
     .title {
-      height: 1rem;
-      line-height: 1rem;
-      padding: 15px;
-      font-size: 16px;
+      border-bottom: 1px solid $divider;
+      height: 55px;
+      padding: 15px 0 15px 15px;
+      line-height: 26px;
+      font-size: 18px;
       font-weight: 700;
       text-align: left;
     }
     .post-tweet {
       display:flex;
       flex-direction: row;
-      height: 150px;
-      border-bottom: #eee 10px solid;
+      height: 120px;
       position: relative;
       .avatar {
-        margin: 0 15px;
-        height: 40px;
-        width: 40px;
-        min-height: 40px;
-        min-width: 40px;
+        position: absolute;
+        top: 10px;
+        left: 15px;
+        height: 50px;
+        width: 50px;
         border-radius: 50%;
-        background: #919191;
+        background: $lightdark;
+        cursor: pointer;
+        &:hover {
+          box-shadow: 0 0 3px 1px $lightdark;
+        }
+      }
+      ::placeholder {
+        position: absolute;
+        top: 20px;
+        left: 75px;
+        font-weight: 500;
+        font-size: 18px;
+        line-height: 26px;
+        color: $lightdark;
       }
       .content {
-        padding-top: 10px;
+        padding: 20px 0 0 75px;
         border: none;
         overflow: auto;
         outline: none;
         box-shadow: none;
         resize: none;
         width: 100%;
-      }
-      ::placeholder {
-        font-size: 16px;
+        font-size: 18px;
         font-weight: 500;
-        color: #919191;
+        font-size: 18px;
+        line-height: 26px;
       }
       .btn-tweet {
+        width: 100%;
+        max-width: 64px;
+        height: 40px;
         position: absolute;
-        bottom: 15px;
+        bottom: 10px;
         right: 15px;
         background: $orange;
-        font-size: 14px;
+        font-size: 18px;
         font-weight: 700;
         color: #ffffff;
-        width: 60px;
-        border-radius: 30px;
+        border-radius: 100px;
         transition: ease-in 0.2s;
         &:hover {
           background-color: $deeporange;
+          box-shadow: 0 0 3px 1px $lightdark;
         }
       }
     }
-
+    .divider {
+      height: 10px;
+      background-color: $divider;
+    }
   }
 }
 </style>
