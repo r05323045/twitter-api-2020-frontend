@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="upper">
-      <img class="arrow" src="./../asset/Vector@2x.png" alt="">
+      <img class="arrow" src="@/asset/Vector@2x.png" alt="">
       <div class="title">
         <h3>John Doe</h3>
         <span>25 推文</span>
@@ -22,7 +22,7 @@
     
     <div class="followListContent">
       <div class="singlContent">
-        <img src="./../asset/cyan_bg_.jpg" alt="">
+        <img src="@/asset/johnny.jpg">
         <div class="text">
           <h5 class="title">Laura</h5>
           <h5 class="account">@LauraBill</h5>

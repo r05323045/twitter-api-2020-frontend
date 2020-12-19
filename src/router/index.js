@@ -13,10 +13,9 @@ const routes = [
     name: 'Main',
     component: () => import('@/views/Main.vue')
   },
-  
   {
     path: '/signup',
-    name: "UserSignUp",
+    name: 'UserSignUp',
     component: () => import('@/views/UserSignUp.vue')
   },
   {
@@ -31,7 +30,7 @@ const routes = [
   },
   {
     path: '/user/self/following',
-    name: "SelfFollowing",
+    name: 'SelfFollowing',
     component: () => import('@/views/SelfFollowers.vue')
   },
   {

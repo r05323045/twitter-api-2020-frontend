@@ -2,7 +2,7 @@
   <div class="signin">
     <div class="container">
       <div class="logo">
-        <img src="https://media.cakeresume.com/image/upload/s--S9Jdcf0R--/c_pad,fl_png8,h_400,w_400/v1548316744/ribjsyna9cm9tm4pkv63.png">
+        <div class="icon logo"></div>
       </div>
       <div class="title">
         <span v-if="!isAdmin">登入 Alphitter</span>
@@ -78,8 +78,11 @@ $bitdark: #657786;
     .logo {
       margin-bottom: 30px;
       height: 50px;
-      img {
+      .icon.logo {
+        background-color: $orange;
+        width: 100%;
         height: 100%;
+        mask: url(../assets/icon_logo.svg) no-repeat center;
       }
     }
     .title {

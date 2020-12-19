@@ -41,7 +41,7 @@ export default {
   name: 'Navbar',
   data () {
     return {
-      isAdmin: false
+      isAdmin: true
     }
   }
 }
