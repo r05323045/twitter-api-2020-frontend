@@ -40,6 +40,11 @@ const routes = [
     component: () => import('@/views/UserProfile.vue')
   },
   {
+    path: '/user/other/:id',
+    name: 'UserProfile',
+    component: () => import('@/views/UserProfile.vue')
+  },
+  {
     path: '/user/self/following',
     name: 'SelfFollowing',
     component: () => import('@/views/SelfFollowers.vue')
