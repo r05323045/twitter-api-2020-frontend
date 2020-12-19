@@ -4,31 +4,31 @@
       <div class="icon logo"></div>
     </div>
     <div class="nav-item-wrapper">
-      <div v-if="!(currentUser.role === 'admin')" class="nav-item" @click="$router.push('/')">
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/')">
         <div class="icon index"></div>
         首頁
       </div>
-      <div v-if="!(currentUser.role === 'admin')" class="nav-item" @click="$router.push('/user/self')">
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/user/self')">
         <div class="icon user"></div>
         個人資料
       </div>
-      <div v-if="!(currentUser.role === 'admin')" class="nav-item" @click="$router.push('/setting')">
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/setting')">
         <div class="icon cog"></div>
         設定
       </div>
-      <div v-if="!(currentUser.role === 'admin')" class="nav-item">
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item">
         <button class="btn-tweet">推文</button>
       </div>
-      <div v-if="(currentUser.role === 'admin')" class="nav-item" @click="$router.push('/admin/main')">
+      <div v-if="$route.path.indexOf('admin') > 0" class="nav-item" @click="$router.push('/admin/main')">
         <div class="icon index"></div>
         推文清單
       </div>
-      <div v-if="(currentUser.role === 'admin')" class="nav-item" @click="$router.push('/admin/users')">
+      <div v-if="$route.path.indexOf('admin') > 0" class="nav-item" @click="$router.push('/admin/users')">
         <div class="icon user"></div>
         使用者列表
       </div>
     </div>
-    <div class="logout-wrapper">
+    <div class="logout-wrapper" @click="logout">
       <div class="icon logout"></div>
       登出
     </div>
@@ -42,6 +42,12 @@ export default {
   computed: {
     ...mapState(['currentUser', 'isAuthenticated'])
   },
+  methods: {
+    logout () {
+      this.$store.commit('revokeAuthentication')
+      this.$router.push('/signin')
+    }
+  }
 }
 
 </script>

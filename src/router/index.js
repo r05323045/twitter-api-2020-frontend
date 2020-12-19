@@ -4,11 +4,20 @@ import store from './../store'
 
 Vue.use(VueRouter)
 
+const authorizeIsAdmin = (to, from, next) => {
+  const currentUser = store.state.currentUser
+  if (currentUser && !(currentUser.role === 'admin')) {
+    next('/404')
+    return
+  }
+  next()
+}
+
 const routes = [
   {
     path: '/',
     name: 'root',
-    redirect: '/signin'
+    redirect: '/main'
   },
   {
     path: '/main',
@@ -63,12 +72,14 @@ const routes = [
       },
       {
         path: 'main',
-        component: () => import('@/views/admin/AdminMain.vue')
+        component: () => import('@/views/admin/AdminMain.vue'),
+        beforeEnter: authorizeIsAdmin
       },
       {
         path: 'users',
         name: 'AdminUsers',
-        component: () => import('@/views/admin/AdminUsers.vue')
+        component: () => import('@/views/admin/AdminUsers.vue'),
+        beforeEnter: authorizeIsAdmin
       }
     ]
   },
@@ -85,7 +96,26 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  store.dispatch('fetchCurrentUser')
+  const tokenInLocalStorage = localStorage.getItem('token')
+  const tokenInStore = store.state.token
+  let isAuthenticated = store.state.isAuthenticated
+
+  if (tokenInLocalStorage && tokenInLocalStorage !== tokenInStore) {
+    (async () => {
+      isAuthenticated = await store.dispatch('fetchCurrentUser')
+    })()
+  }
+
+  if (!isAuthenticated && to.path !== '/signin' && to.path !== '/signup' && to.path !== '/admin/signin') {
+    next('/signin')
+    return
+  }
+
+  if (isAuthenticated && to.path === '/signin') {
+    next('/main')
+    return
+  }
+
   next()
 })
 
