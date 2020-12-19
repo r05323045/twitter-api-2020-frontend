@@ -8,14 +8,14 @@
         <span v-if="!isAdmin">登入 Alphitter</span>
         <span v-if="isAdmin">後台登入</span>
       </div>
-      <form>
+      <form @submit.prevent="signin">
         <div class="form-group">
-          <label class="account" v-show="!accountFocus">帳號</label>
-          <input type="text" ref="account" @focus="checkFocus('account')" @blur="checkBlur('account')" class="form-control">
-          <label class="password" v-show="!passwordFocus">密碼</label>
-          <input type="text" class="form-control" @focus="checkFocus('password')" @blur="checkBlur('password')" required>
+          <label class="account" v-show="!accountFocus && account === ''">帳號</label>
+          <input type="text" ref="account" @focus="checkFocus('account')" @blur="checkBlur('account')" v-model="account" class="form-control" required>
+          <label class="password" v-show="!passwordFocus && password === ''">密碼</label>
+          <input type="password" ref="password" @focus="checkFocus('password')" @blur="checkBlur('password')" v-model="password" class="form-control"  required>
         </div>
-        <button class="btn btn-signin" type="submit">登入</button>
+        <button :disabled="isProcessing" class="btn btn-signin" type="submit">登入</button>
       </form>
       <div  class="link">
         <span v-if="!isAdmin" @click="$router.push('/signup')">註冊 Alphitter</span>
@@ -29,12 +29,18 @@
 
 <script>
 
+import authorizationAPI from '@/apis/authorization'
+import { Toast } from '@/utils/helpers'
+
 export default {
   data () {
     return {
       accountFocus: false,
       passwordFocus: false,
-      isAdmin: true
+      account: '',
+      password: '',
+      isAdmin: this.$route.path === '/admin/signin',
+      isProcessing: false
     }
   },
   created () {
@@ -57,6 +63,38 @@ export default {
         this.accountFocus = false
       } else if (params === 'password') {
         this.passwordFocus = false
+      }
+    },
+    async signin () {
+      try {
+        if (!this.account || !this.password) {
+          Toast.fire({
+            icon: 'warning',
+            title: '請填入 email 和 password'
+          })
+          return
+        }
+        this.isProcessing = true
+        const response = await authorizationAPI.signIn({
+          account: this.account,
+          password: this.password
+        })
+        const { data } = response
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+        localStorage.setItem('token', data.token)
+        
+        this.$store.commit('setCurrentUser', data.user)
+
+        this.$router.push('/main')
+      } catch(error) {
+        this.password = ''
+        this.isProcessing = false
+        Toast.fire({
+          icon: 'warning',
+          title: '請確認您輸入了正確的帳號密碼'
+        })
       }
     }
   }
