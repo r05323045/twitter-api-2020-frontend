@@ -26,6 +26,7 @@ export default {
     /* outline: red solid;   */
     min-width: 1440px;
     margin-top: 15px;
+    height: 100%;
   }
   /* .content {
     flex: 1;

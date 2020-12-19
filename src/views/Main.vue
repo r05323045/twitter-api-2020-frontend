@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <Navbar  ></Navbar>
+    <Navbar></Navbar>
     <div class="container">
       <div class="title">首頁</div>
       <div class="post-tweet">
@@ -12,7 +12,6 @@
       <TweetList></TweetList>
     </div>
     <RecommendUsers></RecommendUsers>
-    
   </div>
   
   

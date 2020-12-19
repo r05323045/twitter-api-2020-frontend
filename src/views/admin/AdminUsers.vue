@@ -133,12 +133,6 @@ $divider: #E6ECF0;
             display: flex;
             flex-direction: row;
             justify-content: center;
-            .fas  {
-              width: 15px;
-              height: 15px;
-              color: #F6F7F8;
-              text-shadow: -1px 0 $bitdark, 0 1px $bitdark, 1px 0 $bitdark, 0 -1px $bitdark;
-            }
             .reply-wrapper {
               margin-right: 15px;
               display: flex;
