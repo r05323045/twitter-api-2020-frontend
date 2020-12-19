@@ -72,7 +72,6 @@ $divider: #E6ECF0;
           backdrop-filter: brightness(.95);
         }
         .icon.cross {
-          cursor: pointer;
           position: absolute;
           top: 19.5px;
           right: 19.5px;
@@ -81,6 +80,11 @@ $divider: #E6ECF0;
           mask: url(../../assets/icon_cross.svg) no-repeat center;
           mask-size: contain;
           background-color: $bitdark;
+          cursor: pointer;
+          transition: ease-in 0.2s;
+          &:hover {
+            background-color: $orange;
+          }
         }
         .avatar {
           margin: 3px 0 0 15px;
