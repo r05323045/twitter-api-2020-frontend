@@ -4,26 +4,26 @@
       <div class="icon logo"></div>
     </div>
     <div class="nav-item-wrapper">
-      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/').catch(()=>{})">
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/').catch(()=>{})" :class="{ active: $route.path === '/main' }">
         <div class="icon index"></div>
         首頁
       </div>
-      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/user/self').catch(()=>{})">
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/user/self').catch(()=>{})" :class="{ active: $route.path === '/user/self' }">
         <div class="icon user"></div>
         個人資料
       </div>
-      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/setting').catch(()=>{})">
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/setting').catch(()=>{})" :class="{ active: $route.path === '/setting' }">
         <div class="icon cog"></div>
         設定
       </div>
       <div v-if="$route.path.indexOf('admin') < 0" class="nav-item">
         <button class="btn-tweet" @click="afterClickNewTweet">推文</button>
       </div>
-      <div v-if="$route.path.indexOf('admin') > 0" class="nav-item" @click="$router.push('/admin/main').catch(()=>{})">
+      <div v-if="$route.path.indexOf('admin') > 0" class="nav-item" @click="$router.push('/admin/main').catch(()=>{})"  :class="{ active: $route.path === '/admin/main' }">
         <div class="icon index"></div>
         推文清單
       </div>
-      <div v-if="$route.path.indexOf('admin') > 0" class="nav-item" @click="$router.push('/admin/users').catch(()=>{})">
+      <div v-if="$route.path.indexOf('admin') > 0" class="nav-item" @click="$router.push('/admin/users').catch(()=>{})"  :class="{ active: $route.path === '/admin/users' }">
         <div class="icon user"></div>
         使用者列表
       </div>
@@ -156,6 +156,12 @@ $lightdark: #9197A3;
         }
       }
     }
+    .nav-item.active {
+        color: $orange;
+        .icon {
+          background-color: $orange;
+        }
+      }
   }
   .logout-wrapper {
     width: 100%;
