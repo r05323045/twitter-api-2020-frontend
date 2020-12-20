@@ -1,32 +1,112 @@
 <template>
-  <div class="recommend-users">
+  <div class="recommend-users" :style="[more ? { height: `${topUsers.length * 71 + 92}px` } : { height:  `${5 * 71 + 92}px`}]">
     <div class="title">跟隨誰</div>
     <div class="list-group">
-      <div class="list-group-item">
-        <div class="avatar"></div>
+      <div v-show="!(!more && idx > 4)" v-for="(user, idx) in topUsers" :key="user.id" class="list-group-item">
+        <div class="avatar" :style="{ background: `url(${user.avatar}) no-repeat center/cover` }"></div>
         <div class="info">
-          <div class="name">Pizza Hut</div>
-          <div class="account">@pizzahut</div>
+          <div class="name" @click="$router.push(`/users/other/:${user.id}`)">{{ user.name }}</div>
+          <div class="account" @click="$router.push(`/users/other/:${user.id}`)">{{ user.account }}</div>
         </div>
-        <button class="btn btn-follow unfollow">正在跟隨</button>
-      </div>
-      <div v-for="i in 5" :key="i" class="list-group-item">
-        <div class="avatar"></div>
-        <div class="info">
-          <div class="name">Pizza Hut</div>
-          <div class="account">@pizzahut</div>
-        </div>
-        <button class="btn btn-follow">跟隨</button>
+        <button v-show="user.isFollowed" class="btn btn-follow unfollow" @click="deleteFollowing(user.id)">正在跟隨</button>
+        <button v-show="!user.isFollowed" class="btn btn-follow" @click="addFollowing(user.id)">跟隨</button>
       </div>
     </div>
-    <div class="footer">顯示更多</div>
+    <div v-show="!more" class="footer" @click="more = !more">顯示更多</div>
+    <div v-show="more" class="footer" @click="more = !more">顯示更少</div>
   </div>
 </template>
 
 <script>
 
+import followshipsAPI from '@/apis/followships'
+import usersAPI from '@/apis/users'
+import { Toast } from '@/utils/helpers'
+
 export default {
-  name: 'RecommendUsers'
+  name: 'RecommendUsers',
+  data () {
+    return {
+      topUsers: [],
+      more: false
+    }
+  },
+  created () {
+    this.fetchTopUsers()
+  },
+  methods: {
+    async fetchTopUsers () {
+      try {
+        const { data } = await usersAPI.getTopUsers()
+        this.topUsers = data.users.map(user => ({
+          id: user.id,
+          name: user.name,
+          avatar: user.avatar,
+          account: user.account,
+          followerCount: user.FollowerCount,
+          isFollowed: user.isFollowed
+        }))
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '目前無法為你推薦追蹤，請稍候'
+        })
+      }
+    },
+    async addFollowing (userId) {
+      try {
+        const { data } = await followshipsAPI.addFollowing({ userId })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        this.topUsers = this.topUsers.map(user => {
+          if (user.id !== userId) {
+            return user
+          } else {
+            return {
+              ...user,
+              followerCount: user.followerCount + 1,
+              isFollowed: true
+            }
+          }
+        })
+      } catch (error) {
+        Toast.fire({
+          icon: 'error',
+          title: '無法加入追蹤，請稍後再試'
+        })
+      }
+    },
+    async deleteFollowing (userId) {
+      try {
+        const { data } = await followshipsAPI.deleteFollowing({ userId })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        this.topUsers = this.topUsers.map(user => {
+          if (user.id !== userId) {
+            return user
+          } else {
+            return {
+              ...user,
+              followerCount: user.followerCount - 1,
+              isFollowed: false
+            }
+          }
+        })
+      } catch (error) {
+        Toast.fire({
+          icon: 'error',
+          title: '無法取消追蹤，請稍後再試'
+        })
+      }
+    }
+  }
 }
 
 </script>
@@ -40,7 +120,7 @@ $divider: #E6ECF0;
 .recommend-users {
   width: 100%;
   max-width: 350px;
-  max-height: 517px;
+  height: 517px;
   margin: 15px 82px 0 30px;
   border-radius: 14px;
   background: $lightgray;
@@ -61,7 +141,7 @@ $divider: #E6ECF0;
       border-radius: 0;
       border-top: 1px solid $divider;
       border-bottom: 1px solid $divider;
-      height: 70px;
+      height: 71px;
       padding: 10px 15px 0 15px;
       background: none;
       display: flex;
@@ -77,7 +157,6 @@ $divider: #E6ECF0;
         height: 50px;
         width: 50px;
         border-radius: 50%;
-        background: $bitdark;
         cursor: pointer;
         &:hover {
           filter: brightness(.9);
@@ -129,6 +208,9 @@ $divider: #E6ECF0;
       .btn-follow {
         width: 100%;
         max-width: 62px;
+        position: absolute;
+        top: 20px;
+        right: 15px;
         height: 30px;
         line-height: 15px;
         margin-left: auto;
@@ -162,6 +244,7 @@ $divider: #E6ECF0;
     &:hover {
       text-decoration: underline;
       color: $deeporange;
+      font-weight: bold;
     }
   }
 }

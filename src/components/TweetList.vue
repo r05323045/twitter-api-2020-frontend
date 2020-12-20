@@ -1,21 +1,25 @@
 <template>
-  <div class="tweet-list">
-    <div v-for="i in 7" :key="i" class="list-item">
-      <div class="avatar"></div>
+  <div class="tweet-list" v-if="tweets">
+    <div v-for="tweet in tweets" :key="tweet.id" class="list-item">
+      <div class="avatar" :style="{ background: `url(${tweet.avatar}) no-repeat center/cover` }" @click="$router.push(`/user/other/${tweet.userId}`)"></div>
       <div class="tweet-wrapper">
         <div class="info">
-          <div class="name">Pizza Hut</div>
-          <div class="account-and-post-time">@pizzahut &bull; 3小時</div>
+          <div class="name" @click="$router.push(`/user/other/${tweet.userId}`)">{{ tweet.name }}</div>
+          <div class="account-and-post-time">
+            <span class="account" @click="$router.push(`/user/other/${tweet.userId}`)">{{ tweet.account }} </span>&bull;
+            <span>{{ tweet.createdAt | fromNow }}</span>
+          </div>
         </div>
-        <div class="content">Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum.</div>
+        <div class="content">{{ tweet.description}}</div>
         <div class="action">
           <div class="reply-wrapper">
             <div class="icon reply"></div>
-            <span class="number">3</span>
+            <span class="number">{{ tweet.replyTweetCount }}</span>
           </div>
           <div class="like-wrapper">
-            <div class="icon like"></div>
-            <span class="number">10</span>
+            <div v-show="!tweet.isLiked" class="icon like" @click="likeTweet(tweet.id)"></div>
+            <div v-show="tweet.isLiked" class="icon like liked" @click="unlikeTweet(tweet.id)"></div>
+            <span class="number">{{ tweet.likeTweetCount }}</span>
           </div>
         </div>
       </div>
@@ -25,8 +29,98 @@
 
 <script>
 
+import likesAPI from '@/apis/likes'
+import tweetsAPI from '@/apis/tweets'
+import { Toast } from '@/utils/helpers'
+
 export default {
-  name: 'TweetList'
+  name: 'TweetList',
+  data () {
+    return {
+      tweets: []
+    }
+  },
+  created () {
+    this.fetchTweets()
+  },
+  methods: {
+    async fetchTweets () {
+      try {
+        const { data } = await tweetsAPI.getTweets()
+        this.tweets = data.map(tweet => ({
+          id: tweet.id,
+          userId: tweet.User.id,
+          name: tweet.User.name,
+          avatar: tweet.User.avatar,
+          account: tweet.User.account,
+          createdAt: tweet.createdAt,
+          description: tweet.description,
+          likeTweetCount: tweet.likeTweetCount,
+          replyTweetCount: tweet.replyTweetCount,
+          isLiked: tweet.isLiked
+        }))
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '目前無法取得推文，請稍候'
+        })
+      }
+    },
+    async likeTweet (tweetId) {
+      try {
+        const { data } = await likesAPI.likeTweet({ tweetId })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        this.tweets = this.tweets.map(tweet => {
+          if (tweet.id !== tweetId) {
+            return tweet
+          } else {
+            return {
+              ...tweet,
+              likeTweetCount: tweet.likeTweetCount + 1,
+              isLiked: true
+            }
+          }
+        })
+      } catch (error) {
+        Toast.fire({
+          icon: 'error',
+          title: '無法按讚推文，請稍後再試'
+        })
+      }
+    },
+    async unlikeTweet (tweetId) {
+      try {
+        const { data } = await likesAPI.unlikeTweet({ tweetId })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        this.tweets = this.tweets.map(tweet => {
+          if (tweet.id !== tweetId) {
+            return tweet
+          } else {
+            return {
+              ...tweet,
+              likeTweetCount: tweet.likeTweetCount - 1,
+              isLiked: false
+            }
+          }
+        })
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法取消按讚，請稍後再試'
+        })
+      }
+    }
+  }
 }
 
 </script>
@@ -86,16 +180,19 @@ $divider: #E6ECF0;
         .account-and-post-time {
           color: $bitdark;
           cursor: pointer;
-          &:hover {
-            text-decoration: underline;
+            .account {
+            &:hover {
+              text-decoration: underline;
+            }
           }
         }
       }
       .content {
-        margin-top: 6px;
+        height: 66px;
+        overflow: hidden;
+        margin: 6px 15px 0 0;
         font-size: 15px;
         font-weight: 500;
-        font-size: 15px;
         line-height: 22px;
         text-align: left;
       }
@@ -121,6 +218,11 @@ $divider: #E6ECF0;
           mask: url(../assets/icon_like.svg) no-repeat center;
           mask-size: contain;
         }
+        .icon.like.liked {
+          mask: url(../assets/icon_liked.svg) no-repeat center;
+          mask-size: contain;
+          background-color:#E0245E;
+        }
         .reply-wrapper {
           display: flex;
           align-items: center;
@@ -131,7 +233,7 @@ $divider: #E6ECF0;
           transition: ease-in 0.2s;
           &:hover {
             .icon {
-              background-color:#E0245E;
+              background-color: $orange;
             }
           }
         }
@@ -147,7 +249,7 @@ $divider: #E6ECF0;
             .icon.like {
               mask: url(../assets/icon_liked.svg) no-repeat center;
               mask-size: contain;
-              background-color: #E0245E;
+              background-color: $orange;
             }
           }
         }

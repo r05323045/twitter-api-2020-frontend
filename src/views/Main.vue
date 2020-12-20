@@ -4,7 +4,7 @@
     <div class="container">
       <div class="title">首頁</div>
       <div class="post-tweet">
-        <div class="avatar"></div>
+        <div class="avatar" @click="$router.push('/user/self')" :style="{ background: `url(${currentUser.avatar}) no-repeat center/cover` }"></div>
         <textarea class="content" placeholder="有什麼新鮮事？"></textarea>
         <button class="btn btn-tweet">推文</button>
       </div>
@@ -21,16 +21,17 @@
 import Navbar from '@/components/Navbar.vue'
 import RecommendUsers from '@/components/RecommendUsers.vue'
 import TweetList from '@/components/TweetList.vue'
-
-
-
+import { mapState } from 'vuex'
 export default {
   name: 'Main',
   components: {
     Navbar,
     RecommendUsers,
-    TweetList,
+    TweetList
   },
+  computed: {
+    ...mapState(['currentUser', 'isAuthenticated'])
+  }
 }
 
 </script>
@@ -71,10 +72,9 @@ $divider: #E6ECF0;
         height: 50px;
         width: 50px;
         border-radius: 50%;
-        background: $lightdark;
         cursor: pointer;
         &:hover {
-          box-shadow: 0 0 3px 1px $lightdark;
+          filter: brightness(.95);
         }
       }
       ::placeholder {
