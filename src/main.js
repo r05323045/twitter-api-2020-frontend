@@ -7,6 +7,7 @@ import moment from 'moment'
 
 Vue.use(VModal)
 Vue.config.productionTip = false
+Vue.prototype.$bus = new Vue()
 
 Vue.filter('fromNow', function (datetime) {
   if (!datetime) {

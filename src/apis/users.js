@@ -7,13 +7,18 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
-  get ({ userId }) {
+  getProfile ({ userId }) {
     return apiHelper.get(`/users/${userId}`, {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
   getTopUsers () {
     return apiHelper.get('/users/top', {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
+  getUserLikes ({ userId }) {
+    return apiHelper.get(`/users/${userId}/likes`, {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   }

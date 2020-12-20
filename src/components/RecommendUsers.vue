@@ -5,8 +5,8 @@
       <div v-show="!(!more && idx > 4)" v-for="(user, idx) in topUsers" :key="user.id" class="list-group-item">
         <div class="avatar" :style="{ background: `url(${user.avatar}) no-repeat center/cover` }"></div>
         <div class="info">
-          <div class="name" @click="$router.push(`/users/other/:${user.id}`)">{{ user.name }}</div>
-          <div class="account" @click="$router.push(`/users/other/:${user.id}`)">{{ user.account }}</div>
+          <div class="name" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})">{{ user.name }}</div>
+          <div class="account" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})">{{ user.account }}</div>
         </div>
         <button v-show="user.isFollowed" class="btn btn-follow unfollow" @click="deleteFollowing(user.id)">正在跟隨</button>
         <button v-show="!user.isFollowed" class="btn btn-follow" @click="addFollowing(user.id)">跟隨</button>
@@ -33,6 +33,9 @@ export default {
   },
   created () {
     this.fetchTopUsers()
+    this.$bus.$on('followAction', action => {
+      this.followAction(action)
+    })
   },
   methods: {
     async fetchTopUsers () {
@@ -61,7 +64,7 @@ export default {
         if (data.status !== 'success') {
           throw new Error(data.message)
         }
-
+        this.$bus.$emit('followAction', { type: 'follow', userId: userId})
         this.topUsers = this.topUsers.map(user => {
           if (user.id !== userId) {
             return user
@@ -87,7 +90,7 @@ export default {
         if (data.status !== 'success') {
           throw new Error(data.message)
         }
-
+        this.$bus.$emit('followAction', { type: 'unfollow', userId: userId})
         this.topUsers = this.topUsers.map(user => {
           if (user.id !== userId) {
             return user
@@ -105,6 +108,18 @@ export default {
           title: '無法取消追蹤，請稍後再試'
         })
       }
+    },
+    followAction (action) {
+      this.topUsers = this.topUsers.map(user => {
+        if (user.id !== action.userId) {
+          return user
+        } else {
+          return {
+            ...user,
+            isFollowed: action.type === 'follow' ? true : false 
+          }
+        }
+      })
     }
   }
 }
@@ -187,24 +202,6 @@ $divider: #E6ECF0;
           }
         }
       }
-      .btn-follow.unfollow {
-        width: 100%;
-        max-width: 92px;
-        position: absolute;
-        top: 20px;
-        right: 15px;
-        height: 30px;
-        background: $orange;
-        font-size: 15px;
-        line-height: 15px;
-        font-weight: 700;
-        color: #ffffff;
-        border-radius: 100px;
-        transition: ease-in 0.2s;
-        &:hover {
-          background-color: $deeporange;
-        }
-      }
       .btn-follow {
         width: 100%;
         max-width: 62px;
@@ -225,6 +222,14 @@ $divider: #E6ECF0;
           box-shadow: 0 0 3px 1px $bitdark;
           background-color: $orange;
           color: #ffffff;
+        }
+      }
+      .btn-follow.unfollow {
+        max-width: 92px;
+        background: $orange;
+        color: #ffffff;
+        &:hover {
+          background-color: $deeporange;
         }
       }
     }

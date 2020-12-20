@@ -1,29 +1,29 @@
 <template>
   <div class="nav flex-column">
-    <div class="logo">
+    <div class="logo" @click="$router.push('/').catch(()=>{})">
       <div class="icon logo"></div>
     </div>
     <div class="nav-item-wrapper">
-      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/')">
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/').catch(()=>{})">
         <div class="icon index"></div>
         首頁
       </div>
-      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/user/self')">
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/user/self').catch(()=>{})">
         <div class="icon user"></div>
         個人資料
       </div>
-      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/setting')">
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/setting').catch(()=>{})">
         <div class="icon cog"></div>
         設定
       </div>
       <div v-if="$route.path.indexOf('admin') < 0" class="nav-item">
-        <button class="btn-tweet">推文</button>
+        <button class="btn-tweet" @click="afterClickNewTweet">推文</button>
       </div>
-      <div v-if="$route.path.indexOf('admin') > 0" class="nav-item" @click="$router.push('/admin/main')">
+      <div v-if="$route.path.indexOf('admin') > 0" class="nav-item" @click="$router.push('/admin/main').catch(()=>{})">
         <div class="icon index"></div>
         推文清單
       </div>
-      <div v-if="$route.path.indexOf('admin') > 0" class="nav-item" @click="$router.push('/admin/users')">
+      <div v-if="$route.path.indexOf('admin') > 0" class="nav-item" @click="$router.push('/admin/users').catch(()=>{})">
         <div class="icon user"></div>
         使用者列表
       </div>
@@ -87,6 +87,7 @@ $lightdark: #9197A3;
   .logo {
     height: 50px;
     width: 50px;
+    cursor: pointer;
     .icon.logo {
       background-color: $orange;
       width: 100%;
