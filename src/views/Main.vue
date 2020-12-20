@@ -1,26 +1,28 @@
 <template>
   <div class="main">
-    <Navbar></Navbar>
+    <Navbar @openModal="showNewTweetModal = true"></Navbar>
     <div class="container">
       <div class="title">首頁</div>
       <div class="post-tweet">
-        <div class="avatar" @click="$router.push('/user/self').catch(()=>{})" :style="{ background: `url(${currentUser.avatar}) no-repeat center/cover` }"></div>
-        <textarea class="content" placeholder="有什麼新鮮事？"></textarea>
-        <button class="btn btn-tweet">推文</button>
+        <form>
+          <div class="avatar" @click="$router.push('/user/self').catch(()=>{})" :style="{ background: `url(${currentUser.avatar}) no-repeat center/cover` }"></div>
+          <textarea class="content" placeholder="有什麼新鮮事？" v-model="tweetDescription"></textarea>
+          <button class="btn btn-tweet" @click="postTweet(tweetDescription)">推文</button>
+        </form>
       </div>
       <div class="divider"></div>
       <TweetList :tweets="tweets" @tweetAction="tweetAction"></TweetList>
     </div>
     <RecommendUsers></RecommendUsers>
+    <ModalForNewTweet v-if="showNewTweetModal" name="ModalForNewTweet" @after-click-cross="showNewTweetModal = false" @postTweet="postTweet">this is a modal</ModalForNewTweet>
   </div>
-  
-  
 </template>
 
 <script>
 import Navbar from '@/components/Navbar.vue'
 import RecommendUsers from '@/components/RecommendUsers.vue'
 import TweetList from '@/components/TweetList.vue'
+import ModalForNewTweet from './../components/ModalForNewTweet'
 import TweetsAPI from '@/apis/tweets'
 import { Toast } from '@/utils/helpers'
 import { mapState } from 'vuex'
@@ -29,14 +31,17 @@ export default {
   components: {
     Navbar,
     RecommendUsers,
-    TweetList
+    TweetList,
+    ModalForNewTweet
   },
   computed: {
     ...mapState(['currentUser', 'isAuthenticated'])
   },
   data () {
     return {
-      tweets: []
+      tweets: [],
+      tweetDescription: '',
+      showNewTweetModal: false
     }
   },
   created () {
@@ -84,7 +89,41 @@ export default {
           }
         }
       })
-    }
+    },
+    async postTweet (description) {
+      try {
+        // eslint-disable-next-line no-control-regex
+        const chineseLenth = description.match(/[^\x00-\xff]/g) ? description.match(/[^\x00-\xff]/g).length : 0 // bytes size of normal Chinese character is 2
+        const englishLenth = description.match(/(\w+)/g) ? description.match(/(\w+)/g).length : 0
+
+        if (chineseLenth + englishLenth > 140) {
+          Toast.fire({
+            icon: 'error',
+            title: '推文字數需在140內'
+          })
+          return
+        }
+
+        const { data } = await TweetsAPI.postTweet({ description })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        await this.fetchTweets()
+        this.tweets.sort((a, b) => {
+          return a.createdAt < b.createdAt ? 1 : -1;
+        })
+        this.tweetDescription = ''
+        this.showNewTweetModal = false
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '目前無法推文，請稍候'
+        })
+      }
+    },
   }
 }
 
@@ -143,7 +182,7 @@ $divider: #E6ECF0;
         color: $lightdark;
       }
       .content {
-        padding: 20px 0 0 60px;
+        padding: 20px 0 0 75px;
         border: none;
         overflow: auto;
         outline: none;
