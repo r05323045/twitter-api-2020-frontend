@@ -119,9 +119,8 @@ $divider: #E6ECF0;
     .post-tweet {
       display:flex;
       flex-direction: row;
-      height: 130px;
+      height: 120px;
       position: relative;
-      border-bottom: 10px solid $divider;
       .avatar {
         position: absolute;
         top: 10px;
@@ -176,7 +175,8 @@ $divider: #E6ECF0;
       }
     }
     .divider {
-      height: 10px;
+      min-height: 10px;
+      max-height: 10px;
       background-color: $divider;
     }
   }

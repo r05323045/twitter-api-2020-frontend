@@ -4,26 +4,26 @@
     <div class="container">
       <div class="title">使用者列表</div>
       <div class="user-card-deck">
-        <div v-for="i in 4" :key="i" class="user-card-row">
-          <div v-for="j in 4" :key="j" class="user-card">
-            <div class="cover-photo"></div>
-            <div class="avatar"></div>
-            <div class="name">John Doe</div>
-            <div class="account">@heyjohn</div>
+        <div v-for="rowNum in Math.ceil(users.length/4)" :key="`row-${rowNum}`" class="user-card-row">
+          <div v-for="user in users.slice((rowNum - 1) * 4, rowNum * 4)" :key="user.id" class="user-card" @click="$router.push(`/user/other/${user.id}`)">
+            <div class="cover-photo" :style="{ background: `url(${user.cover}) no-repeat center/cover` }"></div>
+            <div class="avatar" :style="{ background: `url(${user.avatar}) no-repeat center/cover` }"></div>
+            <div class="name">{{ user.name }}</div>
+            <div class="account">{{ user.account }}</div>
             <div class="action">
               <div class="reply-wrapper">
                 <div class="icon reply"></div>
-                <span class="number">1.5k</span>
+                <span class="number">{{ user.RepliesCount }}</span>
               </div>
               <div class="like-wrapper">
                 <div class="icon like"></div>
-                <span class="number">20k</span>
+                <span class="number">{{ user.LikeCount }}</span>
               </div>
             </div>
             <div class="number-followers">
               <div>
-                <span>34 個</span><span class="following">跟隨中</span>
-                <span>59 位</span><span class="follower">跟隨者</span>
+                <span>{{ user.FollowingCount }} 個</span><span class="following">跟隨中</span>
+                <span>{{ user.FollowerCount }} 位</span><span class="follower">跟隨者</span>
               </div>
             </div>
           </div>
@@ -34,11 +34,43 @@
 </template>
 
 <script>
+import AdminAPI from '@/apis/admin'
+import { Toast } from '@/utils/helpers'
+import { mapState } from 'vuex'
 import Navbar from '@/components/Navbar.vue'
 export default {
   name: 'AdminMain',
   components: {
     Navbar
+  },
+  data () {
+    return {
+      users: []
+    }
+  },
+  created () {
+    this.fetchUsers()
+  },
+  computed: {
+    ...mapState(['currentUser', 'isAuthenticated'])
+  },
+  methods: {
+    async fetchUsers () {
+      try {
+        const { data } = await AdminAPI.getUsers()
+        this.users = data
+        this.users.sort((a, b) => {
+          return a.TweetCount < b.TweetCount ? 1 : -1;
+        })
+        this.users = data
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '目前無法取得使用者清單，請稍候'
+        })
+      }
+    },
   }
 }
 
