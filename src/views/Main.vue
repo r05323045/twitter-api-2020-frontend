@@ -9,7 +9,7 @@
         <button class="btn btn-tweet">推文</button>
       </div>
       <div class="divider"></div>
-      <TweetList></TweetList>
+      <TweetList :tweets="tweets" @tweetAction="tweetAction"></TweetList>
     </div>
     <RecommendUsers></RecommendUsers>
   </div>
@@ -19,6 +19,8 @@
 import Navbar from '@/components/Navbar.vue'
 import RecommendUsers from '@/components/RecommendUsers.vue'
 import TweetList from '@/components/TweetList.vue'
+import TweetsAPI from '@/apis/tweets'
+import { Toast } from '@/utils/helpers'
 import { mapState } from 'vuex'
 export default {
   name: 'Main',
@@ -29,6 +31,58 @@ export default {
   },
   computed: {
     ...mapState(['currentUser', 'isAuthenticated'])
+  },
+  data () {
+    return {
+      tweets: []
+    }
+  },
+  created () {
+    this.$bus.$on('tweetAction', action => {
+      this.tweetAction(action)
+    })
+    this.fetchTweets()
+  },
+  methods: {
+    async fetchTweets () {
+      try {
+        const { data } = await TweetsAPI.getTweets()
+        this.tweets = data.map(tweet => ({
+          id: tweet.id,
+          userId: tweet.User.id,
+          name: tweet.User.name,
+          avatar: tweet.User.avatar,
+          account: tweet.User.account,
+          createdAt: tweet.createdAt,
+          description: tweet.description,
+          likeTweetCount: tweet.likeTweetCount,
+          replyTweetCount: tweet.replyTweetCount,
+          isLiked: tweet.isLiked
+        }))
+        this.tweets.sort((a, b) => {
+          return a.createdAt < b.createdAt ? 1 : -1;
+        })
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '目前無法取得推文，請稍候'
+        })
+      }
+    },
+    tweetAction (action) {
+      this.tweets = this.tweets.map(tweet => {
+        if (tweet.id !== action.tweetId) {
+          return tweet
+        } else {
+          return {
+            ...tweet,
+            likeTweetCount: action.type === 'like' ? tweet.likeTweetCount + 1 : tweet.likeTweetCount - 1,
+            isLiked: !tweet.isLiked
+          }
+        }
+      })
+    }
   }
 }
 
@@ -45,6 +99,8 @@ $divider: #E6ECF0;
   display: flex;
   flex-direction: row;
   .container {
+    max-height: 100vh;
+    overflow-y: scroll;
     border-left: 1px solid $divider;
     border-right: 1px solid $divider;
     max-width: 600px;

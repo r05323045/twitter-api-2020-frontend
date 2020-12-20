@@ -1,6 +1,6 @@
 <template>
   <div class="nav flex-column">
-    <div class="logo">
+    <div class="logo" @click="$router.push('/')">
       <div class="icon logo"></div>
     </div>
     <div class="nav-item-wrapper">
@@ -66,6 +66,7 @@ $lightdark: #9197A3;
   .logo {
     height: 50px;
     width: 50px;
+    cursor: pointer;
     .icon.logo {
       background-color: $orange;
       width: 100%;

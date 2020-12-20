@@ -1,6 +1,6 @@
 <template>
   <div class="tweet-list" v-if="tweets">
-    <div v-for="tweet in tweets" :key="tweet.id" class="list-item">
+    <div v-for="tweet in tweets" :key="`${tweet.id}-${Math.random()}`" class="list-item">
       <div class="avatar" :style="{ background: `url(${tweet.avatar}) no-repeat center/cover` }" @click="$router.push(`/user/other/${tweet.userId}`)"></div>
       <div class="tweet-wrapper">
         <div class="info">
@@ -30,43 +30,19 @@
 <script>
 
 import likesAPI from '@/apis/likes'
-import tweetsAPI from '@/apis/tweets'
 import { Toast } from '@/utils/helpers'
 
 export default {
   name: 'TweetList',
-  data () {
-    return {
-      tweets: []
+  props: {
+    tweets: {
+      type: Array,
+      default: () => {
+        return []
+      }
     }
   },
-  created () {
-    this.fetchTweets()
-  },
   methods: {
-    async fetchTweets () {
-      try {
-        const { data } = await tweetsAPI.getTweets()
-        this.tweets = data.map(tweet => ({
-          id: tweet.id,
-          userId: tweet.User.id,
-          name: tweet.User.name,
-          avatar: tweet.User.avatar,
-          account: tweet.User.account,
-          createdAt: tweet.createdAt,
-          description: tweet.description,
-          likeTweetCount: tweet.likeTweetCount,
-          replyTweetCount: tweet.replyTweetCount,
-          isLiked: tweet.isLiked
-        }))
-      } catch (error) {
-        console.log(error)
-        Toast.fire({
-          icon: 'error',
-          title: '目前無法取得推文，請稍候'
-        })
-      }
-    },
     async likeTweet (tweetId) {
       try {
         const { data } = await likesAPI.likeTweet({ tweetId })
@@ -74,19 +50,9 @@ export default {
         if (data.status !== 'success') {
           throw new Error(data.message)
         }
-
-        this.tweets = this.tweets.map(tweet => {
-          if (tweet.id !== tweetId) {
-            return tweet
-          } else {
-            return {
-              ...tweet,
-              likeTweetCount: tweet.likeTweetCount + 1,
-              isLiked: true
-            }
-          }
-        })
+        this.$bus.$emit('tweetAction', { type: 'like', tweetId: tweetId})
       } catch (error) {
+        console.log(error)
         Toast.fire({
           icon: 'error',
           title: '無法按讚推文，請稍後再試'
@@ -100,18 +66,7 @@ export default {
         if (data.status !== 'success') {
           throw new Error(data.message)
         }
-
-        this.tweets = this.tweets.map(tweet => {
-          if (tweet.id !== tweetId) {
-            return tweet
-          } else {
-            return {
-              ...tweet,
-              likeTweetCount: tweet.likeTweetCount - 1,
-              isLiked: false
-            }
-          }
-        })
+        this.$bus.$emit('tweetAction', { type: 'unlike', tweetId: tweetId})
       } catch (error) {
         console.log(error)
         Toast.fire({
@@ -133,8 +88,6 @@ $dark: #2c3e50;
 $bitdark: #657786;
 $divider: #E6ECF0;
 .tweet-list {
-  max-height: calc(100vh - 194px);
-  overflow-y: scroll;
   width: 100%;
   .list-item {
     padding: 10px 0 10px 0;
