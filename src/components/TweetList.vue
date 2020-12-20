@@ -1,12 +1,12 @@
 <template>
   <div class="tweet-list" v-if="tweets">
     <div v-for="tweet in tweets" :key="`${tweet.id}-${Math.random()}`" class="list-item">
-      <div class="avatar" :style="{ background: `url(${tweet.avatar}) no-repeat center/cover` }" @click="$router.push(`/user/other/${tweet.userId}`)"></div>
+      <div class="avatar" :style="{ background: `url(${tweet.avatar}) no-repeat center/cover` }" @click="$router.push(`/user/other/${tweet.userId}`).catch(()=>{})"></div>
       <div class="tweet-wrapper">
         <div class="info">
-          <div class="name" @click="$router.push(`/user/other/${tweet.userId}`)">{{ tweet.name }}</div>
+          <div class="name" @click="$router.push(`/user/other/${tweet.userId}`).catch(()=>{})">{{ tweet.name }}</div>
           <div class="account-and-post-time">
-            <span class="account" @click="$router.push(`/user/other/${tweet.userId}`)">{{ tweet.account }} </span>&bull;
+            <span class="account" @click="$router.push(`/user/other/${tweet.userId}`).catch(()=>{})">{{ tweet.account }} </span>&bull;
             <span>{{ tweet.createdAt | fromNow }}</span>
           </div>
         </div>

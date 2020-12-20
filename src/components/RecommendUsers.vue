@@ -5,8 +5,8 @@
       <div v-show="!(!more && idx > 4)" v-for="(user, idx) in topUsers" :key="user.id" class="list-group-item">
         <div class="avatar" :style="{ background: `url(${user.avatar}) no-repeat center/cover` }"></div>
         <div class="info">
-          <div class="name" @click="$router.push(`/user/other/${user.id}`)">{{ user.name }}</div>
-          <div class="account" @click="$router.push(`/user/other/${user.id}`)">{{ user.account }}</div>
+          <div class="name" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})">{{ user.name }}</div>
+          <div class="account" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})">{{ user.account }}</div>
         </div>
         <button v-show="user.isFollowed" class="btn btn-follow unfollow" @click="deleteFollowing(user.id)">正在跟隨</button>
         <button v-show="!user.isFollowed" class="btn btn-follow" @click="addFollowing(user.id)">跟隨</button>

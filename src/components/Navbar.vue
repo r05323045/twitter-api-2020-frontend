@@ -1,44 +1,58 @@
 <template>
   <div class="nav flex-column">
-    <div class="logo" @click="$router.push('/')">
+    <div class="logo" @click="$router.push('/').catch(()=>{})">
       <div class="icon logo"></div>
     </div>
     <div class="nav-item-wrapper">
-      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/')">
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/').catch(()=>{})">
         <div class="icon index"></div>
         首頁
       </div>
-      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/user/self')">
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/user/self').catch(()=>{})">
         <div class="icon user"></div>
         個人資料
       </div>
-      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/setting')">
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/setting').catch(()=>{})">
         <div class="icon cog"></div>
         設定
       </div>
       <div v-if="$route.path.indexOf('admin') < 0" class="nav-item">
-        <button class="btn-tweet">推文</button>
+        <button class="btn-tweet" @click="afterClickNewTweet">推文</button>
       </div>
-      <div v-if="$route.path.indexOf('admin') > 0" class="nav-item" @click="$router.push('/admin/main')">
+      <div v-if="$route.path.indexOf('admin') > 0" class="nav-item" @click="$router.push('/admin/main').catch(()=>{})">
         <div class="icon index"></div>
         推文清單
       </div>
-      <div v-if="$route.path.indexOf('admin') > 0" class="nav-item" @click="$router.push('/admin/users')">
+      <div v-if="$route.path.indexOf('admin') > 0" class="nav-item" @click="$router.push('/admin/users').catch(()=>{})">
         <div class="icon user"></div>
         使用者列表
       </div>
     </div>
+
     <div class="logout-wrapper" @click="logout">
       <div class="icon logout"></div>
       登出
     </div>
+    <ModalForNewTweet v-if="showNewTweetModal" name="ModalForNewTweet" @after-click-cross="afterClickCross">this is a modal</ModalForNewTweet>
   </div>
+  
 </template>
 
 <script>
+
+
 import { mapState } from 'vuex'
+import ModalForNewTweet from './../components/ModalForNewTweet'
 export default {
   name: 'Navbar',
+  components: {
+    ModalForNewTweet
+  },
+  data () {
+    return {
+      showNewTweetModal: false
+    }
+  },
   computed: {
     ...mapState(['currentUser', 'isAuthenticated'])
   },
@@ -46,6 +60,13 @@ export default {
     logout () {
       this.$store.commit('revokeAuthentication')
       this.$router.push('/signin')
+    },
+    afterClickCross() {
+      this.showNewTweetModal = false
+    },
+    afterClickNewTweet() {
+      this.showNewTweetModal = true
+      console.log('afterClickNewTweet')
     }
   }
 }

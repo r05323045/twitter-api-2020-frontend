@@ -13,7 +13,7 @@
             name="account"
             type="text"
             class="form-control"
-            placeholder="name"
+            placeholder="account"
             autocomplete="accountname"
             required
             autofocus
@@ -74,7 +74,7 @@
         </div>
       
         <div  class="link">
-          <span class="save-button">註冊</span> 
+          <span class="save-button">儲存</span> 
         </div>
       </form>
     </div>
@@ -83,15 +83,15 @@
 
 <style lang="scss">
 .container {
-  width: 1202px;
-  height: 1063px;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   flex: 1;
   margin: 0;
  
   .header {
-    width: 1202px;
+    width: auto;
     font-family: Noto Sans TC;
     font-style: normal;
     font-weight: 700;
@@ -110,6 +110,9 @@
   .content {
     margin-left: 16px;
     form {
+      // outline: red solid;
+      width: auto;
+      height: auto;
       .form-label-group {
         width: 642px;
         height: 50px;

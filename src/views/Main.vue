@@ -4,7 +4,7 @@
     <div class="container">
       <div class="title">首頁</div>
       <div class="post-tweet">
-        <div class="avatar" @click="$router.push('/user/self')" :style="{ background: `url(${currentUser.avatar}) no-repeat center/cover` }"></div>
+        <div class="avatar" @click="$router.push('/user/self').catch(()=>{})" :style="{ background: `url(${currentUser.avatar}) no-repeat center/cover` }"></div>
         <textarea class="content" placeholder="有什麼新鮮事？"></textarea>
         <button class="btn btn-tweet">推文</button>
       </div>
@@ -13,6 +13,8 @@
     </div>
     <RecommendUsers></RecommendUsers>
   </div>
+  
+  
 </template>
 
 <script>
@@ -117,8 +119,9 @@ $divider: #E6ECF0;
     .post-tweet {
       display:flex;
       flex-direction: row;
-      height: 120px;
+      height: 130px;
       position: relative;
+      border-bottom: 10px solid $divider;
       .avatar {
         position: absolute;
         top: 10px;
@@ -141,7 +144,7 @@ $divider: #E6ECF0;
         color: $lightdark;
       }
       .content {
-        padding: 20px 0 0 75px;
+        padding: 20px 0 0 60px;
         border: none;
         overflow: auto;
         outline: none;

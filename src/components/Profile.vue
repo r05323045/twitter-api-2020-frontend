@@ -2,7 +2,7 @@
   <div class="profile">
     <div class="header">
       <div class="arrow">
-        <div @click="$router.push('/main')" class="icon back"></div>
+        <div @click="$router.push('/main').catch(()=>{})" class="icon back"></div>
       </div>
       <div class="simple-info">
         <div class="name">{{ user.name }}</div>
@@ -12,8 +12,7 @@
     <div class="user-info">
       <div class="cover-photo" :style="{ background: `url(${user.user ? user.user.cover : ''}) no-repeat center/cover` }"></div>
       <div class="avatar" :style="{ background: `url(${user.user ? user.user.avatar : ''}) no-repeat center/cover` }"></div>
-      <button v-if="this.$route.path === '/user/self' || this.$route.path === `/user/other/${currentUser.id}`" class="btn-edit">編輯個人資料</button>
-
+      <button v-if="this.$route.path === '/user/self' || this.$route.path === `/user/other/${currentUser.id}`" class="btn-edit" @click="afterClickEditProfile">編輯個人資料</button>
       <div v-if="!(this.$route.path === '/user/self' || this.$route.path === `/user/other/${currentUser.id}`)" class="other-button-wrapper">
         <div class="btn-messege">
           <a v-if="user.user" :href="`mailto:${user.user.email}`"><div class="icon messege"></div></a>
@@ -52,6 +51,7 @@
     <TweetList v-if="tabOption === '推文'" :tweets="user.tweets"></TweetList>
     <TweetList v-if="tabOption === '推文與回覆'" :tweets="user.tweets"></TweetList>
     <TweetList v-if="tabOption === '喜歡的內容'" :tweets="userLikes"></TweetList>
+    <ModalForEditProfile v-if="showEditProfileModal" @after-click-cross=" afterClickCross" />
   </div>
 </template>
 
@@ -61,18 +61,20 @@ import TweetList from '@/components/TweetList.vue'
 import usersAPI from '@/apis/users'
 import { Toast } from '@/utils/helpers'
 import { mapState } from 'vuex'
-
+import ModalForEditProfile from '@/components/ModalForEditProfile.vue'
 const STORAGE_KEY = 'twitter-api-vue'
 
 export default {
   name: 'Profile',
   components: {
-    TweetList
+    TweetList,
+    ModalForEditProfile
   },
   data () {
     return {
       user: { tweets: [] },
       tabOption: '推文',
+      showEditProfileModal: false,
       userLikes: [],
       userReplies: [],
       subscribeStorage: []
@@ -230,8 +232,14 @@ export default {
     unsubscribeUser(id) {
       this.subscribeStorage = this.subscribeStorage.filter(event => !(event.from === this.currentUser.id && event.to === id))
       localStorage.setItem(STORAGE_KEY, JSON.stringify(this.subscribeStorage))
+    },
+    afterClickEditProfile() {
+      this.showEditProfileModal = true
+      console.log('showEditProfileModal')
+    },
+     afterClickCross() {
+      this.showEditProfileModal = false
     }
-
   }
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="main-setting row"> 
+  <div class="main-setting"> 
     <Navbar />
     <SubSetting class="main"/>
   </div>
@@ -21,8 +21,11 @@ export default {
 
 <style lang="scss">
   .main-setting {
+    width: 100%;
+    height: 100%;
     display:flex;
     flex-direction: row;
+    flex-wrap: nowrap;
     margin: 0;
     padding: 0;
   }

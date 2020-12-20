@@ -8,21 +8,23 @@
       </div>
     </div>
 
-  <div class="nav">
-    <ul class='nav-list'>
-      <li class="nav-item"> 
-        <a href="">追隨者</a>
-      </li>
-  
-      <li class="nav-item">
-        <a href="">正在跟隨</a>
-      </li>
-    </ul>
-  </div>
+    <div class="nav">
+      <ul class='nav-pills'>
+        <li class="nav-item"> 
+          <router-link to="/user/self/follower">追隨者</router-link>
+        </li>
+    
+        <li class="nav-item">
+          <router-link to="/user/self/following">正在跟隨</router-link>
+        </li>
+      </ul>
+      
+    </div>
     
     <div class="followListContent">
       <div class="singlContent">
-        <img src="@/asset/johnny.jpg">
+
+        <img src="./../asset/elephant.png" alt="">
         <div class="text">
           <h5 class="title">Laura</h5>
           <h5 class="account">@LauraBill</h5>
@@ -83,7 +85,7 @@ export default {
       height: auto;
       padding: 0;
       border: 0;
-      .nav-list {
+      .nav-pills {
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
@@ -91,18 +93,26 @@ export default {
         .nav-item {
           width: 130px;
           list-style: none;
-          
           font-family: Noto Sans TC;
           font-style: normal;
           font-weight: bold;
           font-size: 15px;
-          line-height: 22px;
+          height: 22px;
           
           a {
             text-decoration: none;
-            color: #657786;
+            height: 100%;
           }
+          .active {
+            color: #FF6600;
+            border-bottom: solid 2px #FF6600;
+            
+          }
+         
+          
         }
+        
+
       }
     }
 
