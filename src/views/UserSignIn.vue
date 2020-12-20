@@ -8,6 +8,7 @@
         <span v-if="!isAdmin">登入 Alphitter</span>
         <span v-if="isAdmin">後台登入</span>
       </div>
+
       <form @submit.prevent="signin">
         <div class="form-group">
           <label class="account" v-show="!accountFocus && account === ''">帳號</label>
@@ -64,6 +65,7 @@ export default {
       } else if (params === 'password') {
         this.passwordFocus = false
       }
+
     },
     async signin () {
       try {
@@ -96,6 +98,7 @@ export default {
           title: '請確認您輸入了正確的帳號密碼'
         })
       }
+
     }
   }
 }
