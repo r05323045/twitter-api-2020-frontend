@@ -5,8 +5,8 @@
         <div class="icon logo"></div>
       </div>
       <div class="title">
-        <span v-if="!isAdmin">登入 Alphitter</span>
-        <span v-if="isAdmin">後台登入</span>
+        <span v-if="!routeIsAdmin">登入 Alphitter</span>
+        <span v-if="routeIsAdmin">後台登入</span>
       </div>
 
       <form @submit.prevent="signin">
@@ -19,10 +19,10 @@
         <button :disabled="isProcessing" class="btn btn-signin" type="submit">登入</button>
       </form>
       <div  class="link">
-        <span v-if="!isAdmin" @click="$router.push('/signup')">註冊 Alphitter</span>
-        <p v-if="!isAdmin">&bull;</p>
-        <span v-if="!isAdmin" @click="$router.push('/admin/signin')">後台登入</span>
-        <span v-if="isAdmin" @click="$router.push('/signin')">前台登入</span>
+        <span v-if="!routeIsAdmin" @click="$router.push('/signup')">註冊 Alphitter</span>
+        <p v-if="!routeIsAdmin">&bull;</p>
+        <span v-if="!routeIsAdmin" @click="$router.push('/admin/signin')">後台登入</span>
+        <span v-if="routeIsAdmin" @click="$router.push('/signin')">前台登入</span>
       </div>
     </div>
   </div>
@@ -40,7 +40,7 @@ export default {
       passwordFocus: false,
       account: '',
       password: '',
-      isAdmin: this.$route.path === '/admin/signin',
+      routeIsAdmin: this.$route.path === '/admin/signin',
       isProcessing: false
     }
   },
@@ -82,14 +82,18 @@ export default {
           password: this.password
         })
         const { data } = response
-        if (data.status !== 'success') {
+
+        if (data.status !== 'success' || (data.user.role !== 'admin' && this.routeIsAdmin)) {
           throw new Error(data.message)
         }
+
         localStorage.setItem('token', data.token)
-        
         this.$store.commit('setCurrentUser', data.user)
 
-        this.$router.push('/main')
+        const redirectRoute = this.routeIsAdmin ? '/admin/main' : '/main'
+        
+        this.$router.push(redirectRoute)
+
       } catch(error) {
         this.password = ''
         this.isProcessing = false
