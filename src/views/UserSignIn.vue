@@ -76,14 +76,16 @@ export default {
           })
           return
         }
+        
         this.isProcessing = true
         const response = await authorizationAPI.signIn({
           account: this.account,
           password: this.password
         })
+
         const { data } = response
 
-        if (data.status !== 'success' || (data.user.role !== 'admin' && this.routeIsAdmin)) {
+        if (data.status !== 'success' || (data.user.role !== 'admin' && this.routeIsAdmin) || (data.user.role === 'admin' && !this.routeIsAdmin)) {
           throw new Error(data.message)
         }
 
