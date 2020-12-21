@@ -4,12 +4,12 @@
     <div class="container">
       <div class="title">首頁</div>
       <div class="post-tweet">
-        <div class="avatar"></div>
+        <div class="avatar" @click="$router.push('/user/self').catch(()=>{})" :style="{ background: `url(${currentUser.avatar}) no-repeat center/cover` }"></div>
         <textarea class="content" placeholder="有什麼新鮮事？"></textarea>
         <button class="btn btn-tweet">推文</button>
       </div>
       <div class="divider"></div>
-      <TweetList></TweetList>
+      <TweetList :tweets="tweets" @tweetAction="tweetAction"></TweetList>
     </div>
     <RecommendUsers></RecommendUsers>
   </div>
@@ -21,16 +21,71 @@
 import Navbar from '@/components/Navbar.vue'
 import RecommendUsers from '@/components/RecommendUsers.vue'
 import TweetList from '@/components/TweetList.vue'
-
-
-
+import TweetsAPI from '@/apis/tweets'
+import { Toast } from '@/utils/helpers'
+import { mapState } from 'vuex'
 export default {
   name: 'Main',
   components: {
     Navbar,
     RecommendUsers,
-    TweetList,
+    TweetList
   },
+  computed: {
+    ...mapState(['currentUser', 'isAuthenticated'])
+  },
+  data () {
+    return {
+      tweets: []
+    }
+  },
+  created () {
+    this.$bus.$on('tweetAction', action => {
+      this.tweetAction(action)
+    })
+    this.fetchTweets()
+  },
+  methods: {
+    async fetchTweets () {
+      try {
+        const { data } = await TweetsAPI.getTweets()
+        this.tweets = data.map(tweet => ({
+          id: tweet.id,
+          userId: tweet.User.id,
+          name: tweet.User.name,
+          avatar: tweet.User.avatar,
+          account: tweet.User.account,
+          createdAt: tweet.createdAt,
+          description: tweet.description,
+          likeTweetCount: tweet.likeTweetCount,
+          replyTweetCount: tweet.replyTweetCount,
+          isLiked: tweet.isLiked
+        }))
+        this.tweets.sort((a, b) => {
+          return a.createdAt < b.createdAt ? 1 : -1;
+        })
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '目前無法取得推文，請稍候'
+        })
+      }
+    },
+    tweetAction (action) {
+      this.tweets = this.tweets.map(tweet => {
+        if (tweet.id !== action.tweetId) {
+          return tweet
+        } else {
+          return {
+            ...tweet,
+            likeTweetCount: action.type === 'like' ? tweet.likeTweetCount + 1 : tweet.likeTweetCount - 1,
+            isLiked: !tweet.isLiked
+          }
+        }
+      })
+    }
+  }
 }
 
 </script>
@@ -46,6 +101,8 @@ $divider: #E6ECF0;
   display: flex;
   flex-direction: row;
   .container {
+    max-height: 100vh;
+    overflow-y: scroll;
     border-left: 1px solid $divider;
     border-right: 1px solid $divider;
     max-width: 600px;
@@ -71,10 +128,9 @@ $divider: #E6ECF0;
         height: 50px;
         width: 50px;
         border-radius: 50%;
-        background: $lightdark;
         cursor: pointer;
         &:hover {
-          box-shadow: 0 0 3px 1px $lightdark;
+          filter: brightness(.95);
         }
       }
       ::placeholder {
@@ -87,7 +143,7 @@ $divider: #E6ECF0;
         color: $lightdark;
       }
       .content {
-        padding: 20px 0 0 75px;
+        padding: 20px 0 0 60px;
         border: none;
         overflow: auto;
         outline: none;
@@ -119,7 +175,8 @@ $divider: #E6ECF0;
       }
     }
     .divider {
-      height: 10px;
+      min-height: 10px;
+      max-height: 10px;
       background-color: $divider;
     }
   }

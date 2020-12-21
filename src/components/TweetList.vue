@@ -1,21 +1,25 @@
 <template>
-  <div class="tweet-list">
-    <div v-for="i in 7" :key="i" class="list-item">
-      <div class="avatar"></div>
+  <div class="tweet-list" v-if="tweets">
+    <div v-for="tweet in tweets" :key="`${tweet.id}-${Math.random()}`" class="list-item">
+      <div class="avatar" :style="{ background: `url(${tweet.avatar}) no-repeat center/cover` }" @click="$router.push(`/user/other/${tweet.userId}`).catch(()=>{})"></div>
       <div class="tweet-wrapper">
         <div class="info">
-          <div class="name">Pizza Hut</div>
-          <div class="account-and-post-time">@pizzahut &bull; 3小時</div>
+          <div class="name" @click="$router.push(`/user/other/${tweet.userId}`).catch(()=>{})">{{ tweet.name }}</div>
+          <div class="account-and-post-time">
+            <span class="account" @click="$router.push(`/user/other/${tweet.userId}`).catch(()=>{})">{{ tweet.account }} </span>&bull;
+            <span>{{ tweet.createdAt | fromNow }}</span>
+          </div>
         </div>
-        <div class="content">Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum.</div>
+        <div class="content">{{ tweet.description}}</div>
         <div class="action">
           <div class="reply-wrapper">
             <div class="icon reply"></div>
-            <span class="number">3</span>
+            <span class="number">{{ tweet.replyTweetCount }}</span>
           </div>
           <div class="like-wrapper">
-            <div class="icon like"></div>
-            <span class="number">10</span>
+            <div v-show="!tweet.isLiked" class="icon like" @click="likeTweet(tweet.id)"></div>
+            <div v-show="tweet.isLiked" class="icon like liked" @click="unlikeTweet(tweet.id)"></div>
+            <span class="number">{{ tweet.likeTweetCount }}</span>
           </div>
         </div>
       </div>
@@ -25,8 +29,53 @@
 
 <script>
 
+import likesAPI from '@/apis/likes'
+import { Toast } from '@/utils/helpers'
+
 export default {
-  name: 'TweetList'
+  name: 'TweetList',
+  props: {
+    tweets: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    }
+  },
+  methods: {
+    async likeTweet (tweetId) {
+      try {
+        const { data } = await likesAPI.likeTweet({ tweetId })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+        this.$bus.$emit('tweetAction', { type: 'like', tweetId: tweetId})
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法按讚推文，請稍後再試'
+        })
+      }
+    },
+    async unlikeTweet (tweetId) {
+      try {
+        const { data } = await likesAPI.unlikeTweet({ tweetId })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+        this.$bus.$emit('tweetAction', { type: 'unlike', tweetId: tweetId})
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法取消按讚，請稍後再試'
+        })
+      }
+    }
+  }
 }
 
 </script>
@@ -39,8 +88,6 @@ $dark: #2c3e50;
 $bitdark: #657786;
 $divider: #E6ECF0;
 .tweet-list {
-  max-height: calc(100vh - 194px);
-  overflow-y: scroll;
   width: 100%;
   .list-item {
     padding: 10px 0 10px 0;
@@ -86,16 +133,19 @@ $divider: #E6ECF0;
         .account-and-post-time {
           color: $bitdark;
           cursor: pointer;
-          &:hover {
-            text-decoration: underline;
+            .account {
+            &:hover {
+              text-decoration: underline;
+            }
           }
         }
       }
       .content {
-        margin-top: 6px;
+        height: 66px;
+        overflow: hidden;
+        margin: 6px 15px 0 0;
         font-size: 15px;
         font-weight: 500;
-        font-size: 15px;
         line-height: 22px;
         text-align: left;
       }
@@ -121,6 +171,11 @@ $divider: #E6ECF0;
           mask: url(../assets/icon_like.svg) no-repeat center;
           mask-size: contain;
         }
+        .icon.like.liked {
+          mask: url(../assets/icon_liked.svg) no-repeat center;
+          mask-size: contain;
+          background-color:#E0245E;
+        }
         .reply-wrapper {
           display: flex;
           align-items: center;
@@ -131,7 +186,7 @@ $divider: #E6ECF0;
           transition: ease-in 0.2s;
           &:hover {
             .icon {
-              background-color:#E0245E;
+              background-color: $orange;
             }
           }
         }
@@ -147,7 +202,7 @@ $divider: #E6ECF0;
             .icon.like {
               mask: url(../assets/icon_liked.svg) no-repeat center;
               mask-size: contain;
-              background-color: #E0245E;
+              background-color: $orange;
             }
           }
         }

@@ -4,15 +4,15 @@
     <div class="container">
       <div class="title">推文清單</div>
       <div class="tweet-list">
-        <div v-for="i in 10" :key="i" class="list-item" :class="{ first: i === 1 }">
-          <div class="icon cross"></div>
-          <div class="avatar"></div>
+        <div v-for="(tweet, index) in tweets" :key="tweet.id" class="list-item" :class="{ first: index === 0 }">
+          <div class="icon cross" @click="deleteTweet(tweet.id)"></div>
+          <div class="avatar" :style="{ background: `url(${tweet.avatar}) no-repeat center/cover` }"></div>
           <div class="tweet-wrapper">
             <div class="info">
-              <div class="name">Apple</div>
-              <div class="account-and-post-time">@apple &bull; 3小時</div>
+              <div class="name">{{tweet.name}}</div>
+              <div class="account-and-post-time">{{tweet.account}} &bull; {{ tweet.createdAt | fromNow }}</div>
             </div>
-            <div class="content">Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum.</div>
+            <div class="content">{{tweet.description}}</div>
           </div>
         </div>
       </div>
@@ -21,11 +21,71 @@
 </template>
 
 <script>
+
 import Navbar from '@/components/Navbar.vue'
+import AdminAPI from '@/apis/admin'
+import { Toast } from '@/utils/helpers'
+import { mapState } from 'vuex'
 export default {
   name: 'AdminMain',
   components: {
     Navbar
+  },
+  data () {
+    return {
+      tweets: []
+    }
+  },
+  created () {
+    this.fetchTweets()
+  },
+  computed: {
+    ...mapState(['currentUser', 'isAuthenticated'])
+  },
+  methods: {
+    async fetchTweets () {
+      try {
+        const { data } = await AdminAPI.getTweets()
+        this.tweets = data.map(tweet => ({
+          id: tweet.id,
+          userId: tweet.User.id,
+          name: tweet.User.name,
+          avatar: tweet.User.avatar,
+          account: tweet.User.account,
+          createdAt: tweet.createdAt,
+          description: tweet.description
+        }))
+        this.tweets.sort((a, b) => {
+          return a.createdAt < b.createdAt ? 1 : -1;
+        })
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '目前無法取得推文，請稍候'
+        })
+      }
+    },
+    async deleteTweet (tweetId) {
+      try {
+        const { data } = await AdminAPI.deleteTweet({ tweetId })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+        this.tweets = this.tweets.filter(tweet => tweet.id !== tweetId)
+        Toast.fire({
+          icon: 'success',
+          title: '已成功刪除推文'
+        })
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法刪除推文，請稍後再試'
+        })
+      }
+    }
   }
 }
 
@@ -80,7 +140,6 @@ $divider: #E6ECF0;
           mask: url(../../assets/icon_cross.svg) no-repeat center;
           mask-size: contain;
           background-color: $bitdark;
-
           cursor: pointer;
           transition: ease-in 0.2s;
           &:hover {
@@ -131,6 +190,8 @@ $divider: #E6ECF0;
             line-height: 22px;
             text-align: left;
             max-width: 902px;
+            max-height: 44px;
+            overflow: hidden;
           }
         }
       }

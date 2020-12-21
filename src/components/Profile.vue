@@ -2,40 +2,43 @@
   <div class="profile">
     <div class="header">
       <div class="arrow">
-        <div class="icon back"></div>
+        <div @click="$router.push('/main').catch(()=>{})" class="icon back"></div>
       </div>
       <div class="simple-info">
-        <div class="name">John Doe</div>
-        <div class="tweet-count">25 推文</div>
+        <div class="name">{{ user.name }}</div>
+        <div class="tweet-count">{{ user.tweets ? user.tweets.length : 0 }} 推文</div>
       </div>
     </div>
     <div class="user-info">
-      <div class="cover-photo"></div>
-      <div class="avatar"></div>
-
-      <button v-show="isSelf" class="btn-edit" @click="afterClickEditProfile">編輯個人資料</button>
-
-
-      <div class="other-button-wrapper">
+      <div class="cover-photo" :style="{ background: `url(${user.user ? user.user.cover : ''}) no-repeat center/cover` }"></div>
+      <div class="avatar" :style="{ background: `url(${user.user ? user.user.avatar : ''}) no-repeat center/cover` }"></div>
+      <button v-if="this.$route.path === '/user/self' || this.$route.path === `/user/other/${currentUser.id}`" class="btn-edit" @click="afterClickEditProfile">編輯個人資料</button>
+      <div v-if="!(this.$route.path === '/user/self' || this.$route.path === `/user/other/${currentUser.id}`)" class="other-button-wrapper">
         <div class="btn-messege">
-          <div class="icon messege"></div>
+          <a v-if="user.user" :href="`mailto:${user.user.email}`"><div class="icon messege"></div></a>
         </div>
-        <div class="btn-noti">
-          <div class="icon subscribe"></div>
+        <div v-if="user.user">
+          <div v-if="subscribeStorage.filter(event => (event.from === this.currentUser.id && event.to === user.user.id)).length === 0" class="btn-noti" @click="subscribeUser(user.user.id)">
+            <div class="icon subscribe"></div>
+          </div>
+          <div v-if="subscribeStorage.filter(event => (event.from === this.currentUser.id && event.to === user.user.id)).length > 0" class="btn-noti already" @click="unsubscribeUser(user.user.id)">
+            <div class="icon subscribe"></div>
+          </div>
         </div>
-        <button class="btn-follow unfollow">正在跟隨</button>
+        <button v-if="user.isFollowed" class="btn-follow unfollow" @click="deleteFollowing(user.user.id)">正在跟隨</button>
+        <button v-if="!user.isFollowed" class="btn btn-follow" @click="addFollowing(user.user.id)">跟隨</button>
       </div>
 
-      <div class="name">John Doe</div>
-      <div class="account">@heyjohn</div>
-      <div class="intro">Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint.</div>
+      <div class="name">{{ user.name }}</div>
+      <div class="account">{{ user.user ? user.user.account : '' }}</div>
+      <div class="intro">{{ user.user ? user.user.introduction : '' }}</div>
       <div class="number-followers">
-        <span>34個</span><span class="type">跟隨中</span>
-        <span>59個</span><span class="type">跟隨者</span>
+        <span class="followings">{{ user.following ? user.following.count : 0 }} 個</span><span class="type followings">跟隨中</span>
+        <span class="followers">{{ user.follower ? user.follower.count : 0 }} 個</span><span class="type followers">跟隨者</span>
       </div>
     </div>
     <div class="tab">
-      <div class="item" :class="{ active: tabOption === '推文' }" @click.prevent="selectTab">
+      <div class="item" :class="{ active: tabOption === '推文' }" @click="selectTab">
         <span class="text">推文</span>
       </div>
       <div class="item" :class="{ active: tabOption === '推文與回覆' }" @click="selectTab">
@@ -45,34 +48,190 @@
         <span class="text">喜歡的內容</span>
       </div>
     </div>
-    <TweetList></TweetList>
-<ModalForEditProfile v-if="showEditProfileModal" @after-click-cross=" afterClickCross" />
-
+    <TweetList v-if="tabOption === '推文'" :tweets="user.tweets"></TweetList>
+    <TweetList v-if="tabOption === '推文與回覆'" :tweets="user.tweets"></TweetList>
+    <TweetList v-if="tabOption === '喜歡的內容'" :tweets="userLikes"></TweetList>
+    <ModalForEditProfile v-if="showEditProfileModal" @after-click-cross=" afterClickCross" />
   </div>
 </template>
 
 <script>
+import followshipsAPI from '@/apis/followships'
 import TweetList from '@/components/TweetList.vue'
+import usersAPI from '@/apis/users'
+import { Toast } from '@/utils/helpers'
+import { mapState } from 'vuex'
 import ModalForEditProfile from '@/components/ModalForEditProfile.vue'
+const STORAGE_KEY = 'twitter-api-vue'
+
 export default {
   name: 'Profile',
   components: {
     TweetList,
     ModalForEditProfile
-
-
   },
   data () {
     return {
+      user: { tweets: [] },
       tabOption: '推文',
-      isSelf: false,
       showEditProfileModal: false,
+      userLikes: [],
+      userReplies: [],
+      subscribeStorage: []
     }
+  },
+  created () {
+    this.subscribeStorage = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []
+    this.$bus.$on('tweetAction', action => {
+      this.tweetAction(action)
+    })
+    this.$bus.$on('followAction', action => {
+      this.followAction(action)
+    })
+    this.fetchProfile()
+  },
+  watch: {
+    '$route.params.id': function() {
+      this.fetchProfile()
+      this.tabOption = '推文'
+    }
+  },
+  computed: {
+    ...mapState(['currentUser', 'isAuthenticated'])
   },
   methods: {
     selectTab (event) {
       this.tabOption = event.target.children[0] ? event.target.children[0].innerText : event.target.innerText
+      switch (this.tabOption) {
+        case '推文':
+          this.fetchProfile()
+          break
+        case '推文與回覆': 
+          break
+        case '喜歡的內容':
+          this.fetchUserLikes()
+          break
+      }
+    },
+    async fetchProfile () {
+      const userId = this.$route.path === '/user/self' ? this.currentUser.id : this.$route.params.id
+      try {
+        const { data } = await usersAPI.getProfile({userId})
+        this.user = data
+        this.user.tweets = this.user.tweets.map(tweet => ({
+          id: tweet.id,
+          userId: tweet.User.id,
+          name: tweet.User.name,
+          avatar: tweet.User.avatar,
+          account: tweet.User.account,
+          createdAt: tweet.createdAt,
+          description: tweet.description,
+          likeTweetCount: tweet.likeTweetCount,
+          replyTweetCount: tweet.replyTweetCount,
+          isLiked: tweet.isLiked
+        }))
+        this.user.tweets.sort((a, b) => {
+          return a.createdAt < b.createdAt ? 1 : -1;
+        })
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '目前無法取得資料，請稍候'
+        })
+      }
+    },
+    async fetchUserLikes () {
+      const userId = this.$route.path === '/user/self' ? this.currentUser.id : this.$route.params.id
+      try {
+        const { data } = await usersAPI.getUserLikes({userId})
+        this.userLikes = data.map(item => ({
+          id: item.Tweet.id,
+          userId: item.Tweet.User.id,
+          name: item.Tweet.User.name,
+          avatar: item.Tweet.User.avatar,
+          account: item.Tweet.User.account,
+          createdAt: item.Tweet.createdAt,
+          description: item.Tweet.description,
+          likeTweetCount: item.likeTweetCount,
+          replyTweetCount: item.replyTweetCount,
+          isLiked: item.isLiked,
+          likedAt: item.createdAt
+        }))
+        this.userLikes.sort((a, b) => {
+          return a.likedAt < b.likedAt ? 1 : -1;
+        })
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '目前無法取得資料，請稍候'
+        })
+      }
+    },
+    async addFollowing (userId) {
+      try {
+        const { data } = await followshipsAPI.addFollowing({ userId })
 
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+        this.user.isFollowed = true
+        this.$bus.$emit('followAction', { type: 'follow', userId: userId})
+      } catch (error) {
+        Toast.fire({
+          icon: 'error',
+          title: '無法加入追蹤，請稍後再試'
+        })
+      }
+    },
+    async deleteFollowing (userId) {
+      try {
+        const { data } = await followshipsAPI.deleteFollowing({ userId })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+        this.user.isFollowed = false
+        this.$bus.$emit('followAction', { type: 'unfollow', userId: userId})
+      } catch (error) {
+        Toast.fire({
+          icon: 'error',
+          title: '無法取消追蹤，請稍後再試'
+        })
+      }
+    },
+    tweetAction (action) {
+      this.user.tweets = this.user.tweets.map(tweet => {
+        if (tweet.id !== action.tweetId) {
+          return tweet
+        } else {
+          return {
+            ...tweet,
+            likeTweetCount: action.type === 'like' ? tweet.likeTweetCount + 1 : tweet.likeTweetCount - 1,
+            isLiked: !tweet.isLiked
+          }
+        }
+      })
+      this.fetchUserLikes()
+    },
+    followAction (action) {
+      if (this.$route.path === '/user/self' || this.$route.path === `/user/other/${this.currentUser.id}`) {
+        this.user.following.count = action.type === 'follow' ? this.user.following.count + 1 : this.user.following.count - 1
+      } else {
+        if (this.user.user.id === action.userId) {
+          this.user.isFollowed = action.type === 'follow' ? true : false 
+          this.user.follower.count = action.type === 'follow' ? this.user.follower.count + 1 : this.user.follower.count - 1
+        }
+      }
+    },
+    subscribeUser(id) {
+      this.subscribeStorage.push({from: this.currentUser.id, to: id})
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.subscribeStorage))
+    },
+    unsubscribeUser(id) {
+      this.subscribeStorage = this.subscribeStorage.filter(event => !(event.from === this.currentUser.id && event.to === id))
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.subscribeStorage))
     },
     afterClickEditProfile() {
       this.showEditProfileModal = true
@@ -80,8 +239,7 @@ export default {
     },
      afterClickCross() {
       this.showEditProfileModal = false
-    },
-
+    }
   }
 }
 
@@ -94,6 +252,9 @@ $lightdark: #9197A3;
 $divider: #E6ECF0;
 $bitdark: #657786;
 .profile {
+  max-height: 100vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
   width: 100%;
   border: 1px solid $divider;
   max-width: 600px;
@@ -258,19 +419,27 @@ $bitdark: #657786;
         width: 100%;
         max-width: 92px;
         height: 40px;
-        background: $orange;
-        border: 1px solid $orange;
+        border: 1px solid $orange ;
         border-radius: 100px;
-        color: #ffffff;
+        color: $orange;
         transition: ease-in 0.2s;
         font-weight: bold;
         font-size: 15px;
         line-height: 15px;
         &:hover {
-          background-color: $deeporange;
+          box-shadow: 0 0 3px 1px $bitdark;
+          background-color: $orange;
+          color: #ffffff;
         }
         &:focus {
           outline: 0;
+        }
+      }
+      .btn-follow.unfollow {
+        background: $orange;
+        color: #ffffff;
+        &:hover {
+          background-color: $deeporange;
         }
       }
     }
@@ -309,6 +478,10 @@ $bitdark: #657786;
       font-weight: 500;
       font-size: 14px;
       color: 14px;
+      .followers,
+      .followings {
+        cursor: pointer;
+      }
       .type {
         color: $bitdark;
         margin-right: 20px;
