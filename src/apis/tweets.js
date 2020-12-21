@@ -6,5 +6,10 @@ export default {
     return apiHelper.get('/tweets', {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
+  },
+  postTweet ({ description }) {
+    return apiHelper.post('/tweets', { description: description }, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
   }
 }

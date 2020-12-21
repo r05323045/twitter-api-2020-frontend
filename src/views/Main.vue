@@ -1,26 +1,28 @@
 <template>
   <div class="main">
-    <Navbar></Navbar>
+    <Navbar @openModal="showNewTweetModal = true"></Navbar>
     <div class="container">
       <div class="title">首頁</div>
       <div class="post-tweet">
-        <div class="avatar" @click="$router.push('/user/self').catch(()=>{})" :style="{ background: `url(${currentUser.avatar}) no-repeat center/cover` }"></div>
-        <textarea class="content" placeholder="有什麼新鮮事？"></textarea>
-        <button class="btn btn-tweet">推文</button>
+        <form class="content-wrapper">
+          <div class="avatar" @click="$router.push('/user/self').catch(()=>{})" :style="{ background: `url(${currentUser.avatar}) no-repeat center/cover` }"></div>
+          <textarea class="content" placeholder="有什麼新鮮事？" v-model="tweetDescription"></textarea>
+          <button class="btn btn-tweet" @click="postTweet(tweetDescription)">推文</button>
+        </form>
       </div>
       <div class="divider"></div>
       <TweetList :tweets="tweets" @tweetAction="tweetAction"></TweetList>
     </div>
     <RecommendUsers></RecommendUsers>
+    <ModalForNewTweet v-if="showNewTweetModal" name="ModalForNewTweet" @after-click-cross="showNewTweetModal = false" @postTweet="postTweet">this is a modal</ModalForNewTweet>
   </div>
-  
-  
 </template>
 
 <script>
 import Navbar from '@/components/Navbar.vue'
 import RecommendUsers from '@/components/RecommendUsers.vue'
 import TweetList from '@/components/TweetList.vue'
+import ModalForNewTweet from './../components/ModalForNewTweet'
 import TweetsAPI from '@/apis/tweets'
 import { Toast } from '@/utils/helpers'
 import { mapState } from 'vuex'
@@ -29,14 +31,17 @@ export default {
   components: {
     Navbar,
     RecommendUsers,
-    TweetList
+    TweetList,
+    ModalForNewTweet
   },
   computed: {
     ...mapState(['currentUser', 'isAuthenticated'])
   },
   data () {
     return {
-      tweets: []
+      tweets: [],
+      tweetDescription: '',
+      showNewTweetModal: false
     }
   },
   created () {
@@ -84,7 +89,48 @@ export default {
           }
         }
       })
-    }
+    },
+    async postTweet (description) {
+      try {
+        if (!description) {
+          Toast.fire({
+            icon: 'error',
+            title: '請輸入內容'
+          })
+          return
+        }
+        // eslint-disable-next-line no-control-regex
+        const chineseLenth = description.match(/[^\x00-\xff]/g) ? description.match(/[^\x00-\xff]/g).length : 0 // bytes size of normal Chinese character is 2
+        const englishLenth = description.match(/(\w+)/g) ? description.match(/(\w+)/g).length : 0
+
+        if (chineseLenth + englishLenth > 140) {
+          Toast.fire({
+            icon: 'error',
+            title: '推文字數需在140內'
+          })
+          return
+        }
+
+        const { data } = await TweetsAPI.postTweet({ description })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        await this.fetchTweets()
+        this.tweets.sort((a, b) => {
+          return a.createdAt < b.createdAt ? 1 : -1;
+        })
+        this.tweetDescription = ''
+        this.showNewTweetModal = false
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '目前無法推文，請稍候'
+        })
+      }
+    },
   }
 }
 
@@ -121,56 +167,60 @@ $divider: #E6ECF0;
       flex-direction: row;
       height: 120px;
       position: relative;
-      .avatar {
-        position: absolute;
-        top: 10px;
-        left: 15px;
-        height: 50px;
-        width: 50px;
-        border-radius: 50%;
-        cursor: pointer;
-        &:hover {
-          filter: brightness(.95);
+      .content-wrapper {
+        width: 100%;
+        height: 100%;
+        .avatar {
+          position: absolute;
+          top: 10px;
+          left: 15px;
+          height: 50px;
+          width: 50px;
+          border-radius: 50%;
+          cursor: pointer;
+          &:hover {
+            filter: brightness(.95);
+          }
         }
-      }
-      ::placeholder {
-        position: absolute;
-        top: 20px;
-        left: 75px;
-        font-weight: 500;
-        font-size: 18px;
-        line-height: 26px;
-        color: $lightdark;
-      }
-      .content {
-        padding: 20px 0 0 60px;
-        border: none;
-        overflow: auto;
-        outline: none;
-        box-shadow: none;
-        resize: none;
-        width: 100%;
-        font-size: 18px;
-        font-weight: 500;
-        font-size: 18px;
-        line-height: 26px;
-      }
-      .btn-tweet {
-        width: 100%;
-        max-width: 64px;
-        height: 40px;
-        position: absolute;
-        bottom: 10px;
-        right: 15px;
-        background: $orange;
-        font-size: 18px;
-        font-weight: 700;
-        color: #ffffff;
-        border-radius: 100px;
-        transition: ease-in 0.2s;
-        &:hover {
-          background-color: $deeporange;
-          box-shadow: 0 0 3px 1px $lightdark;
+        ::placeholder {
+          position: absolute;
+          top: 20px;
+          left: 75px;
+          font-weight: 500;
+          font-size: 18px;
+          line-height: 26px;
+          color: $lightdark;
+        }
+        .content {
+          padding: 20px 0 0 75px;
+          border: none;
+          overflow: auto;
+          outline: none;
+          box-shadow: none;
+          resize: none;
+          width: 100%;
+          font-size: 18px;
+          font-weight: 500;
+          font-size: 18px;
+          line-height: 26px;
+        }
+        .btn-tweet {
+          width: 100%;
+          max-width: 64px;
+          height: 40px;
+          position: absolute;
+          bottom: 10px;
+          right: 15px;
+          background: $orange;
+          font-size: 18px;
+          font-weight: 700;
+          color: #ffffff;
+          border-radius: 100px;
+          transition: ease-in 0.2s;
+          &:hover {
+            background-color: $deeporange;
+            box-shadow: 0 0 3px 1px $lightdark;
+          }
         }
       }
     }
