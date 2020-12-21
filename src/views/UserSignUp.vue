@@ -1,5 +1,5 @@
 <template>
-  <div class="signin">
+  <div class="signup">
     <div class="container">
       <div class="logo">
         <img src="https://media.cakeresume.com/image/upload/s--S9Jdcf0R--/c_pad,fl_png8,h_400,w_400/v1548316744/ribjsyna9cm9tm4pkv63.png">
@@ -78,8 +78,8 @@
           >
         </div>
       
-        <div  class="link">
-          <span class="signup-button" @click="$router.push('/signin')">註冊</span> 
+        <div class="link">
+          <button type="submit" class="signup-button" :disabled="isProcessing" >{{ isProcessing ? "處理中..." : "註冊" }}</button> 
           <span class="signin-button"  @click="$router.push('/signin')">取消</span>
         </div>
       </form>
@@ -88,43 +88,74 @@
 </template>
 
 <script>
-
+import authorizationAPI from '@/apis/authorization'
+import { Toast } from '@/utils/helpers'
 export default {
   name: 'UserSignUp',
+
   data() {
     return {
       account: '',
       name: '',
       email: '',
       password:'',
-      passwordConfirm: '', 
+      // passwordCheck: '', 
+      isProcessing: false,
     }
   },
   methods: {
-    // handleSubmit (e) {
+    async handleSubmit (e) {
+      try {
+        if (!this.account || !this.name || !this.email || !this.password || !this.passwordCheck) {
+          Toast.fire({
+            icon: 'warning',
+            title: '請輸入必填欄位'
+          })
+          return
+        } else if (this.password !== this.passwordCheck) {
+          Toast.fire({
+            icon: 'warning',
+            title: '您輸入的密碼不吻合'
+          })
+          this.password = ''
+          this.passwordCheck = ''
+          return
+        }
+        const form = e.target
+        const formData = new FormData(form)
+        // for (let [name, value] of formData.entries()) {
+        //   console.log(name + ': ' + value)
+        // }
+        const { data } = await authorizationAPI.signUp.create({
+          formData
+        })
+        
+        if (data.status !== "success") {
+          throw new Error(data.message)
+        }
 
-      // const data = JSON.stringify({
-      //   account: this.account,
-      //   name: this.name,
-      //   email: this.email,
-      //   password: this.password,
-      //   passwordCheck: this.passwordCheck
-      // })
-      // console.log('data', data)
-      //需api串接
+        console.log('account signed up sucessfully')
+        this.$router.push('/signin') 
 
-    // },
+        
+
+      } catch (error) { 
+        Toast.fire({
+          icon: 'error',                   //TODO 
+          title: '系統錯誤，請再試一次'
+        })
+      }
+    },
   }
-
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 $orange: #f46524;
 $deeporange: #F34A16;
 $lightgray: #f6f8fa;
 $lightblue: #00B7EF;
-.signin {
+.signup {
   margin: auto;
   max-width: 540px;
   .container {
