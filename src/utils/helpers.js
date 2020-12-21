@@ -3,7 +3,6 @@ import Swal from 'sweetalert2'
 
 const baseURL = 'https://simple-twitter-demo-ac.herokuapp.com/api'
 
-
 export const apiHelper = axios.create({
   baseURL
 })
@@ -15,4 +14,3 @@ export const Toast = Swal.mixin({
   timer: 3000
 
 })
-
