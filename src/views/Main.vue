@@ -7,7 +7,7 @@
         <form class="content-wrapper">
           <div class="avatar" @click="$router.push('/user/self').catch(()=>{})" :style="{ background: `url(${currentUser.avatar}) no-repeat center/cover` }"></div>
           <textarea class="content" placeholder="有什麼新鮮事？" v-model="tweetDescription"></textarea>
-          <button class="btn btn-tweet" @click="postTweet(tweetDescription)">推文</button>
+          <button class="btn btn-tweet" @click.stop.prevent="postTweet(tweetDescription)">推文</button>
         </form>
       </div>
       <div class="divider"></div>

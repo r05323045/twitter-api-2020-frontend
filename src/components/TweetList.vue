@@ -150,7 +150,11 @@ $divider: #E6ECF0;
         height: 22px;
         line-height: 22px;
         font-size: 15px;
+        font-weight: 500;
         cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+        }
         .title {
           color: $bitdark;
         }
