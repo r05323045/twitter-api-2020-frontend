@@ -38,7 +38,7 @@ export default {
     return {
       accountFocus: false,
       passwordFocus: false,
-      account: '@',
+      account: this.$route.path === '/admin/signin' ? '' : '@',
       password: '',
       routeIsAdmin: this.$route.path === '/admin/signin',
       isProcessing: false
