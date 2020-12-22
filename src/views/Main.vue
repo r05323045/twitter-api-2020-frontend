@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <Navbar @openModal="showNewTweetModal = true"></Navbar>
+    <Navbar></Navbar>
     <div class="container">
       <div class="title">首頁</div>
       <div class="post-tweet">
@@ -14,7 +14,6 @@
       <TweetList :tweets="tweets" @tweetAction="tweetAction"></TweetList>
     </div>
     <RecommendUsers></RecommendUsers>
-    <ModalForNewTweet v-if="showNewTweetModal" name="ModalForNewTweet" @after-click-cross="showNewTweetModal = false" @postTweet="postTweet">this is a modal</ModalForNewTweet>
   </div>
 </template>
 
@@ -22,7 +21,6 @@
 import Navbar from '@/components/Navbar.vue'
 import RecommendUsers from '@/components/RecommendUsers.vue'
 import TweetList from '@/components/TweetList.vue'
-import ModalForNewTweet from './../components/ModalForNewTweet'
 import TweetsAPI from '@/apis/tweets'
 import { Toast } from '@/utils/helpers'
 import { mapState } from 'vuex'
@@ -31,8 +29,7 @@ export default {
   components: {
     Navbar,
     RecommendUsers,
-    TweetList,
-    ModalForNewTweet
+    TweetList
   },
   computed: {
     ...mapState(['currentUser', 'isAuthenticated'])
@@ -40,13 +37,15 @@ export default {
   data () {
     return {
       tweets: [],
-      tweetDescription: '',
-      showNewTweetModal: false
+      tweetDescription: ''
     }
   },
   created () {
     this.$bus.$on('tweetAction', action => {
       this.tweetAction(action)
+    })
+    this.$bus.$on('renewTweets', action => {
+      this.fetchTweets(action)
     })
     this.fetchTweets()
   },
@@ -99,11 +98,8 @@ export default {
           })
           return
         }
-        // eslint-disable-next-line no-control-regex
-        const chineseLenth = description.match(/[^\x00-\xff]/g) ? description.match(/[^\x00-\xff]/g).length : 0 // bytes size of normal Chinese character is 2
-        const englishLenth = description.match(/(\w+)/g) ? description.match(/(\w+)/g).length : 0
 
-        if (chineseLenth + englishLenth > 140) {
+        if (description.length > 140) {
           Toast.fire({
             icon: 'error',
             title: '推文字數需在140內'
@@ -130,7 +126,7 @@ export default {
           title: '目前無法推文，請稍候'
         })
       }
-    },
+    }
   }
 }
 

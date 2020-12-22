@@ -88,6 +88,9 @@ export default {
     this.$bus.$on('followAction', action => {
       this.followAction(action)
     })
+    this.$bus.$on('renewTweets', action => {
+      this.fetchProfile(action)
+    })
     this.fetchProfile()
     this.fetchUserLikes()
   },
@@ -134,7 +137,6 @@ export default {
           return a.createdAt < b.createdAt ? 1 : -1;
         })
         const that = this
-        console.log(data)
         this.userReplies = data.replies.map(reply => {
           return {
             ...reply,
@@ -149,7 +151,6 @@ export default {
         this.userReplies.sort((a, b) => {
           return a.createdAt < b.createdAt ? 1 : -1;
         })
-        console.log(this.userReplies)
       } catch (error) {
         console.log(error)
         Toast.fire({
@@ -158,6 +159,7 @@ export default {
         })
       }
     },
+    
     async fetchUserLikes () {
       const userId = this.$route.path === '/user/self' ? this.currentUser.id : this.$route.params.id
       try {
