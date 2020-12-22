@@ -3,7 +3,7 @@
     <div class="title">跟隨誰</div>
     <div class="list-group">
       <div v-show="!(!more && idx > 4)" v-for="(user, idx) in topUsers" :key="user.id" class="list-group-item">
-        <div class="avatar" :style="{ background: `url(${user.avatar}) no-repeat center/cover` }"></div>
+        <div class="avatar" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})" :style="{ background: `url(${user.avatar}) no-repeat center/cover` }"></div>
         <div class="info">
           <div class="name" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})">{{ user.name }}</div>
           <div class="account" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})">{{ user.account }}</div>
