@@ -1,5 +1,5 @@
 <template>
-  <div class="modal">
+  <div class="modal new">
     <div class="modal-content">
 
       <div class="modal-header">
@@ -50,7 +50,7 @@ $deeporange: #F34A16;
 $lightdark: #9197A3;
 $bitdark: #657786;
 $divider: #E6ECF0;
-.modal {
+.modal.new {
   position: fixed;
   top: 0;
   left: 0;

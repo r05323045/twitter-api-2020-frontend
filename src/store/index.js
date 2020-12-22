@@ -9,6 +9,7 @@ export default new Vuex.Store({
     currentUser: {
       id: -1,
       avatar: '',
+      cover: '',
       name: '',
       account: '',
       introduction: '',
@@ -41,7 +42,7 @@ export default new Vuex.Store({
         if (statusText !== 'OK') {
           throw new Error(statusText)
         }
-        const { id, name, account, avatar, role, introduction, email } = data
+        const { id, name, account, avatar, cover, role, introduction, email } = data
 
         commit('setCurrentUser', {
           id,
@@ -50,6 +51,7 @@ export default new Vuex.Store({
           email,
           introduction,
           avatar,
+          cover,
           role
         })
         return true

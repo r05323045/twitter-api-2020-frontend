@@ -13,13 +13,13 @@ export default {
     })
   },
   getSettingPage ({ userId }) {
-     return apiHelper.get(`/users/${userId}/setting`, {
-        headers: { Authorization: `Bearer ${getToken()}` }
-     })
+    return apiHelper.get(`/users/${userId}/setting`, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
   },
   putSetting ({ formData }) {
     return apiHelper.put(`/users/${userId}/setting`, formData, {
-        headers: { Authorization: `Bearer ${getToken()}` }
+      headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
   getTopUsers () {
@@ -31,6 +31,11 @@ export default {
     return apiHelper.get(`/users/${userId}/likes`, {
       headers: { Authorization: `Bearer ${getToken()}` }
 
+    })
+  },
+  putUser ({ userId, formData }) {
+    return apiHelper.put(`/users/${userId}`, formData, {
+      headers: { Authorization: `Bearer ${getToken()}` }
     })
   }
 }

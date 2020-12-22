@@ -10,8 +10,12 @@
             <span>{{ tweet.createdAt | fromNow }}</span>
           </div>
         </div>
+        <div class="reply-to-wrapper" v-show="tweet.type === 'reply'">
+          <span class="title">回覆 </span>
+          <span class="name">{{ tweet.replyTo }}</span>
+        </div>
         <div class="content">{{ tweet.description}}</div>
-        <div class="action">
+        <div class="action" v-show="tweet.type !== 'reply'">
           <div class="reply-wrapper">
             <div class="icon reply"></div>
             <span class="number">{{ tweet.replyTweetCount }}</span>
@@ -140,10 +144,26 @@ $divider: #E6ECF0;
           }
         }
       }
+      .reply-to-wrapper {
+        margin-top: 4px;
+        text-align: left;
+        height: 22px;
+        line-height: 22px;
+        font-size: 15px;
+        cursor: pointer;
+        .title {
+          color: $bitdark;
+        }
+        .name {
+          color: $orange;
+        }
+      }
       .content {
+        width: 100%;
+        max-width: 510px;
         height: 66px;
         overflow: hidden;
-        margin: 6px 15px 0 0;
+        margin: 5px 15px 0 0;
         font-size: 15px;
         font-weight: 500;
         line-height: 22px;

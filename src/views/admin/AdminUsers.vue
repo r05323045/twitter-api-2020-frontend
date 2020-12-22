@@ -5,7 +5,7 @@
       <div class="title">使用者列表</div>
       <div class="user-card-deck">
         <div v-for="rowNum in Math.ceil(users.length/4)" :key="`row-${rowNum}`" class="user-card-row">
-          <div v-for="user in users.slice((rowNum - 1) * 4, rowNum * 4)" :key="user.id" class="user-card" @click="$router.push(`/user/other/${user.id}`)">
+          <div v-for="user in users.slice((rowNum - 1) * 4, rowNum * 4)" :key="user.id" class="user-card">
             <div class="cover-photo" :style="{ background: `url(${user.cover}) no-repeat center/cover` }"></div>
             <div class="avatar" :style="{ background: `url(${user.avatar}) no-repeat center/cover` }"></div>
             <div class="name">{{ user.name }}</div>
@@ -13,7 +13,7 @@
             <div class="action">
               <div class="reply-wrapper">
                 <div class="icon reply"></div>
-                <span class="number">{{ user.RepliesCount }}</span>
+                <span class="number">{{ user.TweetCount }}</span>
               </div>
               <div class="like-wrapper">
                 <div class="icon like"></div>
@@ -62,7 +62,6 @@ export default {
         this.users.sort((a, b) => {
           return a.TweetCount < b.TweetCount ? 1 : -1;
         })
-        this.users = data
       } catch (error) {
         console.log(error)
         Toast.fire({
@@ -91,6 +90,7 @@ $divider: #E6ECF0;
     border-left: 1px solid $divider;
     width: 100%;
     padding: 0;
+    overflow-y: scroll;
     .title {
       width: 100%;
       border-bottom: 1px solid $divider;
@@ -102,14 +102,12 @@ $divider: #E6ECF0;
     }
     .user-card-deck {
       padding: 15px 0 0 18px;
-      overflow-y: scroll;
       max-height: calc(100vh - 55px);
       .user-card-row {
         display: flex;
         flex-direction: row;
         margin-bottom: 15px;
         .user-card {
-          cursor: pointer;
           margin: 0px 15px 0px 0;
           width: 245px;
           height: 314px;
@@ -171,8 +169,8 @@ $divider: #E6ECF0;
               flex-direction: row;
               align-items: center;
               .icon.reply {
-                width: 19.75px;
-                height: 19.75px;
+                min-width: 19.75px;
+                min-height: 19.75px;
                 mask: url(../../assets/icon_reply.svg) no-repeat center;
                 mask-size: contain;
                 background-color: $bitdark;
@@ -189,8 +187,8 @@ $divider: #E6ECF0;
               flex-direction: row;
               align-items: center;
               .icon.like {
-                width: 19.75px;
-                height: 19.75px;
+                min-width: 19.75px;
+                min-height: 19.75px;
                 mask: url(../../assets/icon_like.svg) no-repeat center;
                 mask-size: contain;
                 background-color: $bitdark;
