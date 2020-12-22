@@ -13,46 +13,63 @@ const authorizeIsAdmin = (to, from, next) => {
   next()
 }
 
+const authorizeIsUser = (to, from, next) => {
+  const currentUser = store.state.currentUser
+  if (currentUser && !(currentUser.role === 'user')) {
+    next('/admin/main')
+    return
+  }
+  next()
+}
+
 const routes = [
   {
     path: '/',
     name: 'root',
-    redirect: '/main'
+    redirect: '/main',
+    beforeEnter: authorizeIsUser
   },
   {
     path: '/main',
     name: 'Main',
-    component: () => import('@/views/Main.vue')
+    component: () => import('@/views/Main.vue'),
+    beforeEnter: authorizeIsUser
   },
   {
     path: '/signup',
     name: 'UserSignUp',
-    component: () => import('@/views/UserSignUp.vue')
+    component: () => import('@/views/UserSignUp.vue'),
+    beforeEnter: authorizeIsUser
   },
   {
     path: '/user/self/follower',
     name: 'SelfFollowers',
-    component: () => import('@/views/SelfFollowers.vue')
+    component: () => import('@/views/SelfFollowers.vue'),
+    beforeEnter: authorizeIsUser
   },
   {
     path: '/user/self',
     name: 'UserProfile',
-    component: () => import('@/views/UserProfile.vue')
+    component: () => import('@/views/UserProfile.vue'),
+    beforeEnter: authorizeIsUser
   },
   {
     path: '/user/other/:id',
     name: 'otherProfile',
-    component: () => import('@/views/UserProfile.vue')
+    component: () => import('@/views/UserProfile.vue'),
+    beforeEnter: authorizeIsUser
   },
   {
     path: '/user/self/following',
     name: 'SelfFollowing',
-    component: () => import('@/views/SelfFollowers.vue')
+    component: () => import('@/views/SelfFollowers.vue'),
+    beforeEnter: authorizeIsUser
   },
   {
     path: '/setting',
     name: 'Setting',
-    component: () => import('@/views/Setting.vue')
+    component: () => import('@/views/Setting.vue'),
+    beforeEnter: authorizeIsUser
   },
   {
     path: '/signin',
@@ -61,7 +78,8 @@ const routes = [
   {
     path: '/reply_list',
     name: 'SingleTweet',
-    component: () => import('@/views/SingleTweet.vue')
+    component: () => import('@/views/SingleTweet.vue'),
+    beforeEnter: authorizeIsUser
   },
   {
     path: '/admin',
@@ -117,11 +135,15 @@ router.beforeEach((to, from, next) => {
     return
   }
 
+  if (!isAuthenticated && to.path !== '/signin' && to.path !== '/signup' && to.path !== '/admin/signin') {
+    next('/signin')
+    return
+  }
+
   if (isAuthenticated && to.path === '/signin') {
     next('/main')
     return
   }
-
   next()
 })
 

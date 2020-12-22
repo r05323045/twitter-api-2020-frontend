@@ -1,6 +1,6 @@
 <template>
   <div class="nav flex-column">
-    <div class="logo" @click="$router.push('/').catch(()=>{})">
+    <div class="logo" @click="currentUser.role === 'admin' ? $router.push('/admin/main').catch(()=>{}) : $router.push('/').catch(()=>{})">
       <div class="icon logo"></div>
     </div>
     <div class="nav-item-wrapper">

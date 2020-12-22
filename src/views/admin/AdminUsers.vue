@@ -5,7 +5,7 @@
       <div class="title">使用者列表</div>
       <div class="user-card-deck">
         <div v-for="rowNum in Math.ceil(users.length/4)" :key="`row-${rowNum}`" class="user-card-row">
-          <div v-for="user in users.slice((rowNum - 1) * 4, rowNum * 4)" :key="user.id" class="user-card" @click="$router.push(`/user/other/${user.id}`)">
+          <div v-for="user in users.slice((rowNum - 1) * 4, rowNum * 4)" :key="user.id" class="user-card">
             <div class="cover-photo" :style="{ background: `url(${user.cover}) no-repeat center/cover` }"></div>
             <div class="avatar" :style="{ background: `url(${user.avatar}) no-repeat center/cover` }"></div>
             <div class="name">{{ user.name }}</div>
