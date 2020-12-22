@@ -49,7 +49,7 @@
       </div>
     </div>
     <TweetList v-if="tabOption === '推文'" :tweets="user.tweets"></TweetList>
-    <TweetList v-if="tabOption === '推文與回覆'" :tweets="user.tweets"></TweetList>
+    <TweetList v-if="tabOption === '推文與回覆'" :tweets="userReplies"></TweetList>
     <TweetList v-if="tabOption === '喜歡的內容'" :tweets="userLikes"></TweetList>
     <ModalForEditProfile v-if="showEditProfileModal" @after-click-cross=" afterClickCross" />
   </div>
@@ -89,6 +89,7 @@ export default {
       this.followAction(action)
     })
     this.fetchProfile()
+    this.fetchUserLikes()
   },
   watch: {
     '$route.params.id': function() {
@@ -104,7 +105,6 @@ export default {
       this.tabOption = event.target.children[0] ? event.target.children[0].innerText : event.target.innerText
       switch (this.tabOption) {
         case '推文':
-          this.fetchProfile()
           break
         case '推文與回覆': 
           break
@@ -133,6 +133,23 @@ export default {
         this.user.tweets.sort((a, b) => {
           return a.createdAt < b.createdAt ? 1 : -1;
         })
+        const that = this
+        console.log(data)
+        this.userReplies = data.replies.map(reply => {
+          return {
+            ...reply,
+            replyTo: reply.Tweet.User.account,
+            name: that.user.user.name,
+            avatar: that.user.user.avatar,
+            account: that.user.user.account,
+            description: reply.comment,
+            type: 'reply'
+          }
+        })
+        this.userReplies.sort((a, b) => {
+          return a.createdAt < b.createdAt ? 1 : -1;
+        })
+        console.log(this.userReplies)
       } catch (error) {
         console.log(error)
         Toast.fire({
@@ -202,6 +219,7 @@ export default {
       }
     },
     tweetAction (action) {
+      const userId = this.$route.path === '/user/self' ? this.currentUser.id : this.$route.params.id
       this.user.tweets = this.user.tweets.map(tweet => {
         if (tweet.id !== action.tweetId) {
           return tweet
@@ -213,7 +231,24 @@ export default {
           }
         }
       })
-      this.fetchUserLikes()
+      if (userId === this.currentUser.id && action.type === 'unlike') {
+        this.userLikes = this.userLikes.filter(tweet => tweet.id !== action.tweetId)
+      } else {
+        this.userLikes = this.userLikes.map(tweet => {
+          if (tweet.id !== action.tweetId) {
+            return tweet
+          } else {
+            return {
+              ...tweet,
+              likeTweetCount: action.type === 'like' ? tweet.likeTweetCount + 1 : tweet.likeTweetCount - 1,
+              isLiked: !tweet.isLiked
+            }
+          }
+        })
+        this.userLikes.sort((a, b) => {
+          return a.likedAt < b.likedAt ? 1 : -1;
+        })
+      }
     },
     followAction (action) {
       if (this.$route.path === '/user/self' || this.$route.path === `/user/other/${this.currentUser.id}`) {
@@ -235,7 +270,6 @@ export default {
     },
     afterClickEditProfile() {
       this.showEditProfileModal = true
-      console.log('showEditProfileModal')
     },
      afterClickCross() {
       this.showEditProfileModal = false
