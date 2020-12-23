@@ -35,7 +35,7 @@ export default {
   },
   putUser ({ userId, formData }) {
     return apiHelper.put(`/users/${userId}`, formData, {
-      headers: { Authorization: `Bearer ${getToken()}` }
+      headers: { Authorization: `Bearer ${getToken()}`, 'Access-Control-Allow-Origin': '*' }
     })
   }
 }

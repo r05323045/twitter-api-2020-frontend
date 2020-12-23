@@ -18,14 +18,14 @@
             <input class="tweet-content name" v-model="user.name" type="text" placeholder="" name="name" />
             <span class="word-count">{{ user.name.length }}/50</span>
 
-            <textarea class="tweet-content intro" v-model="user.introduction" type="textarea" placeholder="" name="intro" ></textarea>
+            <textarea class="tweet-content intro" v-model="user.introduction" type="textarea" placeholder="" name="introduction" ></textarea>
             <span class="word-count">{{ user.introduction.length }}/160</span>
           </div>
           <div class="icon camera-two">
-            <input class="coverFile" ref="coverFile"  accept="image/*" @change="coverChange" type="file">
+            <input class="coverFile" ref="coverFile" name="cover" accept="image/*" @change="coverChange" type="file">
           </div>
           <div class="icon camera-one">
-            <input class="avatarFile" ref="avatarFile"  accept="image/*" @change="avatarChange" type="file">
+            <input class="avatarFile" ref="avatarFile" name="avatar" accept="image/*" @change="avatarChange" type="file">
           </div>
           <img class="icon camera-two" src="./../asset/camera.png" alt="">
           <img class="icon inside-one" src="./../asset/camera_inside.png" alt="">
@@ -97,7 +97,7 @@ export default {
         return;
       }
       const form = e.target;
-      const formData = new FormData(form);
+      const formData = new FormData(form)
       this.putUser(formData)
     },
     avatarChange() {
