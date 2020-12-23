@@ -4,19 +4,19 @@ import store from './../store'
 
 Vue.use(VueRouter)
 
-const authorizeIsAdmin = (to, from, next) => {
+const authorizeIsUser = (to, from, next) => {
   const currentUser = store.state.currentUser
-  if (currentUser && !(currentUser.role === 'admin')) {
-    next('/404')
+  if (currentUser && !(currentUser.role === 'user')) {
+    next('/admin/main')
     return
   }
   next()
 }
 
-const authorizeIsUser = (to, from, next) => {
+const authorizeIsAdmin = (to, from, next) => {
   const currentUser = store.state.currentUser
-  if (currentUser && !(currentUser.role === 'user')) {
-    next('/admin/main')
+  if (currentUser && !(currentUser.role === 'admin')) {
+    next('/404')
     return
   }
   next()
@@ -86,7 +86,7 @@ const routes = [
     component: () => import('@/views/Admin.vue'),
     children: [
       {
-        path: '',
+        path: '/',
         redirect: 'main'
       },
       {
@@ -131,7 +131,6 @@ router.beforeEach((to, from, next) => {
   }
 
   if (!isAuthenticated && to.path !== '/signin' && to.path !== '/signup' && to.path !== '/admin/signin') {
-    console.log(isAuthenticated)
     next('/signin')
     return
   }
@@ -142,5 +141,7 @@ router.beforeEach((to, from, next) => {
   }
   next()
 })
+
+router.mode = 'history'
 
 export default router

@@ -134,7 +134,6 @@ export default {
         })
 
         const { data } = response
-        console.log(data)
 
         if (data.status !== 'success') {
           this.password = ''
@@ -143,8 +142,6 @@ export default {
         
         localStorage.setItem('token', data.token)
         this.$store.commit('setCurrentUser', data.user)
-        
-        console.log(localStorage.getItem('token'))
 
         this.$router.push('/admin/main')
 

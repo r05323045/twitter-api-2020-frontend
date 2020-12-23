@@ -51,7 +51,7 @@
     <TweetList v-if="tabOption === '推文'" :tweets="user.tweets"></TweetList>
     <TweetList v-if="tabOption === '推文與回覆'" :tweets="userReplies"></TweetList>
     <TweetList v-if="tabOption === '喜歡的內容'" :tweets="userLikes"></TweetList>
-    <ModalForEditProfile v-if="showEditProfileModal" @after-click-cross=" afterClickCross" />
+    <ModalForEditProfile v-if="showEditProfileModal" @after-click-cross=" afterClickCross" @completeEdit="fetchProfile"/>
   </div>
 </template>
 
