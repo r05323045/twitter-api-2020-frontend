@@ -55,6 +55,7 @@ export default {
     }
   },
   created () {
+    console.log(this.currentUser)
     this.user = this.currentUser
   },
   methods: {
@@ -68,10 +69,10 @@ export default {
       }
     },
     handleSubmit(e) {
-      if (this.user.name === "") {
+      if (this.user.name === '') {
         Toast.fire({
-          icon: "warning",
-          title: "尚未填入名稱",
+          icon: 'warning',
+          title: '請輸入名稱',
         });
         return;
       } else if (
@@ -79,20 +80,20 @@ export default {
         this.user.introduction.length > 160
       ) {
         Toast.fire({
-          icon: "warning",
-          title: "名稱和自我介紹都超過限制字數了！",
+          icon: 'warning',
+          title: '名稱和自我介紹超過最大限制字數！',
         });
         return;
       } else if (this.user.name.length > 50) {
         Toast.fire({
-          icon: "warning",
-          title: "名稱只限輸入50字",
+          icon: 'warning',
+          title: '名稱只限50字',
         });
         return;
       } else if (this.user.introduction.length > 160) {
         Toast.fire({
-          icon: "warning",
-          title: "自我介紹只限輸入160個字",
+          icon: 'warning',
+          title: '自我介紹只限160字',
         });
         return;
       }
@@ -317,33 +318,39 @@ $divider: #E6ECF0;
         left: 68px;
         background: url(./../asset/camera.png) no-repeat center;
         background-size: contain;
+        cursor: pointer;
         .avatarFile {
           width: 100%;
           height: 100%;
           opacity: 0;
           position: relative;
-          z-index: 1;
+          cursor: pointer;
         }
       }
       .inside-one {
         top: 196px;
         left: 73px;
+        cursor: pointer;
       }
 
       .camera-two {
         top: 90px;
         left: 262px;
+        cursor: pointer;
+        z-index: 999;
         .coverFile {
           width: 100%;
           height: 100%;
           opacity: 0;
           position: relative;
           z-index: 1;
+          cursor: pointer;
         }
       }
       .inside-two {
         top: 96px;
         left: 267px;
+        cursor: pointer;
       }
 
       .cross {
