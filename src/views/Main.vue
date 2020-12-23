@@ -51,6 +51,10 @@ export default {
   },
   methods: {
     async fetchTweets () {
+      const loader = this.$loading.show({
+        isFullPage: true,
+        opacity: 1
+      }, { default: this.$createElement('MyLoading') })
       try {
         const { data } = await TweetsAPI.getTweets()
         this.tweets = data.map(tweet => ({
@@ -68,7 +72,9 @@ export default {
         this.tweets.sort((a, b) => {
           return a.createdAt < b.createdAt ? 1 : -1;
         })
+        loader.hide()
       } catch (error) {
+        loader.hide()
         console.log(error)
         Toast.fire({
           icon: 'error',

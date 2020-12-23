@@ -43,6 +43,10 @@ export default {
   },
   methods: {
     async fetchTopUsers () {
+      const loader = this.$loading.show({
+        isFullPage: true,
+        opacity: 1
+      }, { default: this.$createElement('MyLoading') })
       try {
         const { data } = await usersAPI.getTopUsers()
         this.topUsers = data.users.map(user => ({
@@ -53,6 +57,7 @@ export default {
           followerCount: user.FollowerCount,
           isFollowed: user.isFollowed
         })).filter(user => user.id !== this.currentUser.id)
+        loader.hide()
       } catch (error) {
         console.log(error)
         Toast.fire({

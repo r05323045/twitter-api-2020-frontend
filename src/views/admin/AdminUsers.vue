@@ -56,13 +56,19 @@ export default {
   },
   methods: {
     async fetchUsers () {
+      const loader = this.$loading.show({
+        isFullPage: true,
+        opacity: 1
+      }, { default: this.$createElement('MyLoading') })
       try {
         const { data } = await AdminAPI.getUsers()
         this.users = data
         this.users.sort((a, b) => {
           return a.TweetCount < b.TweetCount ? 1 : -1;
         })
+        loader.hide()
       } catch (error) {
+        loader.hide()
         console.log(error)
         Toast.fire({
           icon: 'error',

@@ -117,6 +117,10 @@ export default {
       }
     },
     async fetchProfile () {
+      const loader = this.$loading.show({
+        isFullPage: true,
+        opacity: 1
+      }, { default: this.$createElement('MyLoading') })
       const userId = this.$route.path === '/user/self' ? this.currentUser.id : this.$route.params.id
       try {
         const { data } = await usersAPI.getProfile({userId})
@@ -151,7 +155,9 @@ export default {
         this.userReplies.sort((a, b) => {
           return a.createdAt < b.createdAt ? 1 : -1;
         })
+        loader.hide()
       } catch (error) {
+        loader.hide()
         console.log(error)
         Toast.fire({
           icon: 'error',

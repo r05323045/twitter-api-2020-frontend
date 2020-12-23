@@ -16,10 +16,10 @@
           </div>
           <div class="for-inputs">
             <input class="tweet-content name" v-model="user.name" type="text" placeholder="" name="name" />
-            <span class="word-count">8/50</span>
+            <span class="word-count">{{ user.name.length }}/50</span>
 
             <textarea class="tweet-content intro" v-model="user.introduction" type="textarea" placeholder="" name="intro" ></textarea>
-            <span class="word-count">0/160</span>
+            <span class="word-count">{{ user.introduction.length }}/160</span>
           </div>
           <div class="icon camera-two">
             <input class="coverFile" ref="coverFile"  accept="image/*" @change="coverChange" type="file">
@@ -55,7 +55,6 @@ export default {
     }
   },
   created () {
-    console.log(this.currentUser)
     this.user = this.currentUser
   },
   methods: {
@@ -108,6 +107,10 @@ export default {
       }
     },
     async putUser (formData) {
+      const loader = this.$loading.show({
+        isFullPage: true,
+        opacity: 1
+      }, { default: this.$createElement('MyLoading') })
       try {
         const { data } = await usersAPI.putUser({
           userId: this.currentUser.id,
@@ -120,8 +123,9 @@ export default {
 
         this.$emit('completeEdit')
         this.$emit('after-click-cross')
-
+        loader.hide()
       } catch (error) {
+        loader.hide()
         Toast.fire({
           icon: 'error',
           title: '無法更新資料，請稍後再試'
