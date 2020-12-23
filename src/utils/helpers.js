@@ -1,7 +1,7 @@
 import axios from 'axios'
 import Swal from 'sweetalert2'
 
-const baseURL = 'http://localhost:3000/api'
+const baseURL = 'https://simple-twitter-demo-ac.herokuapp.com/api'
 
 
 export const apiHelper = axios.create({
@@ -13,6 +13,5 @@ export const Toast = Swal.mixin({
   position: 'top-end',
   showConfirmButton: false,
   timer: 3000
-
 })
 

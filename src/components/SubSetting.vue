@@ -5,7 +5,7 @@
     </div>
 
     <div class="content">
-      <form>
+      <form @click.stop.prevent="handleSubmit">
         <div class="form-label-group mb-2">
           <!-- <label for="account">帳號</label> -->
           <input
@@ -13,7 +13,7 @@
             name="account"
             type="text"
             class="form-control"
-            placeholder="account"
+            :placeholder="user.account"
             autocomplete="accountname"
             required
             autofocus
@@ -80,6 +80,74 @@
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      user: {
+      ...this.initialUser
+      }
+    }
+  },
+  props: {
+    initialUser: {
+      type: Object,
+      default: () => {
+        return {
+          account: '', 
+          name: '', 
+          email: '',
+          password: '',
+          passwordCheck: ''
+        }
+      }
+    }
+  }, 
+  
+  // created () {
+  //   this.
+  // },
+  methods: {  
+    handleSubmit(e) {
+      const form = e.target
+      const formData = new FormData(form)
+      this.$emit('after-submit', formData)
+    },
+   
+    // async fetchUserSettings ( userId ) {
+    //   try{
+    //     const { data } = await usersAPI.putSetting.getDetail({ userId })
+
+    //     // 解構賦值將資料取出
+    //     const {
+    //         account, 
+    //         name, 
+    //         email,
+            
+    //       } = data.user   //!!!
+        
+    //     // 將資料帶入 Vue 內
+    //     this.user = {
+    //       ...this.user,  //!!!
+    //       account,
+    //       name,
+    //       email,
+    //     }
+    //   } catch (error) {
+    //     Toast.fire({
+    //       icon: 'error',
+    //       title: '無法取得帳戶設定，請稍後再試'
+    //     })
+    //   }
+    // },
+    // handleSubmit () {
+
+    // }
+  // }
+  }
+}
+</script>
 
 <style lang="scss">
 .container {

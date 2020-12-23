@@ -50,7 +50,7 @@ const routes = [
     component: () => import('@/views/SelfFollowers.vue')
   },
   {
-    path: '/setting',
+    path: '/setting/:id',
     name: 'Setting',
     component: () => import('@/views/Setting.vue')
   },

@@ -1,3 +1,4 @@
+
 <template>
   <div class="main">
     <div class="upper">
@@ -7,7 +8,6 @@
         <span>25 推文</span>
       </div>
     </div>
-
     <div class="nav">
       <ul class='nav-pills'>
         <li class="nav-item"> 

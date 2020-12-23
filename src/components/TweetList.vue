@@ -28,7 +28,6 @@
 </template>
 
 <script>
-
 import likesAPI from '@/apis/likes'
 import { Toast } from '@/utils/helpers'
 

@@ -17,7 +17,6 @@
             placeholder="account"
             autocomplete="accountname"
             required
-            autofocus
           >
         </div>
 
@@ -67,9 +66,9 @@
         <div class="form-label-group mb-3">
           <!-- <label for="password-check">密碼確認</label> -->
           <input
-            id="password-check"
-            name="passwordCheck"
-            v-model="passwordCheck"
+            id="Checkpassword"
+            name="Checkpassword"
+            v-model="Checkpassword"
             type="password"
             class="form-control"
             placeholder="Password Check"
@@ -79,7 +78,7 @@
         </div>
       
         <div class="link">
-          <button type="submit" class="signup-button" :disabled="isProcessing" >{{ isProcessing ? "處理中..." : "註冊" }}</button> 
+          <button type="submit" class="signup-button" :disabled="user.isProcessing" >{{ user.isProcessing ? "處理中..." : "註冊" }}</button> 
           <span class="signin-button"  @click="$router.push('/signin')">取消</span>
         </div>
       </form>
@@ -89,59 +88,75 @@
 
 <script>
 import authorizationAPI from '@/apis/authorization'
-import { Toast } from '@/utils/helpers'
+import { Toast } from '@/utils/helpers' 
 export default {
   name: 'UserSignUp',
-
   data() {
     return {
-      account: '',
-      name: '',
-      email: '',
-      password:'',
-      // passwordCheck: '', 
-      isProcessing: false,
+      user: {
+        account: '',
+        name: '',
+        email: '',
+        password:'',
+        Checkpassword: '', 
+        isProcessing: false,
+      }
     }
   },
   methods: {
-    async handleSubmit (e) {
+    async handleSubmit () {
       try {
-        if (!this.account || !this.name || !this.email || !this.password || !this.passwordCheck) {
+        
+        if (!this.user.account || !this.user.name || !this.user.email || !this.user.password || !this.user.Checkpassword) {
           Toast.fire({
             icon: 'warning',
             title: '請輸入必填欄位'
           })
           return
-        } else if (this.password !== this.passwordCheck) {
+        } else if (this.user.password !== this.user.Checkpassword) {
           Toast.fire({
             icon: 'warning',
             title: '您輸入的密碼不吻合'
           })
-          this.password = ''
-          this.passwordCheck = ''
+          this.user.password = ''
+          this.user.Checkpassword = ''
           return
         }
-        const form = e.target
-        const formData = new FormData(form)
+        // const form = e.target
+        // const formData = new FormData(form)
+        // const {account, name, email, password, Checkpassword} = formData
+        // this.Users.push({
+        //   // account: this.user.account,
+        //   // name: this.user.name,
+        //   // email: this.user.email,
+        //   // password: this.user.password,
+        //   // Checkpassword: this.user.Checkpassword, 
+        //   formData
+        // })
+
+        // const form = e.target
+        // const formData = new FormData(form)
         // for (let [name, value] of formData.entries()) {
         //   console.log(name + ': ' + value)
         // }
         const { data } = await authorizationAPI.signUp.create({
-          formData
+          name: this.user.name,
+          email: this.user.email,
+          account: this.user.account,
+          password: this.user.password,
+          passwordCheck: this.user.Checkpassword
         })
         
+        console.log('12345')
         if (data.status !== "success") {
           throw new Error(data.message)
         }
-
         console.log('account signed up sucessfully')
-        this.$router.push('/signin') 
-
-        
+        this.$router.push('/signin')
 
       } catch (error) { 
         Toast.fire({
-          icon: 'error',                   //TODO 
+          icon: 'error',                    
           title: '系統錯誤，請再試一次'
         })
       }
