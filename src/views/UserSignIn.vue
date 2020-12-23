@@ -9,14 +9,17 @@
         <span v-if="routeIsAdmin">後台登入</span>
       </div>
 
-      <form @submit.prevent="signin">
+      <form>
         <div class="form-group">
-          <label class="account" v-show="!accountFocus && account === ''">帳號</label>
-          <input type="text" ref="account" @focus="checkFocus('account')" @blur="checkBlur('account')" v-model="account" class="form-control" required>
+          <label v-if="!routeIsAdmin" class="account" v-show="!accountFocus && account === ''">帳號</label>
+           <label v-if="routeIsAdmin" class="account" v-show="!accountFocus && email === ''">Email</label>
+          <input v-if="!routeIsAdmin" type="text" ref="account" @focus="checkFocus('account')" @blur="checkBlur('account')" v-model="account" class="form-control" required>
+          <input v-if="routeIsAdmin" type="text" ref="email" @focus="checkFocus('email')" @blur="checkBlur('email')" v-model="email" class="form-control" required>
           <label class="password" v-show="!passwordFocus && password === ''">密碼</label>
           <input type="password" ref="password" @focus="checkFocus('password')" @blur="checkBlur('password')" v-model="password" class="form-control"  required>
         </div>
-        <button :disabled="isProcessing" class="btn btn-signin" type="submit">登入</button>
+        <button v-if="!routeIsAdmin" :disabled="isProcessing" class="btn btn-signin user" type="submit" @click.prevent="signin">登入</button>
+        <button v-if="routeIsAdmin" :disabled="isProcessing" class="btn btn-signin admin" type="submit" @click.prevent="adminSignin">登入</button>
       </form>
       <div  class="link">
         <span v-if="!routeIsAdmin" @click="$router.push('/signup')">註冊 Alphitter</span>
@@ -31,6 +34,7 @@
 <script>
 
 import authorizationAPI from '@/apis/authorization'
+import AdminAPI from '@/apis/admin'
 import { Toast } from '@/utils/helpers'
 
 export default {
@@ -38,7 +42,8 @@ export default {
     return {
       accountFocus: false,
       passwordFocus: false,
-      account: this.$route.path === '/admin/signin' ? '' : '@',
+      account: '@',
+      email: '',
       password: '',
       routeIsAdmin: this.$route.path === '/admin/signin',
       isProcessing: false
@@ -46,12 +51,16 @@ export default {
   },
   created () {
     this.$nextTick(() => {
-      this.$refs.account.focus()
+      if (this.routeIsAdmin) {
+        this.$refs.email.focus()
+      } else {
+        this.$refs.account.focus()
+      }
     })
   },
   methods: {
     checkFocus (params) {
-      if (params === 'account') {
+      if (params === 'account' || params === 'email') {
         this.accountFocus = true
         this.passwordFocus = false
       } else if (params === 'password') {
@@ -60,7 +69,7 @@ export default {
       }
     },
     checkBlur (params) {
-      if (params === 'account') {
+      if (params === 'account' || params === 'email') {
         this.accountFocus = false
       } else if (params === 'password') {
         this.passwordFocus = false
@@ -72,7 +81,7 @@ export default {
         if (!this.account || !this.password) {
           Toast.fire({
             icon: 'warning',
-            title: '請填入 email 和 password'
+            title: '請填入帳號和密碼'
           })
           return
         }
@@ -85,14 +94,15 @@ export default {
 
         const { data } = response
 
-        if (data.status !== 'success' || (data.user.role !== 'admin' && this.routeIsAdmin) || (data.user.role === 'admin' && !this.routeIsAdmin)) {
+        if (data.status !== 'success' || data.user.role === 'admin') {
+          this.password = ''
           throw new Error(data.message)
         }
 
         localStorage.setItem('token', data.token)
         this.$store.commit('setCurrentUser', data.user)
 
-        const redirectRoute = this.routeIsAdmin ? '/admin/main' : '/main'
+        const redirectRoute ='/main'
         
         this.$router.push(redirectRoute)
 
@@ -102,6 +112,48 @@ export default {
         Toast.fire({
           icon: 'warning',
           title: '請確認您輸入了正確的帳號密碼'
+        })
+      }
+
+    },
+
+    async adminSignin () {
+      try {
+        if (!this.email || !this.password) {
+          Toast.fire({
+            icon: 'warning',
+            title: '請填入Email和密碼'
+          })
+          return
+        }
+        
+        this.isProcessing = true
+        const response = await AdminAPI.signIn({
+          email: this.email,
+          password: this.password
+        })
+
+        const { data } = response
+        console.log(data)
+
+        if (data.status !== 'success') {
+          this.password = ''
+          throw new Error(data.message)
+        }
+        
+        localStorage.setItem('token', data.token)
+        this.$store.commit('setCurrentUser', data.user)
+        
+        console.log(localStorage.getItem('token'))
+
+        this.$router.push('/admin/main')
+
+      } catch(error) {
+        this.password = ''
+        this.isProcessing = false
+        Toast.fire({
+          icon: 'warning',
+          title: '請確認您輸入了正確的Email和密碼'
         })
       }
 

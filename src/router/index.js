@@ -131,11 +131,7 @@ router.beforeEach((to, from, next) => {
   }
 
   if (!isAuthenticated && to.path !== '/signin' && to.path !== '/signup' && to.path !== '/admin/signin') {
-    next('/signin')
-    return
-  }
-
-  if (!isAuthenticated && to.path !== '/signin' && to.path !== '/signup' && to.path !== '/admin/signin') {
+    console.log(isAuthenticated)
     next('/signin')
     return
   }

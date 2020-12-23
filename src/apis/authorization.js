@@ -3,6 +3,7 @@ const getToken = () => localStorage.getItem('token')
 
 export default {
   signIn ({ account, password }) {
+    console.log('hi')
     return apiHelper.post('/signin', {
       account,
       password
