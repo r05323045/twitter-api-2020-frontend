@@ -3,7 +3,7 @@
     <div class="title">跟隨誰</div>
     <div class="list-group">
       <div v-show="!(!more && idx > 4)" v-for="(user, idx) in topUsers" :key="user.id" class="list-group-item">
-        <div class="avatar" :style="{ background: `url(${user.avatar}) no-repeat center/cover` }"></div>
+        <div class="avatar" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})" :style="{ background: `url(${user.avatar}) no-repeat center/cover` }"></div>
         <div class="info">
           <div class="name" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})">{{ user.name }}</div>
           <div class="account" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})">{{ user.account }}</div>
@@ -43,6 +43,10 @@ export default {
   },
   methods: {
     async fetchTopUsers () {
+      const loader = this.$loading.show({
+        isFullPage: true,
+        opacity: 1
+      }, { default: this.$createElement('MyLoading') })
       try {
         const { data } = await usersAPI.getTopUsers()
         this.topUsers = data.users.map(user => ({
@@ -53,6 +57,7 @@ export default {
           followerCount: user.FollowerCount,
           isFollowed: user.isFollowed
         })).filter(user => user.id !== this.currentUser.id)
+        loader.hide()
       } catch (error) {
         console.log(error)
         Toast.fire({

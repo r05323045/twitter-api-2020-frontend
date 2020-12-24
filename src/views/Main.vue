@@ -7,7 +7,7 @@
         <form class="content-wrapper">
           <div class="avatar" @click="$router.push('/user/self').catch(()=>{})" :style="{ background: `url(${currentUser.avatar}) no-repeat center/cover` }"></div>
           <textarea class="content" placeholder="有什麼新鮮事？" v-model="tweetDescription"></textarea>
-          <button class="btn btn-tweet" @click="postTweet(tweetDescription)">推文</button>
+          <button class="btn btn-tweet" @click.stop.prevent="postTweet(tweetDescription)">推文</button>
         </form>
       </div>
       <div class="divider"></div>
@@ -51,6 +51,10 @@ export default {
   },
   methods: {
     async fetchTweets () {
+      const loader = this.$loading.show({
+        isFullPage: true,
+        opacity: 1
+      }, { default: this.$createElement('MyLoading') })
       try {
         const { data } = await TweetsAPI.getTweets()
         this.tweets = data.map(tweet => ({
@@ -68,7 +72,9 @@ export default {
         this.tweets.sort((a, b) => {
           return a.createdAt < b.createdAt ? 1 : -1;
         })
+        loader.hide()
       } catch (error) {
+        loader.hide()
         console.log(error)
         Toast.fire({
           icon: 'error',

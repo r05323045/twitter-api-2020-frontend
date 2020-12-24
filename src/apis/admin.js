@@ -16,5 +16,11 @@ export default {
     return apiHelper.get('/admin/users', {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
+  },
+  signIn ({ email, password }) {
+    return apiHelper.post('/admin/signin', {
+      email,
+      password
+    })
   }
 }

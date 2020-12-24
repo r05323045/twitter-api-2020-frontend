@@ -1,34 +1,40 @@
 <template>
   <div class="modal edit">
     <div class="modal-content">
-      <div class="modal-header">
-        <div class="icon cross" @click.stop.prevent="cancelModalClick()"></div>
-        <span class="title">編輯個人資料</span>
-        <button class="save" @click.stop.prevent="putUser">儲存</button>
-      </div>
-          
-      <div class="modal-body">
-        <div class="background-photo" :style="{ background: `url(${currentUser.cover}) no-repeat center/cover` }">
-          <input class="coverFile" ref="coverFile"  accept="image/*" @change="coverChange" type="file">
+      <form ref="form" @submit.stop.prevent="handleSubmit" enctype="multipart/form-data">
+        <div class="modal-header">
+          <div class="icon cross" @click.stop.prevent="cancelModalClick()"></div>
+          <span class="title">編輯個人資料</span>
+          <button class="save" type="submit">儲存</button>
         </div>
-        <div class="photo" :style="{ background: `url(${currentUser.avatar}) no-repeat center/cover` }">
-          <input class="avatarFile" ref="avatarFile"  accept="image/*" @change="avatarChange" name="avatar" type="file">
-        </div>
-        <div class="for-inputs">
-          <input class="tweet-content name" v-model="formName" type="text" placeholder="" name="name" />
-          <span class="word-count">8/50</span>
+            
+        <div class="modal-body">
+          <div class="background-photo" :style="{ background: `url(${user.cover}) no-repeat center/cover` }">
+          </div>
+          <div class="photo" :style="{ background: `url(${user.avatar}) no-repeat center/cover` }">
+            
+          </div>
+          <div class="for-inputs">
+            <input class="tweet-content name" v-model="user.name" type="text" placeholder="" name="name" />
+            <span class="word-count">{{ user.name.length }}/50</span>
 
-          <textarea class="tweet-content intro" v-model="formIntro" type="textarea" placeholder="" name="intro" ></textarea>
-          <span class="word-count">0/160</span>
+            <textarea class="tweet-content intro" v-model="user.introduction" type="textarea" placeholder="" name="introduction" ></textarea>
+            <span class="word-count">{{ user.introduction.length }}/160</span>
+          </div>
+          <div class="icon camera-two">
+            <input class="coverFile" ref="coverFile" name="cover" accept="image/*" @change="coverChange" type="file">
+          </div>
+          <div class="icon camera-one">
+            <input class="avatarFile" ref="avatarFile" name="avatar" accept="image/*" @change="avatarChange" type="file">
+          </div>
+          <img class="icon camera-two" src="./../asset/camera.png" alt="">
+          <img class="icon inside-one" src="./../asset/camera_inside.png" alt="">
+          <img class="icon inside-two" src="./../asset/camera_inside.png" alt="">
+          <img class="icon cross" src="./../asset/cross.png" alt="">
+          <span class="name tag">名稱</span>
+          <span class="self-intro tag">自我介紹</span>
         </div>
-        <img class="icon camera-one" src="./../asset/camera.png" alt="">
-        <img class="icon camera-two" src="./../asset/camera.png" alt="">
-        <img class="icon inside-one" src="./../asset/camera_inside.png" alt="">
-        <img class="icon inside-two" src="./../asset/camera_inside.png" alt="">
-        <img class="icon cross" src="./../asset/cross.png" alt="">
-        <span class="name tag">名稱</span>
-        <span class="self-intro tag">自我介紹</span>
-      </div>
+      </form>
     </div>
   </div>
 </template>
@@ -42,13 +48,6 @@ export default {
   computed: {
     ...mapState(['currentUser', 'isAuthenticated'])
   },
-  data () {
-    return {
-      formIntro: '',
-      formName: '',
-      formData: new FormData()
-    }
-  },
   created () {
     this.user = this.currentUser
   },
@@ -57,16 +56,61 @@ export default {
       this.$emit('after-click-cross')
     },
     coverChange() {
-        this.formData.append('file', this.$refs.coverFile.files[0])
+      const { files } =  this.$refs.coverFile.files
+      if (files === 0) {
+        this.user.cover = ''
+      } else {
+        const coverUrl = window.URL.createObjectURL(this.$refs.coverFile.files[0])
+        this.user.cover = coverUrl
+      }
     },
     avatarChange() {
-        this.formData.append('file', this.$refs.avatarFile.files[0])
+      const { files } = this.$refs.avatarFile.files
+      if (files === 0) {
+        this.user.avatar = ''
+      } else {
+        const avatarUrl = window.URL.createObjectURL(this.$refs.avatarFile.files[0])
+        this.user.avatar = avatarUrl
+      }
     },
-    async putUser () {
-      this.formData.append('name', this.formName)
-      this.formData.append('intro', this.formIntro)
-      const formData = this.formData
-      console.log(formData)
+    handleSubmit(e) {
+      if (this.user.name === '') {
+        Toast.fire({
+          icon: 'warning',
+          title: '請輸入名稱',
+        });
+        return;
+      } else if (
+        this.user.name.length > 50 &&
+        this.user.introduction.length > 160
+      ) {
+        Toast.fire({
+          icon: 'warning',
+          title: '名稱和自我介紹超過最大限制字數！',
+        });
+        return;
+      } else if (this.user.name.length > 50) {
+        Toast.fire({
+          icon: 'warning',
+          title: '名稱只限50字',
+        });
+        return;
+      } else if (this.user.introduction.length > 160) {
+        Toast.fire({
+          icon: 'warning',
+          title: '自我介紹只限160字',
+        });
+        return;
+      }
+      const form = e.target;
+      const formData = new FormData(form)
+      this.putUser(formData)
+    },
+    async putUser (formData) {
+      const loader = this.$loading.show({
+        isFullPage: true,
+        opacity: 1
+      }, { default: this.$createElement('MyLoading') })
       try {
         const { data } = await usersAPI.putUser({
           userId: this.currentUser.id,
@@ -77,9 +121,11 @@ export default {
           throw new Error(data.message)
         }
 
+        this.$emit('completeEdit', this.user)
         this.$emit('after-click-cross')
-
+        loader.hide()
       } catch (error) {
+        loader.hide()
         Toast.fire({
           icon: 'error',
           title: '無法更新資料，請稍後再試'
@@ -163,22 +209,18 @@ $divider: #E6ECF0;
       }
     }
 
+    form {
+      height: 100%;
+    }
 
     .modal-body {
+      height: 100%;
       position: relative;
       // outline: black solid ;
-      height: 245px;
       padding: 0;
       .background-photo {
         width: 598px;
         height: 200px;
-        .coverFile {
-          width: 100%;
-          height: 100%;
-          opacity: 0;
-          position: relative;
-          z-index: 1;
-        }
       }
       .photo {
         width: 120px;
@@ -190,14 +232,6 @@ $divider: #E6ECF0;
         top: 140px;
         border: 4px solid #FFFFFF;
         box-sizing: border-box;
-        .avatarFile {
-          width: 100%;
-          height: 100%;
-          opacity: 0;
-          position: relative;
-          z-index: 1;
-        }
-
       }
       .for-inputs {
         display: flex;
@@ -215,7 +249,7 @@ $divider: #E6ECF0;
           background: #F5F8FA;
           margin: 0 15px;
           border-bottom: 2px solid #657786;
-          padding: 20px 15px 0 15px;
+          padding: 22px 15px 0 15px;
           // ::placeholder {
           //   font-family: Noto Sans TC;
           //   font-style: normal;
@@ -224,12 +258,22 @@ $divider: #E6ECF0;
           //   line-height: 15px;
           // }
         }
+        .tweet-content.name {
+          font-weight: 500;
+          font-size: 19px;
+          line-height: 28px;
+          color:#1C1C1C;
+        }
         .name {
           height: 54px; 
           
         }
         .intro {
           margin-top: 43px;
+          font-weight: 500;
+          font-size: 19px;
+          line-height: 28px;
+          color:#1C1C1C;
         }
         .word-count {
           text-align: end;
@@ -251,10 +295,18 @@ $divider: #E6ECF0;
         font-size: 15px;
       }
       .name {
-        top: 280px;
+        top: 285px;
+        font-weight: 500;
+        font-size: 15px;
+        line-height: 15px;
+        color: #657786;
       }
       .self-intro {
-        bottom: 175px;
+        font-weight: 500;
+        font-size: 15px;
+        line-height: 15px;
+        bottom: 231px;
+        color: #657786;
       }
       .icon {
         position: absolute;   
@@ -268,19 +320,42 @@ $divider: #E6ECF0;
       .camera-one {
         top: 190px;
         left: 68px;
+        background: url(./../asset/camera.png) no-repeat center;
+        background-size: contain;
+        cursor: pointer;
+        .avatarFile {
+          padding-right: 30px;
+          padding-bottom: 30px;
+          width: 30px;
+          height: 30px;
+          opacity: 0;
+          cursor: pointer;
+        }
       }
       .inside-one {
         top: 196px;
         left: 73px;
+        cursor: pointer;
       }
 
       .camera-two {
         top: 90px;
         left: 262px;
+        cursor: pointer;
+        z-index: 999;
+        .coverFile {
+          width: 100%;
+          height: 100%;
+          opacity: 0;
+          position: relative;
+          z-index: 1;
+          cursor: pointer;
+        }
       }
       .inside-two {
         top: 96px;
         left: 267px;
+        cursor: pointer;
       }
 
       .cross {

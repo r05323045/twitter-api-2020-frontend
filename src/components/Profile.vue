@@ -51,7 +51,7 @@
     <TweetList v-if="tabOption === '推文'" :tweets="user.tweets"></TweetList>
     <TweetList v-if="tabOption === '推文與回覆'" :tweets="userReplies"></TweetList>
     <TweetList v-if="tabOption === '喜歡的內容'" :tweets="userLikes"></TweetList>
-    <ModalForEditProfile v-if="showEditProfileModal" @after-click-cross=" afterClickCross" />
+    <ModalForEditProfile v-if="showEditProfileModal" @after-click-cross=" afterClickCross" @completeEdit="completeEdit"/>
   </div>
 </template>
 
@@ -117,6 +117,10 @@ export default {
       }
     },
     async fetchProfile () {
+      const loader = this.$loading.show({
+        isFullPage: true,
+        opacity: 1
+      }, { default: this.$createElement('MyLoading') })
       const userId = this.$route.path === '/user/self' ? this.currentUser.id : this.$route.params.id
       try {
         const { data } = await usersAPI.getProfile({userId})
@@ -151,7 +155,9 @@ export default {
         this.userReplies.sort((a, b) => {
           return a.createdAt < b.createdAt ? 1 : -1;
         })
+        loader.hide()
       } catch (error) {
+        loader.hide()
         console.log(error)
         Toast.fire({
           icon: 'error',
@@ -275,6 +281,15 @@ export default {
     },
      afterClickCross() {
       this.showEditProfileModal = false
+    },
+    completeEdit (modalData) {
+      this.user.user = Object.assign({}, modalData)
+      this.user.tweets = this.user.tweets.map(tweet => ({
+        ...tweet,
+        name: modalData.name,
+        avatar: modalData.avatar,
+        description: modalData.description
+      }))
     }
   }
 }
