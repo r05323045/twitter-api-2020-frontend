@@ -12,7 +12,7 @@
           <span class="name">{{tweet.User.name}}</span>
           <span class="account">{{tweet.User.account}}</span>
         </div>
-      </div> 
+      </div>   
       <p class="tweet-content">{{tweet.description}}</p>
       <span class="time">{{tweet.createdAt}}</span>
     </div>
@@ -45,35 +45,34 @@
     <ModalForReplyTweet v-if='showNewReplyModal' @after-click-cross="afterClickCross" />
   </div>
 </template>
-<script>
+<script> 
 import ModalForReplyTweet from './../components/ModalForReplyTweet'
 export default {
   components: {
     ModalForReplyTweet
-  },
+  }, 
   data() {
     return {
       showNewReplyModal: false,
-      tweet: this.initialTweet, 
-      replies: this.initialReplies,
-      likes: this.initialLikes,
-      comments: this.initialReplies.rows
+      tweet: { ...this.initialTweet },
+      replies: {...this.initialReplies},
+      likes: {...this.initialLikes},
+      comments: {...this.initialReplies.rows}
     }
-  },
+  },  
   props: {
     initialTweet: {
-      type: Array,
+      type: Object,
       required: true
     },
     initialReplies: {
-      type: Array,
+      type: Object,
       required: true
     },
     initialLikes: {
-      type: Array,
+      type: Object,
       required: true
     },
-    
   },
   methods: {
    afterClickCross() {

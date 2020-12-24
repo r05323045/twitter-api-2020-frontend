@@ -58,7 +58,7 @@ const routes = [
     component: () => import('@/views/UserSignIn.vue')
   },
   {
-    path: '/reply_list',
+    path: '/reply_list/:id',
     name: 'SingleTweet',
     component: () => import('@/views/SingleTweet.vue')
   },
