@@ -11,7 +11,7 @@ import Navbar from "./../components/Navbar"
 import SubSetting from './../components/SubSetting'
 import usersAPI from './../apis/users'
 import { Toast } from './../utils/helpers'
-
+import store from './../store'
 
 export default {
   name: 'Setting',
@@ -22,45 +22,48 @@ export default {
   data () {
     return {
       user: {
-        id: '',
         account: '', 
         name: '', 
         email: '',
-        password: '',
-        passwordCheck: ''
       }
     }
   },
-  watch: {
-    initialUser (newValue) {
-      this.user = {
-        ...this.user,
-        ...newValue
-      }
-    },
-  }, 
   created () {
-    const { id } = this.$route.params
-    this.fetchUserSetting(id)
+    // const { id } = this.$route.params
+    const userId = store.state.currentUser.id
+    this.fetchUserSetting(userId)
   },
 
   methods: {  
-    async fetchUserSetting () {
+    async fetchUserSetting (userId) {
+      // const userId = store.state.currentUser.id
       try {
-      const userId = () => Response.data.user.id
-      const { data } = await usersAPI.getSettingPage({ userId })
-      
-      const { account, name, email, password, passwordCheck } = data.user  
+        const { data } = await usersAPI.getSettingPage({ userId })
+        // console.log("data", data)
+        console.log("userId", userId)
+        const { account, name, email } = data[0] 
+        console.log("data[0]",data[0])
+        this.user = {
+          ...this.user,
+          account,
+          name,
+          email
+        }
 
-      this.user = {
-        ...this.user,
-        account,
-        name,
-        email,
-        password,
-        passwordCheck
-      }
-
+        // console.log("this.user", this.user)
+         
+        // console.log("this.account",this.account) 
+        // this.password = data.password
+        // this.passwordCheck = data.passwordCheck
+        // this.user = {
+        //   ...this.user,
+        //   account,
+        //   name,
+        //   email,
+        //   password,
+        //   passwordCheck
+        // }
+        
       } catch (error) {
         Toast.fire({
             icon: 'error',

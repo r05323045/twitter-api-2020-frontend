@@ -5,8 +5,8 @@
     </div>
 
     <div class="content">
-      <form @click.stop.prevent="handleSubmit">
-        <div class="form-label-group mb-2">
+      <form>
+        <div class="form-label-group mb-2" >
           <!-- <label for="account">帳號</label> -->
           <input
             id="account"
@@ -16,7 +16,6 @@
             :placeholder="user.account"
             autocomplete="accountname"
             required
-            autofocus
           >
         </div>
 
@@ -27,11 +26,12 @@
             name="name"
             type="text"
             class="form-control"
-            placeholder="name"
+            :placeholder="user.name"
             autocomplete="username"
             required
             
           >
+      
         </div>
 
         <div class="form-label-group mb-2">
@@ -41,7 +41,7 @@
             name="email"
             type="email"
             class="form-control"
-            placeholder="email"
+            :placeholder="user.email"
             autocomplete="email"
             required
           >
@@ -54,24 +54,24 @@
             name="password"
             type="password"
             class="form-control"
-            placeholder="Password"
+            placeholder=""
             autocomplete="new-password"
             required
           >
         </div>
 
         <div class="form-label-group mb-3">
-          <!-- <label for="password-check">密碼確認</label> -->
+          <!-- <label for="password-check">{{user}}</label> -->
           <input
             id="password-check"
             name="passwordCheck"
             type="password"
             class="form-control"
-            placeholder="Password"
+            placeholder=""
             autocomplete="new-password"
             required
           >
-        </div>
+        </div> 
       
         <div  class="link">
           <span class="save-button">儲存</span> 
@@ -85,37 +85,28 @@
 export default {
   data() {
     return {
-      user: {
-      ...this.initialUser
-      }
+    user:{...this.initialUser}
     }
   },
+  
   props: {
     initialUser: {
       type: Object,
-      default: () => {
-        return {
-          account: '', 
-          name: '', 
-          email: '',
-          password: '',
-          passwordCheck: ''
-        }
-      }
+      required: true,
     }
   }, 
-  
-  // created () {
-  //   this.
-  // },
+ 
   methods: {  
-    handleSubmit(e) {
-      const form = e.target
-      const formData = new FormData(form)
-      this.$emit('after-submit', formData)
-    },
-   
-    // async fetchUserSettings ( userId ) {
+    // handleSubmit(e) {
+    //   const form = e.target
+    //   const formData = new FormData(form)
+    //   this.$emit('after-submit', formData)
+    // },
+    
+
+
+
+    // async fetchUserSetting ( userId ) {
     //   try{
     //     const { data } = await usersAPI.putSetting.getDetail({ userId })
 

@@ -12,7 +12,7 @@
         <div class="icon user"></div>
         個人資料
       </div>
-      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/setting/:id').catch(()=>{})">
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/setting').catch(()=>{})">
         <div class="icon cog"></div>
         設定
       </div>

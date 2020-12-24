@@ -12,7 +12,6 @@ const authorizeIsAdmin = (to, from, next) => {
   }
   next()
 }
-
 const routes = [
   {
     path: '/',
@@ -50,7 +49,7 @@ const routes = [
     component: () => import('@/views/SelfFollowers.vue')
   },
   {
-    path: '/setting/:id',
+    path: '/setting',
     name: 'Setting',
     component: () => import('@/views/Setting.vue')
   },
