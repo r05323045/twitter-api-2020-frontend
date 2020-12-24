@@ -46,7 +46,7 @@ const routes = [
   {
     path: '/user/self/following',
     name: 'SelfFollowing',
-    component: () => import('@/views/SelfFollowers.vue')
+    component: () => import('@/views/SelfFollowing.vue')
   },
   {
     path: '/setting',

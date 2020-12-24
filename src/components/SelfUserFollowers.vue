@@ -10,11 +10,11 @@
     </div>
     <div class="nav">
       <ul class='nav-pills'>
-        <li class="nav-item"> 
+        <li class="nav-item" @click="handleTurnTrue"> 
           <router-link to="/user/self/follower">追隨者</router-link>
         </li>
-    
-        <li class="nav-item">
+        
+        <li class="nav-item" @click="handleTurnFalse">
           <router-link to="/user/self/following">正在跟隨</router-link>
         </li>
       </ul>
@@ -22,16 +22,30 @@
     </div>
     
     <div class="followListContent">
-      <div class="singlContent">
-
-        <img src="./../asset/elephant.png" alt="">
-        <div class="text">
-          <h5 class="title">Laura</h5>
-          <h5 class="account">@LauraBill</h5>
-          <p class="content">Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit.</p>
+      <div v-if="followButtonStatus" >
+        <div v-for="follower in followers" :key="follower.id" class="singlContent">
+          <img :src="follower.avatar" alt="">
+          <div class="text">
+            <h5 class="title">{{follower.name}}</h5>
+            <h5 class="account">{{folloer.account}}</h5>
+            <p class="content">{{follower.introduction}}</p>
+          </div>
+          <button class="follow">正在跟隨</button>
         </div>
-        <button class="follow">正在跟隨</button>
-      </div>      
+      </div>
+     
+      <div v-else-if="!followButtonStatus">
+        <div v-for="following in followings" :key="following.id"  class="singlContent followings">
+          <img :src="following.avatar" alt="">
+          <div class="text">
+            <h5 class="title">{{following.name}}</h5>
+            <h5 class="account">{{following.account}}</h5>
+            <p class="content">{{ following.introduction }}</p>
+          </div>
+          <button class="follow">正在跟隨</button>
+        </div>
+      </div>
+
     </div>  
 
 
@@ -42,8 +56,32 @@
 
 <script>
 export default {
+  data(){
+    return {
+      followButtonStatus: true,
+      followings: {...this.initialFollowings},
+      followers: {...this.initialFollowers}
+    }
+  },
+  props: {
+    initialFollowings: {
+      type: Object,
+      required: true
+    },
+    initialFollowers: {
+      type: Object,
+      required: true
+    }
+  },
   methods: {
+    handleTurnTrue() {
+      this.followButtonStatus = true
+    },
 
+    handleTurnFalse() {
+      this.followButtonStatus = false 
+    }
+    
   }  
 }
 </script>
