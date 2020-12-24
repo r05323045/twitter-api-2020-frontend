@@ -51,7 +51,7 @@
     <TweetList v-if="tabOption === '推文'" :tweets="user.tweets"></TweetList>
     <TweetList v-if="tabOption === '推文與回覆'" :tweets="userReplies"></TweetList>
     <TweetList v-if="tabOption === '喜歡的內容'" :tweets="userLikes"></TweetList>
-    <ModalForEditProfile v-if="showEditProfileModal" @after-click-cross=" afterClickCross" @completeEdit="fetchProfile"/>
+    <ModalForEditProfile v-if="showEditProfileModal" @after-click-cross=" afterClickCross" @completeEdit="completeEdit"/>
   </div>
 </template>
 
@@ -281,6 +281,15 @@ export default {
     },
      afterClickCross() {
       this.showEditProfileModal = false
+    },
+    completeEdit (modalData) {
+      this.user.user = Object.assign({}, modalData)
+      this.user.tweets = this.user.tweets.map(tweet => ({
+        ...tweet,
+        name: modalData.name,
+        avatar: modalData.avatar,
+        description: modalData.description
+      }))
     }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="modal edit">
     <div class="modal-content">
-      <form @submit.stop.prevent="handleSubmit">
+      <form ref="form" @submit.stop.prevent="handleSubmit" enctype="multipart/form-data">
         <div class="modal-header">
           <div class="icon cross" @click.stop.prevent="cancelModalClick()"></div>
           <span class="title">編輯個人資料</span>
@@ -48,12 +48,6 @@ export default {
   computed: {
     ...mapState(['currentUser', 'isAuthenticated'])
   },
-  data () {
-    return {
-      formIntro: '',
-      formName: '',
-    }
-  },
   created () {
     this.user = this.currentUser
   },
@@ -62,9 +56,21 @@ export default {
       this.$emit('after-click-cross')
     },
     coverChange() {
-      if (this.$refs.coverFile.files) {
+      const { files } =  this.$refs.coverFile.files
+      if (files === 0) {
+        this.user.cover = ''
+      } else {
         const coverUrl = window.URL.createObjectURL(this.$refs.coverFile.files[0])
         this.user.cover = coverUrl
+      }
+    },
+    avatarChange() {
+      const { files } = this.$refs.avatarFile.files
+      if (files === 0) {
+        this.user.avatar = ''
+      } else {
+        const avatarUrl = window.URL.createObjectURL(this.$refs.avatarFile.files[0])
+        this.user.avatar = avatarUrl
       }
     },
     handleSubmit(e) {
@@ -100,12 +106,6 @@ export default {
       const formData = new FormData(form)
       this.putUser(formData)
     },
-    avatarChange() {
-      if (this.$refs.avatarFile.files) {
-        const avatarUrl = window.URL.createObjectURL(this.$refs.avatarFile.files[0])
-        this.user.avatar = avatarUrl
-      }
-    },
     async putUser (formData) {
       const loader = this.$loading.show({
         isFullPage: true,
@@ -121,7 +121,7 @@ export default {
           throw new Error(data.message)
         }
 
-        this.$emit('completeEdit')
+        this.$emit('completeEdit', this.user)
         this.$emit('after-click-cross')
         loader.hide()
       } catch (error) {
@@ -324,10 +324,11 @@ $divider: #E6ECF0;
         background-size: contain;
         cursor: pointer;
         .avatarFile {
-          width: 100%;
-          height: 100%;
+          padding-right: 30px;
+          padding-bottom: 30px;
+          width: 30px;
+          height: 30px;
           opacity: 0;
-          position: relative;
           cursor: pointer;
         }
       }
