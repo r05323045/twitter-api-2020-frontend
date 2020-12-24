@@ -53,7 +53,7 @@ export default {
           avatar: tweet.User.avatar,
           account: tweet.User.account,
           createdAt: tweet.createdAt,
-          description: tweet.description
+          description: tweet.description.slice(0, 50)
         }))
         this.tweets.sort((a, b) => {
           return a.createdAt < b.createdAt ? 1 : -1;

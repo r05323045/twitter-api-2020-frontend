@@ -1,29 +1,29 @@
 <template>
   <div class="nav flex-column">
-    <div class="logo" @click="$router.push('/').catch(()=>{})">
+    <div class="logo" @click="currentUser.role === 'admin' ? $router.push('/admin/main').catch(()=>{}) : $router.push('/').catch(()=>{})">
       <div class="icon logo"></div>
     </div>
     <div class="nav-item-wrapper">
-      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/').catch(()=>{})">
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/').catch(()=>{})" :class="{ active: $route.path === '/main' }">
         <div class="icon index"></div>
         首頁
       </div>
-      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/user/self').catch(()=>{})">
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/user/self').catch(()=>{})" :class="{ active: $route.path === '/user/self' }">
         <div class="icon user"></div>
         個人資料
       </div>
-      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/setting').catch(()=>{})">
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/setting').catch(()=>{})" :class="{ active: $route.path === '/setting' }">
         <div class="icon cog"></div>
         設定
       </div>
       <div v-if="$route.path.indexOf('admin') < 0" class="nav-item">
-        <button class="btn-tweet" @click="afterClickNewTweet">推文</button>
+        <button class="btn-tweet" @click="showNewTweetModal = true">推文</button>
       </div>
-      <div v-if="$route.path.indexOf('admin') > 0" class="nav-item" @click="$router.push('/admin/main').catch(()=>{})">
+      <div v-if="$route.path.indexOf('admin') > 0" class="nav-item" @click="$router.push('/admin/main').catch(()=>{})"  :class="{ active: $route.path === '/admin/main' }">
         <div class="icon index"></div>
         推文清單
       </div>
-      <div v-if="$route.path.indexOf('admin') > 0" class="nav-item" @click="$router.push('/admin/users').catch(()=>{})">
+      <div v-if="$route.path.indexOf('admin') > 0" class="nav-item" @click="$router.push('/admin/users').catch(()=>{})"  :class="{ active: $route.path === '/admin/users' }">
         <div class="icon user"></div>
         使用者列表
       </div>
@@ -33,16 +33,17 @@
       <div class="icon logout"></div>
       登出
     </div>
-    <ModalForNewTweet v-if="showNewTweetModal" name="ModalForNewTweet" @after-click-cross="afterClickCross">this is a modal</ModalForNewTweet>
+    <ModalForNewTweet v-if="showNewTweetModal" name="ModalForNewTweet" @after-click-cross="showNewTweetModal = false" @postTweet="postTweet"></ModalForNewTweet>
   </div>
   
 </template>
 
 <script>
 
-
 import { mapState } from 'vuex'
-import ModalForNewTweet from './../components/ModalForNewTweet'
+import TweetsAPI from '@/apis/tweets'
+import { Toast } from '@/utils/helpers'
+import ModalForNewTweet from '@/components/ModalForNewTweet.vue'
 export default {
   name: 'Navbar',
   components: {
@@ -61,12 +62,39 @@ export default {
       this.$store.commit('revokeAuthentication')
       this.$router.push('/signin')
     },
-    afterClickCross() {
-      this.showNewTweetModal = false
-    },
-    afterClickNewTweet() {
-      this.showNewTweetModal = true
-      console.log('afterClickNewTweet')
+    async postTweet (description) {
+      try {
+        if (!description) {
+          Toast.fire({
+            icon: 'error',
+            title: '請輸入內容'
+          })
+          return
+        }
+
+        if (description.length > 140) {
+          Toast.fire({
+            icon: 'error',
+            title: '推文字數需在140內'
+          })
+          return
+        }
+
+        const { data } = await TweetsAPI.postTweet({ description })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        this.$bus.$emit('renewTweets')
+        this.showNewTweetModal = false
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '目前無法推文，請稍候'
+        })
+      }
     }
   }
 }
@@ -156,6 +184,12 @@ $lightdark: #9197A3;
         }
       }
     }
+    .nav-item.active {
+        color: $orange;
+        .icon {
+          background-color: $orange;
+        }
+      }
   }
   .logout-wrapper {
     width: 100%;

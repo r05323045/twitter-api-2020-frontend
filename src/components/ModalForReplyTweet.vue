@@ -1,5 +1,5 @@
 <template>
-  <div class="modal">
+  <div class="modal reply">
     <div class="modal-content">
       <div class="modal-header">
         <img src="./../asset/exit.png" alt="" @click="cancelModalClick">
@@ -53,7 +53,7 @@ export default {
 </script>
 
 <style lang='scss'>
-  .modal {
+  .modal.reply {
     position: fixed;
     top: 0;
     left: 0;
