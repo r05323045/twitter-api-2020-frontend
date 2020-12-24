@@ -1,25 +1,25 @@
 <template>
   <div class="main">
     <div class="upper">
-      <img class="arrow" src="./../asset/Vector@2x.png" alt="">
+      <img class="arrow" src="./../asset/Vector@2x.png" alt="" @click="$router.push(`/main`)">
       <span>推文</span>
     </div>
     <hr>
     <div class="self-content">
       <div class="self-info">
-        <img class="self-photo" src="./../asset/elephant.png" alt="">
+        <img class="self-photo" :src=" tweet.User.avatar " alt="">
         <div class="wrap">
-          <span class="name">Apple</span>
-          <span class="account">@apple</span>
+          <span class="name">{{tweet.User.name}}</span>
+          <span class="account">{{tweet.User.account}}</span>
         </div>
-      </div> 
-      <p class="tweet-content">Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum.</p>
-      <span class="time">上午 10:05・2020年6月10日</span>
+      </div>   
+      <p class="tweet-content">{{tweet.description}}</p>
+      <span class="time">{{tweet.createdAt}}</span>
     </div>
     <hr>
     <div class="counts">
-      <span class="reply-counts">34回覆</span>
-      <span class="like-counts">808 喜歡次數</span>
+      <span class="reply-counts">{{replies.count}}回覆</span>
+      <span class="like-counts">{{likes.count}} 喜歡次數</span>
     </div>
     <hr>
     <div class="icons">
@@ -28,116 +28,51 @@
     </div>
     
     <div class="replies">
-      <div class="single-reply">  
-        <img src="./../asset/elephant.png" alt="">
+      <div class="single-reply" v-for="comment in comments" :key="comment.id">  
+        <img :src="comment.User.avatar" alt="">
         <div class="reply-content">
           <div class="title">
-            <span class="name">Apple</span>
-            <span class="account">@apple</span>
-            <span class="time">・13小時</span>
+            <span class="name">{{comment.User.name}}</span>
+            <span class="account">{{comment.User.account}}</span>
+            <span class="time">・{{comment.createdAt}}</span>
           </div>
-          <span class="to-whom">回覆 @apple</span>
-          <p class="reply-item">Great</p>
+          <span class="to-whom">回覆 {{tweet.User.account}}</span>
+          <p class="reply-item">{{comment.comment}}</p>
         </div>
       </div>
-      <div class="single-reply">  
-        <img src="./../asset/elephant.png" alt="">
-        <div class="reply-content">
-          <div class="title">
-            <span class="name">Apple</span>
-            <span class="account">@apple</span>
-            <span class="time">・13小時</span>
-          </div>
-          <span class="to-whom">回覆 @apple</span>
-          <p class="reply-item">Great</p>
-        </div>
-      </div>
-      <div class="single-reply">  
-        <img src="./../asset/elephant.png" alt="">
-        <div class="reply-content">
-          <div class="title">
-            <span class="name">Apple</span>
-            <span class="account">@apple</span>
-            <span class="time">・13小時</span>
-          </div>
-          <span class="to-whom">回覆 @apple</span>
-          <p class="reply-item">Great</p>
-        </div>
-      </div> 
-      <div class="single-reply">  
-        <img src="./../asset/elephant.png" alt="">
-        <div class="reply-content">
-          <div class="title">
-            <span class="name">Apple</span>
-            <span class="account">@apple</span>
-            <span class="time">・13小時</span>
-          </div>
-          <span class="to-whom">回覆 @apple</span>
-          <p class="reply-item">Great</p>
-        </div>
-      </div> 
-      <div class="single-reply">  
-        <img src="./../asset/elephant.png" alt="">
-        <div class="reply-content">
-          <div class="title">
-            <span class="name">Apple</span>
-            <span class="account">@apple</span>
-            <span class="time">・13小時</span>
-          </div>
-          <span class="to-whom">回覆 @apple</span>
-          <p class="reply-item">Great</p>
-        </div>
-      </div> 
-      <div class="single-reply">  
-        <img src="./../asset/elephant.png" alt="">
-        <div class="reply-content">
-          <div class="title">
-            <span class="name">Apple</span>
-            <span class="account">@apple</span>
-            <span class="time">・13小時</span>
-          </div>
-          <span class="to-whom">回覆 @apple</span>
-          <p class="reply-item">Great</p>
-        </div>
-      </div> 
-      <div class="single-reply">  
-        <img src="./../asset/elephant.png" alt="">
-        <div class="reply-content">
-          <div class="title">
-            <span class="name">Apple</span>
-            <span class="account">@apple</span>
-            <span class="time">・13小時</span>
-          </div>
-          <span class="to-whom">回覆 @apple</span>
-          <p class="reply-item">Great</p>
-        </div>
-      </div> 
-      <div class="single-reply">  
-        <img src="./../asset/elephant.png" alt="">
-        <div class="reply-content">
-          <div class="title">
-            <span class="name">Apple</span>
-            <span class="account">@apple</span>
-            <span class="time">・13小時</span>
-          </div>
-          <span class="to-whom">回覆 @apple</span>
-          <p class="reply-item">Great</p>
-        </div>
-      </div> 
     </div>
+
     <ModalForReplyTweet v-if='showNewReplyModal' @after-click-cross="afterClickCross" />
   </div>
 </template>
-<script>
+<script> 
 import ModalForReplyTweet from './../components/ModalForReplyTweet'
 export default {
   components: {
     ModalForReplyTweet
-  },
+  }, 
   data() {
     return {
-      showNewReplyModal: false 
+      showNewReplyModal: false,
+      tweet: { ...this.initialTweet },
+      replies: {...this.initialReplies},
+      likes: {...this.initialLikes},
+      comments: {...this.initialReplies.rows}
     }
+  },  
+  props: {
+    initialTweet: {
+      type: Object,
+      required: true
+    },
+    initialReplies: {
+      type: Object,
+      required: true
+    },
+    initialLikes: {
+      type: Object,
+      required: true
+    },
   },
   methods: {
    afterClickCross() {

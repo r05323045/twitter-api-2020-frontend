@@ -6,17 +6,16 @@
 
     <div class="content">
       <form>
-        <div class="form-label-group mb-2">
+        <div class="form-label-group mb-2" >
           <!-- <label for="account">帳號</label> -->
           <input
             id="account"
             name="account"
             type="text"
             class="form-control"
-            placeholder="account"
+            :placeholder="user.account"
             autocomplete="accountname"
             required
-            autofocus
           >
         </div>
 
@@ -27,11 +26,12 @@
             name="name"
             type="text"
             class="form-control"
-            placeholder="name"
+            :placeholder="user.name"
             autocomplete="username"
             required
             
           >
+      
         </div>
 
         <div class="form-label-group mb-2">
@@ -41,7 +41,7 @@
             name="email"
             type="email"
             class="form-control"
-            placeholder="email"
+            :placeholder="user.email"
             autocomplete="email"
             required
           >
@@ -54,24 +54,24 @@
             name="password"
             type="password"
             class="form-control"
-            placeholder="Password"
+            placeholder=""
             autocomplete="new-password"
             required
           >
         </div>
 
         <div class="form-label-group mb-3">
-          <!-- <label for="password-check">密碼確認</label> -->
+          <!-- <label for="password-check">{{user}}</label> -->
           <input
             id="password-check"
             name="passwordCheck"
             type="password"
             class="form-control"
-            placeholder="Password"
+            placeholder=""
             autocomplete="new-password"
             required
           >
-        </div>
+        </div> 
       
         <div  class="link">
           <span class="save-button">儲存</span> 
@@ -80,6 +80,65 @@
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+    user:{...this.initialUser}
+    }
+  },
+  
+  props: {
+    initialUser: {
+      type: Object,
+      required: true,
+    }
+  }, 
+ 
+  methods: {  
+    // handleSubmit(e) {
+    //   const form = e.target
+    //   const formData = new FormData(form)
+    //   this.$emit('after-submit', formData)
+    // },
+    
+
+
+
+    // async fetchUserSetting ( userId ) {
+    //   try{
+    //     const { data } = await usersAPI.putSetting.getDetail({ userId })
+
+    //     // 解構賦值將資料取出
+    //     const {
+    //         account, 
+    //         name, 
+    //         email,
+            
+    //       } = data.user   //!!!
+        
+    //     // 將資料帶入 Vue 內
+    //     this.user = {
+    //       ...this.user,  //!!!
+    //       account,
+    //       name,
+    //       email,
+    //     }
+    //   } catch (error) {
+    //     Toast.fire({
+    //       icon: 'error',
+    //       title: '無法取得帳戶設定，請稍後再試'
+    //     })
+    //   }
+    // },
+    // handleSubmit () {
+
+    // }
+  // }
+  }
+}
+</script>
 
 <style lang="scss">
 .container {
