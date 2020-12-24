@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="upper">
-      <img class="arrow" src="./../asset/Vector@2x.png" alt="">
+      <img class="arrow" src="./../asset/Vector@2x.png" alt="" @click="$router.push(`/main`)">
       <span>推文</span>
     </div>
     <hr>
