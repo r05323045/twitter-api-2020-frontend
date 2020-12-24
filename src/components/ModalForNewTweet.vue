@@ -1,19 +1,27 @@
 <template>
   <div class="modal new">
     <div class="modal-content">
-
       <div class="modal-header">
+
+        <img @click.stop.prevent="cancelModalClick()" src="./../asset/exit.png" alt="">
         <div class="icon cross" @click.stop.prevent="cancelModalClick()"></div>
+
       </div>
-      
       <hr>
       <div class="modal-body">
+
+        
+          <img class="photo" src="" alt="">
+          <textarea class="tweet-content" type="textarea" placeholder="有什麼新鮮事嗎?" name="" id=""></textarea>
+          <button>推文</button>
+        
+
         <!-- <hr class="line"> -->
         <div class="photo" :style="{ background: `url(${currentUser.avatar}) no-repeat center/cover` }"></div>
         <textarea class="tweet-content" type="textarea" placeholder="有什麼新鮮事嗎?" v-model="tweetDescription"></textarea>
         <button @click="postTweet(tweetDescription)">推文</button>
-      </div>
 
+      </div>
     </div>
   </div>
 </template>
@@ -126,6 +134,7 @@ $divider: #E6ECF0;
           font-size: 16px;
           font-weight: 500;
           color: #919191;
+
         }
       }
       button {
