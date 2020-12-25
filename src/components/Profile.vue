@@ -89,7 +89,9 @@ export default {
       this.followAction(action)
     })
     this.$bus.$on('renewTweets', action => {
-      this.fetchProfile(action)
+      if (this.$route.path === '/user/self') {
+        this.fetchProfile(action)
+      }
     })
     this.fetchProfile()
     this.fetchUserLikes()

@@ -9,12 +9,12 @@
       </div>
     </div>
     <div class="tab">
-      <div class="item" :class="{ active: this.$route.path === '/user/self/follower' }"> 
-        <div class="text"  @click="$router.push('/user/self/follower')">追隨者</div>
+      <div class="item" :class="{ active: this.$route.path === '/user/self/follower' }" @click="$router.push('/user/self/follower')"> 
+        <div class="text">追隨者</div>
       </div>
       
-      <div class="item" :class="{ active: $route.path === '/user/self/following' }">
-        <div class="text" @click="$router.push('/user/self/following')">正在跟隨</div>
+      <div class="item" :class="{ active: $route.path === '/user/self/following' }" @click="$router.push('/user/self/following')">
+        <div class="text">正在跟隨</div>
       </div>
     </div>
     <div class="followListContent">

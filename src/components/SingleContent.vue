@@ -92,6 +92,9 @@ export default {
         const data = await tweetsAPI.getTweet({ tweetId })
         this.tweet =  { ...data.data.tweet }
         this.replies =  { ...data.data.replies }
+        this.replies.rows.sort((a, b) => {
+          return a.createdAt < b.createdAt ? 1 : -1;
+        })
         this.likes =  { ...data.data.likes }
       } catch(error) {
         Toast.fire({

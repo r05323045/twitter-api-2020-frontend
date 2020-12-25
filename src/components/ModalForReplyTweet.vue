@@ -121,6 +121,7 @@ $divider: #E6ECF0;
               margin: 0px 10px 41px 0px;
               object-fit: cover;
               background: #C4C4C4;
+              transition: ease-in 0.2s;
               cursor: pointer;
               &:hover {
                 filter: brightness(.9);

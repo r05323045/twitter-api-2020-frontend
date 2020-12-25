@@ -1,12 +1,12 @@
 <template>
   <div class="main">
     <Navbar></Navbar>
-    <div class="container">
+    <div class="main-container">
       <div class="title">首頁</div>
       <div class="post-tweet">
         <form class="content-wrapper">
           <div class="avatar" @click="$router.push('/user/self').catch(()=>{})" :style="{ background: `url(${currentUser.avatar}) no-repeat center/cover` }"></div>
-          <textarea class="content" placeholder="有什麼新鮮事？" v-model="tweetDescription"></textarea>
+          <textarea v-on="checkTextLength" class="content" placeholder="有什麼新鮮事？" v-model="tweetDescription"></textarea>
           <button class="btn btn-tweet" @click.stop.prevent="postTweet(tweetDescription)">推文</button>
         </form>
       </div>
@@ -32,7 +32,7 @@ export default {
     TweetList
   },
   computed: {
-    ...mapState(['currentUser', 'isAuthenticated'])
+    ...mapState(['currentUser', 'isAuthenticated']),
   },
   data () {
     return {
@@ -40,16 +40,31 @@ export default {
       tweetDescription: ''
     }
   },
+  watch: {
+    tweetDescription () {
+      this.checkTextLength()
+    }
+  },
   created () {
     this.$bus.$on('tweetAction', action => {
       this.tweetAction(action)
     })
     this.$bus.$on('renewTweets', action => {
-      this.fetchTweets(action)
+      if (this.$route.path === '/main') { 
+        this.fetchTweets(action)
+      }
     })
     this.fetchTweets()
   },
   methods: {
+    checkTextLength () {
+      if (this.tweetDescription.length > 139) {
+        Toast.fire({
+          icon: 'error',
+          title: '推文字數已達上限'
+        })
+      }
+    },
     async fetchTweets () {
       const loader = this.$loading.show({
         isFullPage: true,
@@ -148,7 +163,7 @@ $divider: #E6ECF0;
   width: 100%;
   display: flex;
   flex-direction: row;
-  .container {
+  .main-container {
     max-height: 100vh;
     overflow-y: scroll;
     border-left: 1px solid $divider;
@@ -195,6 +210,7 @@ $divider: #E6ECF0;
         }
         .content {
           padding: 20px 0 0 75px;
+          height: 100%;
           border: none;
           overflow: auto;
           outline: none;

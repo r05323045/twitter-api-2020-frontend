@@ -3,20 +3,11 @@
     <div class="modal-content">
       <div class="modal-header">
 
-        <img @click.stop.prevent="cancelModalClick()" src="./../asset/exit.png" alt="">
         <div class="icon cross" @click.stop.prevent="cancelModalClick()"></div>
 
       </div>
       <hr>
       <div class="modal-body">
-
-        
-          <img class="photo" src="" alt="">
-          <textarea class="tweet-content" type="textarea" placeholder="有什麼新鮮事嗎?" name="" id=""></textarea>
-          <button>推文</button>
-        
-
-        <!-- <hr class="line"> -->
         <div class="photo" :style="{ background: `url(${currentUser.avatar}) no-repeat center/cover` }"></div>
         <textarea class="tweet-content" type="textarea" placeholder="有什麼新鮮事嗎?" v-model="tweetDescription"></textarea>
         <button @click.stop.prevent="postTweet(tweetDescription)">推文</button>
@@ -119,6 +110,11 @@ $divider: #E6ECF0;
         background: #C4C4C4;
         position: absolute;
         left: 15px;
+        transition: ease-in 0.2s;
+        cursor: pointer;
+        &:hover {
+          filter: brightness(.9);
+        }
         
       }
       .tweet-content {
