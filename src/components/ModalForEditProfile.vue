@@ -101,6 +101,12 @@ export default {
           title: '自我介紹只限160字',
         });
         return;
+      } else if (!this.$refs.avatarFile.files.FileList && !this.$refs.coverFile.files.FileList) {
+        Toast.fire({
+          icon: 'warning',
+          title: '請上傳圖片',
+        });
+        return;
       }
       const form = e.target;
       const formData = new FormData(form)
