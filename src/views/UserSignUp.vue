@@ -1,34 +1,32 @@
 <template>
   <div class="signup">
-    <div class="container">
+    <div class="sign-up-container">
       <div class="logo">
         <img src="https://media.cakeresume.com/image/upload/s--S9Jdcf0R--/c_pad,fl_png8,h_400,w_400/v1548316744/ribjsyna9cm9tm4pkv63.png">
       </div>
       <div class="title">建立你的帳號</div>
       <form>
         <div class="form-label-group mb-2">
-          <!-- <label for="account">帳號</label> -->
+          <label for="account">帳號</label>
           <input
             id="account"
             name="account"
             v-model="user.account"
             type="text"
             class="form-control"
-            placeholder="account"
             autocomplete="accountname"
             required
           >
         </div>
 
         <div class="form-label-group mb-2">
-          <!-- <label for="name">名稱</label> -->
+          <label for="name">名稱</label>
           <input
             id="name"
             name="name"
             v-model="user.name"
             type="text"
             class="form-control"
-            placeholder="name"
             autocomplete="name"
             required
             
@@ -36,42 +34,39 @@
         </div>
 
         <div class="form-label-group mb-2">
-          <!-- <label for="email">Email</label> -->
+          <label for="email">Email</label>
           <input
             id="email"
             name="email"
             v-model="user.email"
             type="email"
             class="form-control"
-            placeholder="email"
             autocomplete="email"
             required
           >
         </div>
 
         <div class="form-label-group mb-3">
-          <!-- <label for="password">密碼</label> -->
+          <label for="password">密碼</label>
           <input
             id="password"
             name="password"
             v-model="user.password"
             type="password"
             class="form-control"
-            placeholder="Password"
             autocomplete="password"
             required
           >
         </div>
 
         <div class="form-label-group mb-3">
-          <!-- <label for="password-check">密碼確認</label> -->
+          <label for="password-check">密碼確認</label>
           <input
             id="Checkpassword"
             name="Checkpassword"
             v-model="user.Checkpassword"
             type="password"
             class="form-control"
-            placeholder="Password Check"
             autocomplete="password"
             required
           >
@@ -104,15 +99,21 @@ export default {
   },
   methods: {
     async handleSubmit () {
+      const loader = this.$loading.show({
+        isFullPage: true,
+        opacity: 1
+      }, { default: this.$createElement('MyLoading') })
       try {
         
         if (!this.user.account || !this.user.name || !this.user.email || !this.user.password || !this.user.Checkpassword) {
+          loader.hide()
           Toast.fire({
             icon: 'warning',
             title: '請輸入必填欄位'
           })
           return
         } else if (this.user.password !== this.user.Checkpassword) {
+          loader.hide()
           Toast.fire({
             icon: 'warning',
             title: '您輸入的密碼不吻合'
@@ -124,16 +125,18 @@ export default {
         const { data } = await authorizationAPI.signUp({ account: this.user.account, name: this.user.name, email: this.user.email, password: this.user.password, checkPassword: this.user.Checkpassword})
         
         if (data.status !== "success") {
+          loader.hide()
           throw new Error(data.message)
         }
+        loader.hide()
         Toast.fire({
           icon: 'success',                    
           title: '註冊成功'
         })
 
         this.$router.push('/signin')
-
       } catch (error) { 
+        loader.hide()
         console.log(error)
         Toast.fire({
           icon: 'error',                    
@@ -155,7 +158,7 @@ $bitdark: #657786;
 .signup {
   margin: auto;
   max-width: 540px;
-  .container {
+  .sign-up-container {
     margin-top: 60px;
     height: 100%;
     padding: 0;
@@ -180,7 +183,19 @@ $bitdark: #657786;
       width: 540px;
       height: 50px;
       margin: 0px;
+      position: relative;
+      label {
+        position: absolute;
+        left: 10px;
+        top: 5px;
+        height: 15px;
+        font-weight: 500;
+        font-size: 15px;
+        line-height: 15px;
+        color: $bitdark;
+      }
       input {
+        padding: 20px 0 0 12px;
         border-radius: 0;
         border: none;
         border-bottom: 2px solid #919191;

@@ -12,7 +12,7 @@
       <form>
         <div class="form-group">
           <label v-if="!routeIsAdmin" class="account" v-show="!accountFocus && account === ''">帳號</label>
-           <label v-if="routeIsAdmin" class="account" v-show="!accountFocus && email === ''">Email</label>
+          <label v-if="routeIsAdmin" class="account" v-show="!accountFocus && email === ''">Email</label>
           <input v-if="!routeIsAdmin" type="text" ref="account" @focus="checkFocus('account')" @blur="checkBlur('account')" v-model="account" class="form-control" required>
           <input v-if="routeIsAdmin" type="text" ref="email" @focus="checkFocus('email')" @blur="checkBlur('email')" v-model="email" class="form-control" required>
           <label class="password" v-show="!passwordFocus && password === ''">密碼</label>
@@ -77,6 +77,10 @@ export default {
 
     },
     async signin () {
+      const loader = this.$loading.show({
+        isFullPage: true,
+        opacity: 1
+      }, { default: this.$createElement('MyLoading') })
       try {
         if (!this.account || !this.password) {
           Toast.fire({
@@ -86,7 +90,6 @@ export default {
           return
         }
         
-        this.isProcessing = true
         const response = await authorizationAPI.signIn({
           account: this.account,
           password: this.password
@@ -96,6 +99,7 @@ export default {
 
         if (data.status !== 'success' || data.user.role === 'admin') {
           this.password = ''
+          loader.hide()
           throw new Error(data.message)
         }
 
@@ -105,8 +109,9 @@ export default {
         const redirectRoute ='/main'
         
         this.$router.push(redirectRoute)
-
+        loader.hide()
       } catch(error) {
+        loader.hide()
         this.password = ''
         this.isProcessing = false
         Toast.fire({
@@ -118,8 +123,13 @@ export default {
     },
 
     async adminSignin () {
+      const loader = this.$loading.show({
+        isFullPage: true,
+        opacity: 1
+      }, { default: this.$createElement('MyLoading') })
       try {
         if (!this.email || !this.password) {
+          loader.hide()
           Toast.fire({
             icon: 'warning',
             title: '請填入Email和密碼'
@@ -127,7 +137,6 @@ export default {
           return
         }
         
-        this.isProcessing = true
         const response = await AdminAPI.signIn({
           email: this.email,
           password: this.password
@@ -136,6 +145,7 @@ export default {
         const { data } = response
 
         if (data.status !== 'success') {
+          loader.hide()
           this.password = ''
           throw new Error(data.message)
         }
@@ -144,8 +154,9 @@ export default {
         this.$store.commit('setCurrentUser', data.user)
 
         this.$router.push('/admin/main')
-
+        loader.hide()
       } catch(error) {
+        loader.hide()
         this.password = ''
         this.isProcessing = false
         Toast.fire({

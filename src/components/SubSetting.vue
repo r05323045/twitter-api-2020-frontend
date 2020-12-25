@@ -7,7 +7,7 @@
     <div class="content">
       <form ref="settingForm">
         <div class="form-label-group mb-2" >
-          <!-- <label for="account">帳號</label> -->
+          <label for="account">帳號</label>
           <input
             id="account"
             name="account"
@@ -19,7 +19,7 @@
         </div>
 
         <div class="form-label-group mb-2">
-          <!-- <label for="name">名稱</label> -->
+          <label for="name">名稱</label>
           <input
             id="name"
             name="name"
@@ -33,7 +33,7 @@
         </div>
 
         <div class="form-label-group mb-2">
-          <!-- <label for="email">Email</label> -->
+          <label for="email">Email</label>
           <input
             id="email"
             name="email"
@@ -45,7 +45,7 @@
         </div>
 
         <div class="form-label-group mb-3">
-          <!-- <label for="password">密碼</label> -->
+          <label for="password">密碼</label>
           <input
             id="password"
             name="password"
@@ -58,15 +58,13 @@
         </div>
 
         <div class="form-label-group mb-3">
-          <!-- <label for="password-check">{{user}}</label> -->
+          <label for="password-check">密碼確認</label>
           <input
             id="password-check"
             name="passwordCheck"
             type="password"
             class="form-control"
-            placeholder=""
-            autocomplete="new-password"
-            v-model="passwordCheck"
+            v-model="confirmedPassword"
             required
           >
         </div> 
@@ -87,7 +85,7 @@ export default {
   data () {
     return {
       user: {},
-      passwordCheck: ''
+      confirmedPassword: ''
     }
   },
   props: {
@@ -103,13 +101,18 @@ export default {
   },
   methods: {  
     async fetchUserSetting (userId) {
+      const loader = this.$loading.show({
+        isFullPage: true,
+        opacity: 1
+      }, { default: this.$createElement('MyLoading') })
 
       try {
         const { data } = await usersAPI.getSettingPage({ userId })
 
         this.user = { ...data[0], password: ''}
-        
+        loader.hide()
       } catch (error) {
+        loader.hide()
         Toast.fire({
             icon: 'error',
             title: '無法取得使用者資料，請稍後再試'
@@ -117,8 +120,13 @@ export default {
       }
     },
     async handleSubmit () {
+      const loader = this.$loading.show({
+        isFullPage: true,
+        opacity: 1
+      }, { default: this.$createElement('MyLoading') })
       try {
         if (this.user.account.length > 15) {
+          loader.hide()
           Toast.fire({
             icon: "warning",
             title: "帳號限定使用15個字",
@@ -126,6 +134,7 @@ export default {
           return
         }
         if (this.user.name.length > 50) {
+          loader.hide()
           Toast.fire({
             icon: "warning",
             title: "名字限定使用50個字",
@@ -133,32 +142,35 @@ export default {
           return
         }
         if (!this.user.account || !this.user.name || !this.user.email) {
+          loader.hide()
           Toast.fire({
             icon: "warning",
             title: "所有欄位為必填",
           })
           return
         }
-        if (this.user.password !== this.passwordCheck) {
+        if (this.user.password !== this.confirmedPassword) {
+          loader.hide()
           Toast.fire({
             icon: "warning",
             title: "密碼與確認密碼不符",
           })
           return;
         }
-        const formData = {name: this.user.name, account: this.user.account, email: this.user.email}
-        if (this.user.password !== this.passwordCheck) {
+        const formData = { name: this.user.name, account: this.user.account, email: this.user.email, confirmedPassword: this.confirmedPassword }
+        if (this.user.password === this.confirmedPassword) {
           formData.password = this.user.password
         }
-        console.log(formData)
         const { data } = await usersAPI.putSetting({
           userId: this.currentUserid,
           formData
         })
 
         if (data.status !== 'success') {
+          loader.hide()
           throw new Error(data.message)
         } else {
+          loader.hide()
           Toast.fire({
             icon: 'success',
             title: '更新成功'
@@ -166,6 +178,7 @@ export default {
         }
         this.$store.commit('setCurrentUser', this.user)
       } catch (error) {
+        loader.hide()
         Toast.fire({
           icon: 'error',
           title: error
@@ -177,6 +190,12 @@ export default {
 </script>
 
 <style lang="scss">
+$orange: #FF6600;
+$deeporange: #F34A16;
+$lightgray: #F5F8FA;
+$lightblue: #0099FF;
+$lightdark: #657786;
+$bitdark: #657786;
 .container {
   border-left: solid 1px #E6ECF0;
   width: 100%;
@@ -214,6 +233,7 @@ export default {
         height: 50px;
         margin: 0px;
         padding: 0;
+        position: relative;
         input {
 
           border-radius: 0;
@@ -223,6 +243,19 @@ export default {
           margin-top: 30px;
           width: 642px;
           height: 50px;
+        }
+        label {
+          position: absolute;
+          left: 10px;
+          top: 5px;
+          height: 15px;
+          font-weight: 500;
+          font-size: 15px;
+          line-height: 15px;
+          color: $bitdark;
+        }
+        .form-control {
+          padding: 20px 0 0 12px;
         }
       }
 
