@@ -21,8 +21,8 @@
             <span class="number">{{ tweet.replyTweetCount }}</span>
           </div>
           <div class="like-wrapper">
-            <div v-show="!tweet.isLiked" class="icon like" @click="likeTweet(tweet.id)"></div>
-            <div v-show="tweet.isLiked" class="icon like liked" @click="unlikeTweet(tweet.id)"></div>
+            <div v-show="!tweet.isLiked" class="icon like" @click.stop="likeTweet(tweet.id)"></div>
+            <div v-show="tweet.isLiked" class="icon like liked" @click.stop="unlikeTweet(tweet.id)"></div>
             <span class="number">{{ tweet.likeTweetCount }}</span>
           </div>
         </div>
@@ -188,6 +188,7 @@ $divider: #E6ECF0;
         flex-direction: row;
         justify-content: space-between;
         color: $bitdark;
+        z-index: 999;
         .icon  {
           max-width: 15px;
           width: 100%;
