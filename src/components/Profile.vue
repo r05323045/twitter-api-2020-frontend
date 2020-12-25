@@ -133,6 +133,15 @@ export default {
       try {
         const { data } = await usersAPI.getProfile({userId})
         this.user = data
+        if (this.user.following.rows.map(d => d.followerId).includes(userId)) {
+          this.user.following.rows = this.user.following.rows.filter(d => d.followerId !== userId)
+          this.user.following.count = this.user.following.count - 1
+        }
+        if (this.user.follower.rows.map(d => d.followerId).includes(userId)) {
+          this.user.follower.rows = this.user.follower.rows.filter(d => d.followerId !== userId)
+          this.user.follower.count = this.user.follower.count - 1
+        }
+        console.log(this.user.follower)
         this.user.tweets = this.user.tweets.map(tweet => ({
           id: tweet.id,
           userId: tweet.User.id,
