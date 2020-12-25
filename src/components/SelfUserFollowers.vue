@@ -1,48 +1,44 @@
 
 <template>
-  <div class="main">
+  <div class="follower-main">
     <div class="upper">
       <img class="arrow" src="@/asset/Vector@2x.png" alt="">
       <div class="title">
-        <h3>John Doe</h3>
-        <span>25 推文</span>
+        <h3>{{ currentUser.name }}</h3>
+        <span v-if="currentUser.tweets">{{ currentUser.tweets.length }} 推文</span>
       </div>
     </div>
-    <div class="nav">
-      <ul class='nav-pills'>
-        <li class="nav-item" @click="handleTurnTrue"> 
-          <router-link to="/user/self/follower">追隨者</router-link>
-        </li>
-        
-        <li class="nav-item" @click="handleTurnFalse">
-          <router-link to="/user/self/following">正在跟隨</router-link>
-        </li>
-      </ul>
+    <div class="tab">
+      <div class="item" :class="{ active: this.$route.path === '/user/self/follower' }"> 
+        <div class="text"  @click="$router.push('/user/self/follower')">追隨者</div>
+      </div>
       
-    </div>
-    
-    <div class="followListContent">
-      <div v-if="followButtonStatus" >
-        <div v-for="follower in followers" :key="follower.id" class="singlContent">
-          <img :src="follower.avatar" alt="">
-          <div class="text">
-            <h5 class="title">{{follower.name}}</h5>
-            <h5 class="account">{{folloer.account}}</h5>
-            <p class="content">{{follower.introduction}}</p>
-          </div>
-          <button class="follow">正在跟隨</button>
-        </div>
+      <div class="item" :class="{ active: $route.path === '/user/self/following' }">
+        <div class="text" @click="$router.push('/user/self/following')">正在跟隨</div>
       </div>
-     
-      <div v-else-if="!followButtonStatus">
-        <div v-for="following in followings" :key="following.id"  class="singlContent followings">
-          <img :src="following.avatar" alt="">
+    </div>
+    <div class="followListContent">
+      <div>
+        <div v-for="follower in initialFollowers" :key="follower.id" class="singlContent">
+          <img  v-if="follower" :src="follower.avatar" alt="">
           <div class="text">
-            <h5 class="title">{{following.name}}</h5>
-            <h5 class="account">{{following.account}}</h5>
-            <p class="content">{{ following.introduction }}</p>
+            <h5 v-if="follower" class="title">{{follower.name}}</h5>
+            <h5  v-if="follower" class="account">{{follower.account}}</h5>
+            <p  v-if="follower" class="content">{{follower.introduction}}</p>
           </div>
-          <button class="follow">正在跟隨</button>
+          <button 
+            v-if="follower && currentUser.following"
+            v-show="currentUser.following.rows.map(row => row.followingId).includes(follower.id)"
+            class="btn-follow unfollow" @click="deleteFollowing(follower.id)">
+            正在跟隨
+          </button>
+          <button
+            v-if="follower && currentUser.following"
+            v-show="!currentUser.following.rows.map(row => row.followingId).includes(follower.id)"
+            class="btn-follow"
+            @click="addFollowing(follower.id)">
+            跟隨
+          </button>
         </div>
       </div>
 
@@ -55,39 +51,68 @@
 </template>
 
 <script>
+import { Toast } from '@/utils/helpers'
+import followshipsAPI from '@/apis/followships'
 export default {
-  data(){
-    return {
-      followButtonStatus: true,
-      followings: {...this.initialFollowings},
-      followers: {...this.initialFollowers}
+  props: {
+    initialFollowers: {
+      type: Array
+    },
+    currentUser: {
+      type: Object
     }
   },
-  props: {
-    initialFollowings: {
-      type: Object,
-      required: true
+  watch: {
+    initialFollowers: function () {
+
     },
-    initialFollowers: {
-      type: Object,
-      required: true
-    }
+    currentUsers: function () {
+      
+    },
+    deep: true
   },
   methods: {
-    handleTurnTrue() {
-      this.followButtonStatus = true
-    },
+    async addFollowing (userId) {
+      try {
+        const { data } = await followshipsAPI.addFollowing({ userId })
 
-    handleTurnFalse() {
-      this.followButtonStatus = false 
-    }
-    
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+        this.$bus.$emit('followAction', { type: 'follow', userId: userId})
+      } catch (error) {
+        Toast.fire({
+          icon: 'error',
+          title: '無法加入追蹤，請稍後再試'
+        })
+      }
+    },
+    async deleteFollowing (userId) {
+      try {
+        const { data } = await followshipsAPI.deleteFollowing({ userId })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+        this.$bus.$emit('followAction', { type: 'unfollow', userId: userId})
+      } catch (error) {
+        Toast.fire({
+          icon: 'error',
+          title: '無法取消追蹤，請稍後再試'
+        })
+      }
+    },
   }  
 }
 </script>
 
 <style lang="scss">
-  .main {
+$orange: #FF6600;
+$deeporange: #F34A16;
+$lightgray: #F5F8FA;
+$bitdark: #657786;
+$divider: #E6ECF0;
+  .follower-main {
     width: 600px;
     display: flex;
     flex-direction: column;
@@ -117,43 +142,39 @@ export default {
         }
       }
     }
-
-    .nav {
-      width: 600px;
-      height: auto;
-      padding: 0;
-      border: 0;
-      .nav-pills {
+    .tab {
+      border-bottom: 1px solid $divider;
+      height: 54px;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: row;
+      .item {
+        width: 100%;
+        max-width: 130px;
+        height: 54px;
         display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        padding: 0;
-        .nav-item {
-          width: 130px;
-          list-style: none;
-          font-family: Noto Sans TC;
-          font-style: normal;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: ease-in 0.2s;
+        &:hover {
+          backdrop-filter: brightness(.95);
+        }
+        .text {
+          z-index: -1;
           font-weight: bold;
           font-size: 15px;
-          height: 22px;
-          
-          a {
-            text-decoration: none;
-            height: 100%;
-          }
-          .active {
-            color: #FF6600;
-            border-bottom: solid 2px #FF6600;
-            
-          }
-         
-          
+          line-height: 22px;
+          color: $bitdark;
         }
-        
-
+      }
+      .item.active {
+        border-bottom: 2px solid $orange;
+        .text {
+          color: $orange;
+        }
       }
     }
-
     .followListContent {
       height: 104px;
       width: 600px;
@@ -205,17 +226,35 @@ export default {
           }
           
         }
-        .follow {
-          background: #FF6600;
-          width: 92px;
-          height: 30px;
-          border: 1px solid #FF6600;
-          box-sizing: border-box;
-          border-radius: 100px;
+        .btn-follow {
+          width: 100%;
+          max-width: 62px;
           position: absolute;
-          top: 12px;
+          top: 20px;
           right: 15px;
+          height: 30px;
+          line-height: 15px;
+          margin-left: auto;
+          border: 1px solid $orange ;
+          background: none;
+          font-size: 15px;
+          font-weight: 700;
+          color: $orange;
+          border-radius: 100px;
+          transition: ease-in 0.2s;
+          &:hover {
+            box-shadow: 0 0 3px 1px $bitdark;
+            background-color: $orange;
+            color: #ffffff;
+          }
+        }
+        .btn-follow.unfollow {
+          max-width: 92px;
+          background: $orange;
           color: #ffffff;
+          &:hover {
+            background-color: $deeporange;
+          }
         }
       }
     }

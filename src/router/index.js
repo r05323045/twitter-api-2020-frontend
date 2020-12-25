@@ -62,9 +62,8 @@ const routes = [
   {
     path: '/user/self/following',
     name: 'SelfFollowing',
-    component: () => import('@/views/SelfFollowing.vue')
+    component: () => import('@/views/SelfFollowers.vue'),
     beforeEnter: authorizeIsUser
-
   },
   {
     path: '/setting',

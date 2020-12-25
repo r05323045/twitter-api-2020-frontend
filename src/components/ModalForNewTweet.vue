@@ -21,7 +21,6 @@
         <textarea class="tweet-content" type="textarea" placeholder="有什麼新鮮事嗎?" v-model="tweetDescription"></textarea>
         <button @click.stop.prevent="postTweet(tweetDescription)">推文</button>
       </div>
-      </div>
     </div>
   </div>
 </template>

@@ -16,7 +16,7 @@
           <input v-if="!routeIsAdmin" type="text" ref="account" @focus="checkFocus('account')" @blur="checkBlur('account')" v-model="account" class="form-control" required>
           <input v-if="routeIsAdmin" type="text" ref="email" @focus="checkFocus('email')" @blur="checkBlur('email')" v-model="email" class="form-control" required>
           <label class="password" v-show="!passwordFocus && password === ''">密碼</label>
-          <input type="password" ref="password" @focus="checkFocus('password')" @blur="checkBlur('password')" v-model="password" class="form-control"  required>
+          <input type="password" ref="password" @focus="checkFocus('password')" @blur="checkBlur('password')" v-model="password" class="form-control" >
         </div>
         <button v-if="!routeIsAdmin" :disabled="isProcessing" class="btn btn-signin user" type="submit" @click.prevent="signin">登入</button>
         <button v-if="routeIsAdmin" :disabled="isProcessing" class="btn btn-signin admin" type="submit" @click.prevent="adminSignin">登入</button>

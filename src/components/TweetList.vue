@@ -1,6 +1,6 @@
 <template>
   <div class="tweet-list" v-if="tweets">
-    <div v-for="tweet in tweets" :key="`${tweet.id}-${Math.random()}`" class="list-item" @click="$router.push(`/reply_list/${tweet.id}`)">
+    <div v-for="tweet in tweets" :key="`${tweet.id}-${Math.random()}`" class="list-item" @click="tweetDetail(tweet.id)">
       <div class="avatar" :style="{ background: `url(${tweet.avatar}) no-repeat center/cover` }" @click="$router.push(`/user/other/${tweet.userId}`).catch(()=>{})"></div>
       <div class="tweet-wrapper">
         <div class="info">
@@ -43,9 +43,17 @@ export default {
       default: () => {
         return []
       }
-    }
+    },
+    isReply: Boolean
   },
   methods: {
+    tweetDetail (tweetId) {
+      if (this.isReply) {
+        return
+      } else {
+        this.$router.push(`/reply_list/${tweetId}`)
+      }
+    },
     async likeTweet (tweetId) {
       try {
         const { data } = await likesAPI.likeTweet({ tweetId })

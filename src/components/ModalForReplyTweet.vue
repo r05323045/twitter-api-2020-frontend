@@ -2,37 +2,35 @@
   <div class="modal reply">
     <div class="modal-content">
       <div class="modal-header">
-        <img src="./../asset/exit.png" alt="" @click="cancelModalClick">
+        <img  class="cross" src="./../asset/exit.png" alt="" @click="cancelModalClick">
       </div>
       <hr>
       <div class="modal-body">
         <div class="content-of-other">
           <div class="other-info">
-            <img src="./../asset/elephant.png" alt="">
+            <img :src="tweet.User.avatar" alt="" @click="$router.push(`/user/other/${tweet.User ? tweet.User.id : '/'}`).catch(()=>{})">
             <div class="text-wrap">
 
               <div class="title-wrap">
-                <span class="name">Apple</span>
-                <span class="account">@apple</span>
-                <span class="time">．3小時</span>
+                <span class="name" @click="$router.push(`/user/other/${tweet.User ? tweet.User.id : '/'}`).catch(()=>{})">{{ tweet.User.name }}</span>
+                <span class="account" @click="$router.push(`/user/other/${tweet.User ? tweet.User.id : '/'}`).catch(()=>{})">{{ tweet.User.account }}</span>
+                <span style="margin: 0 2px ; color: #657786;"> &bull;</span>
+                <span class="time"> {{ tweet.createdAt | fromNow }}</span>
               </div>
 
-              <p>Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco cillum dolor. Voluptate exercitation incididunt aliquip deserunt reprehenderit elit laborum.
-              </p>
+              <p>{{ tweet.description }}</p>
               <div class="to-whom">
-                <span>回覆給</span> 
-                <span class="receiver">@apple</span> 
+                <span>回覆給 </span> 
+                <span class="receiver">{{ tweet.User.name }}</span> 
               </div>
             </div>
           </div> 
         </div>
 
-        
-
         <div class="content-of-mine">
-          <img class="photo-of-mine" src="./../asset/elephant.png" alt="">
-          <textarea class="tweet-content" type="textarea" placeholder="推你的回覆" name="" id=""></textarea>
-          <button>推文</button>
+          <img class="photo-of-mine" :src="currentUser.avatar" alt="">
+          <textarea class="tweet-content" v-model="replyContent" type="textarea" placeholder="推你的回覆" name="" id=""></textarea>
+          <button @click.prevent="replyTweet">推文</button>
         </div>
       
       </div>
@@ -41,20 +39,40 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   name: 'ModalForReplyTweet',
-  
-  methods: {
-  cancelModalClick() {
-      this.$emit('after-click-cross')
+  data () {
+    return {
+      replyContent: '',
     }
+  },
+  props: {
+    tweet: {
+      type: Object
+    }
+  },
+  computed: {
+    ...mapState(['currentUser', 'isAuthenticated'])
+  },
+  methods: {
+    cancelModalClick() {
+      this.$emit('after-click-cross')
+    },
+    replyTweet () {
+      this.$emit('replyTweet', this.replyContent)
+    },
   }
 }
 </script>
 
 <style lang='scss'>
+$orange: #FF6600;
+$deeporange: #F34A16;
+$lightgray: #F5F8FA;
+$bitdark: #657786;
+$divider: #E6ECF0;
   .modal.reply {
-    position: fixed;
     top: 0;
     left: 0;
     bottom: 0;
@@ -65,10 +83,8 @@ export default {
     
     
     .modal-content {
-      position: absolute;
-      
-      left: 50%;
-      top: 54px;
+      margin: auto;
+      margin-top: 54px;
       width: 600px;
       height: 450px;
       border-radius: 14px;
@@ -82,6 +98,7 @@ export default {
         height: 54px;
         // outline: red solid;
         img {
+          cursor: pointer;
           height: 15px;
           width: 15px;
           padding: 19.5px auto 19.5px 19.5px;
@@ -104,6 +121,10 @@ export default {
               margin: 0px 10px 41px 0px;
               object-fit: cover;
               background: #C4C4C4;
+              cursor: pointer;
+              &:hover {
+                filter: brightness(.9);
+              }
               // outline: red solid;
             }
             .text-wrap {
@@ -124,6 +145,10 @@ export default {
                   font-size: 15px;
                   line-height: 22px;
                   margin-right: 5px;
+                  cursor: pointer;
+                  &:hover {
+                    text-decoration: underline;
+                  }
                 }
                 .account {
                   font-family: Noto Sans TC;
@@ -131,8 +156,14 @@ export default {
                   font-weight: 500;
                   font-size: 15px;
                   line-height: 22px;
+                  color: $bitdark;
+                  cursor: pointer;
+                  &:hover {
+                    text-decoration: underline;
+                  }
                 }
                 .time {
+                  color: $bitdark;
                   font-family: Noto Sans TC;
                   font-style: normal;
                   font-weight: 500;
@@ -168,10 +199,12 @@ export default {
             background: #C4C4C4;
             position: absolute;
             left: 15px;
+            object-fit: cover;
             
           }
           .tweet-content {
-            height: 220px;
+            height: 100%;
+            max-height: 220px;
             width: 510px;
             margin-left: 75px - 16px;
             margin-right: 15px;

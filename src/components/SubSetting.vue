@@ -5,7 +5,7 @@
     </div>
 
     <div class="content">
-      <form>
+      <form ref="settingForm">
         <div class="form-label-group mb-2" >
           <!-- <label for="account">帳號</label> -->
           <input
@@ -13,8 +13,7 @@
             name="account"
             type="text"
             class="form-control"
-            :placeholder="user.account"
-            autocomplete="accountname"
+            v-model="user.account"
             required
           >
         </div>
@@ -26,8 +25,7 @@
             name="name"
             type="text"
             class="form-control"
-            :placeholder="user.name"
-            autocomplete="username"
+            v-model="user.name"
             required
             
           >
@@ -41,8 +39,7 @@
             name="email"
             type="email"
             class="form-control"
-            :placeholder="user.email"
-            autocomplete="email"
+            v-model="user.email"
             required
           >
         </div>
@@ -55,7 +52,7 @@
             type="password"
             class="form-control"
             placeholder=""
-            autocomplete="new-password"
+            v-model="user.password"
             required
           >
         </div>
@@ -69,12 +66,13 @@
             class="form-control"
             placeholder=""
             autocomplete="new-password"
+            v-model="passwordCheck"
             required
           >
         </div> 
       
-        <div  class="link">
-          <span class="save-button">儲存</span> 
+        <div class="link">
+          <div class="save-button" @click.prevent="handleSubmit">儲存</div> 
         </div>
       </form>
     </div>
@@ -82,66 +80,105 @@
 </template>
 
 <script>
+import { Toast } from '@/utils/helpers'
+import usersAPI from './../apis/users'
+import { mapState } from 'vuex'
 export default {
-  data() {
+  data () {
     return {
-    user:{...this.initialUser}
+      user: {},
+      passwordCheck: ''
     }
   },
-  
   props: {
     initialUser: {
       type: Object,
-      required: true,
     }
   }, 
- 
+  created () {
+    this.fetchUserSetting(this.currentUser.id)
+  },
+  computed: {
+    ...mapState(['currentUser', 'isAuthenticated'])
+  },
   methods: {  
-    // handleSubmit(e) {
-    //   const form = e.target
-    //   const formData = new FormData(form)
-    //   this.$emit('after-submit', formData)
-    // },
-    
+    async fetchUserSetting (userId) {
 
+      try {
+        const { data } = await usersAPI.getSettingPage({ userId })
 
-
-    // async fetchUserSetting ( userId ) {
-    //   try{
-    //     const { data } = await usersAPI.putSetting.getDetail({ userId })
-
-    //     // 解構賦值將資料取出
-    //     const {
-    //         account, 
-    //         name, 
-    //         email,
-            
-    //       } = data.user   //!!!
+        this.user = { ...data[0], password: ''}
         
-    //     // 將資料帶入 Vue 內
-    //     this.user = {
-    //       ...this.user,  //!!!
-    //       account,
-    //       name,
-    //       email,
-    //     }
-    //   } catch (error) {
-    //     Toast.fire({
-    //       icon: 'error',
-    //       title: '無法取得帳戶設定，請稍後再試'
-    //     })
-    //   }
-    // },
-    // handleSubmit () {
+      } catch (error) {
+        Toast.fire({
+            icon: 'error',
+            title: '無法取得使用者資料，請稍後再試'
+          })
+      }
+    },
+    async handleSubmit () {
+      try {
+        if (this.user.account.length > 15) {
+          Toast.fire({
+            icon: "warning",
+            title: "帳號限定使用15個字",
+          })
+          return
+        }
+        if (this.user.name.length > 50) {
+          Toast.fire({
+            icon: "warning",
+            title: "名字限定使用50個字",
+          })
+          return
+        }
+        if (!this.user.account || !this.user.name || !this.user.email) {
+          Toast.fire({
+            icon: "warning",
+            title: "所有欄位為必填",
+          })
+          return
+        }
+        if (this.user.password !== this.passwordCheck) {
+          Toast.fire({
+            icon: "warning",
+            title: "密碼與確認密碼不符",
+          })
+          return;
+        }
+        const formData = {name: this.user.name, account: this.user.account, email: this.user.email}
+        if (this.user.password !== this.passwordCheck) {
+          formData.password = this.user.password
+        }
+        console.log(formData)
+        const { data } = await usersAPI.putSetting({
+          userId: this.currentUserid,
+          formData
+        })
 
-    // }
-  // }
-  }
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        } else {
+          Toast.fire({
+            icon: 'success',
+            title: '更新成功'
+          })
+        }
+        this.$store.commit('setCurrentUser', this.user)
+      } catch (error) {
+        Toast.fire({
+          icon: 'error',
+          title: '無法更新餐廳資料，請稍後再試'
+        })
+      }
+    }
+  } 
 }
 </script>
 
 <style lang="scss">
 .container {
+  border-left: solid 1px #E6ECF0;
   width: 100%;
   height: 100%;
   display: flex;
@@ -204,7 +241,7 @@ export default {
           font-weight: bold;
           font-size: 18px;
           color: #ffffff;
-          
+          cursor: pointer;
         }
       }
     }

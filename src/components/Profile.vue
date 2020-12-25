@@ -33,8 +33,8 @@
       <div class="account">{{ user.user ? user.user.account : '' }}</div>
       <div class="intro">{{ user.user ? user.user.introduction : '' }}</div>
       <div class="number-followers">
-        <span class="followings">{{ user.following ? user.following.count : 0 }} 個</span><span class="type followings">跟隨中</span>
-        <span class="followers">{{ user.follower ? user.follower.count : 0 }} 個</span><span class="type followers">跟隨者</span>
+        <span @click="$router.push('/user/self/following')" class="followings">{{ user.following ? user.following.count : 0 }} 個</span><span @click="$router.push('/user/self/following')" class="type followings">跟隨中</span>
+        <span @click="$router.push('/user/self/follower')" class="followers">{{ user.follower ? user.follower.count : 0 }} 個</span><span @click="$router.push('/user/self/follower')" class="type followers">跟隨者</span>
       </div>
     </div>
     <div class="tab">
@@ -48,9 +48,9 @@
         <span class="text">喜歡的內容</span>
       </div>
     </div>
-    <TweetList v-if="tabOption === '推文'" :tweets="user.tweets"></TweetList>
-    <TweetList v-if="tabOption === '推文與回覆'" :tweets="userReplies"></TweetList>
-    <TweetList v-if="tabOption === '喜歡的內容'" :tweets="userLikes"></TweetList>
+    <TweetList v-if="tabOption === '推文'" :tweets="user.tweets" :isReply="false"></TweetList>
+    <TweetList v-if="tabOption === '推文與回覆'" :tweets="userReplies" :isReply="true"></TweetList>
+    <TweetList v-if="tabOption === '喜歡的內容'" :tweets="userLikes" :isReply="false"></TweetList>
     <ModalForEditProfile v-if="showEditProfileModal" @after-click-cross=" afterClickCross" @completeEdit="completeEdit"/>
   </div>
 </template>
@@ -144,7 +144,7 @@ export default {
         this.userReplies = data.replies.map(reply => {
           return {
             ...reply,
-            replyTo: reply.Tweet.User.account,
+            replyTo: reply.Tweet ? reply.Tweet.User.account : '',
             name: that.user.user.name,
             avatar: that.user.user.avatar,
             account: that.user.user.account,

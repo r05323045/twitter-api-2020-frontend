@@ -201,6 +201,7 @@ $divider: #E6ECF0;
           }
         }
         .account {
+          text-align: left;
           font-size: 15px;
           line-height: 15px;
           font-weight: 700;
