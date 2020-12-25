@@ -39,7 +39,7 @@
         </div>
         <div class="hey" v-if="!(this.$route.path === '/user/self' || this.$route.path === `/user/other/${currentUser.id}`)" >
           <span @click="$router.push(`/user/other/${user.user.id}/following`)" class="followings">{{ user.following ? user.following.count : 0 }} 個</span><span @click="$router.push(`/user/other/${user.user.id}/following`)" class="type followings">跟隨中</span>
-          <span @click="$router.push(`/user/other/${user.user.id}/follower`)" class="followers">{{ user.follower ? user.follower.count : 0 }} 個</span><span @click="$router.push(`/user/other/${user.user.id}}/follower`)" class="type followers">跟隨者</span>
+          <span @click="$router.push(`/user/other/${user.user.id}/follower`)" class="followers">{{ user.follower ? user.follower.count : 0 }} 個</span><span @click="$router.push(`/user/other/${user.user.id}/follower`)" class="type followers">跟隨者</span>
         </div>
       </div>
     </div>
@@ -141,7 +141,6 @@ export default {
           this.user.follower.rows = this.user.follower.rows.filter(d => d.followerId !== userId)
           this.user.follower.count = this.user.follower.count - 1
         }
-        console.log(this.user.follower)
         this.user.tweets = this.user.tweets.map(tweet => ({
           id: tweet.id,
           userId: tweet.User.id,
@@ -186,7 +185,7 @@ export default {
     async fetchUserLikes () {
       const userId = this.$route.path === '/user/self' ? this.currentUser.id : this.$route.params.id
       try {
-        const { data } = await usersAPI.getUserLikes({userId})
+        const { data } = await usersAPI.getUserLikes({ userId })
         this.userLikes = data.map(item => ({
           id: item.Tweet.id,
           userId: item.Tweet.User.id,

@@ -28,7 +28,7 @@
     </div>
     <div class="followListContent">
       <div>
-        <div v-for="follower in followers" :key="follower.id" class="singlContent">
+        <div v-for="follower in followers" :key="follower.id" class="singleContent">
           <img  v-if="follower" :src="follower.avatar" alt="">
           <div class="text">
             <h5 v-if="follower" class="title">{{follower.name}}</h5>
@@ -207,7 +207,7 @@ $divider: #E6ECF0;
     .followListContent {
       height: 104px;
       width: 600px;
-      .singlContent {
+      .singleContent {
         height: 104px;
         width: 100%;
         display: flex;
@@ -233,6 +233,10 @@ $divider: #E6ECF0;
             font-size: 15px;
             line-height: 15px;
             text-align: start;
+            cursor: pointer;
+            &:hover {
+              text-decoration: underline;
+            }
           }
           .account {
             font-family: Noto Sans TC;
@@ -241,6 +245,11 @@ $divider: #E6ECF0;
             font-size: 15px;
             line-height: 15px;
             text-align: start;
+            cursor: pointer;
+            color: $bitdark;
+            &:hover {
+              text-decoration: underline;
+            }
           }
           .content {
             width: 510px;
@@ -256,6 +265,7 @@ $divider: #E6ECF0;
           
         }
         .btn-follow {
+          cursor: pointer;
           width: 100%;
           max-width: 62px;
           position: absolute;
@@ -275,6 +285,9 @@ $divider: #E6ECF0;
             box-shadow: 0 0 3px 1px $bitdark;
             background-color: $orange;
             color: #ffffff;
+          }
+          &:focus {
+            outline: none;
           }
         }
         .btn-follow.unfollow {

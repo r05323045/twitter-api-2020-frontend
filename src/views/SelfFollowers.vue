@@ -40,18 +40,24 @@ export default {
     })
     this.fetchTopUsers ()
     this.fetchFollowers(this.currentUser.id)
-    this.fetchProfile()
-
-  },
-  watch: {
-    '$route.path': function () {
       this.followers.sort((a, b) => {
         return a.Followship.createdAt < b.Followship.createdAt ? 1 : -1;
       })
       this.followings.sort((a, b) => {
         return a.Followship.createdAt < b.Followship.createdAt ? 1 : -1;
       })
+    this.fetchProfile()
+
+  },
+  watch: {
+    '$route.path': function () {
       this.fetchFollowers(this.currentUser.id)
+      this.followers.sort((a, b) => {
+        return a.Followship.createdAt < b.Followship.createdAt ? 1 : -1;
+      })
+      this.followings.sort((a, b) => {
+        return a.Followship.createdAt < b.Followship.createdAt ? 1 : -1;
+      })
     }
   },
   methods: {
@@ -137,12 +143,6 @@ export default {
               d.isFollowed = r.isFollowed
             }
           })
-        })
-        this.followers.sort((a, b) => {
-          return a.Followship.createdAt < b.Followship.createdAt ? 1 : -1;
-        })
-        this.followings.sort((a, b) => {
-          return a.Followship.createdAt < b.Followship.createdAt ? 1 : -1;
         })
       } catch {
         Toast.fire({
