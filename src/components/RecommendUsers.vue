@@ -191,6 +191,7 @@ $divider: #E6ECF0;
         display: flex;
         flex-direction: column;
         .name {
+          text-align: left;
           margin-bottom: 3px;
           font-size: 15px;
           line-height: 15px;
