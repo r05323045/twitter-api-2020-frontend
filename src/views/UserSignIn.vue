@@ -77,10 +77,6 @@ export default {
 
     },
     async signin () {
-      const loader = this.$loading.show({
-        isFullPage: true,
-        opacity: 1
-      }, { default: this.$createElement('MyLoading') })
       try {
         if (!this.account || !this.password) {
           Toast.fire({
@@ -99,7 +95,6 @@ export default {
 
         if (data.status !== 'success' || data.user.role === 'admin') {
           this.password = ''
-          loader.hide()
           throw new Error(data.message)
         }
 
@@ -109,9 +104,7 @@ export default {
         const redirectRoute ='/main'
         
         this.$router.push(redirectRoute)
-        loader.hide()
       } catch(error) {
-        loader.hide()
         this.password = ''
         this.isProcessing = false
         Toast.fire({
@@ -123,13 +116,8 @@ export default {
     },
 
     async adminSignin () {
-      const loader = this.$loading.show({
-        isFullPage: true,
-        opacity: 1
-      }, { default: this.$createElement('MyLoading') })
       try {
         if (!this.email || !this.password) {
-          loader.hide()
           Toast.fire({
             icon: 'warning',
             title: '請填入Email和密碼'
@@ -145,7 +133,6 @@ export default {
         const { data } = response
 
         if (data.status !== 'success') {
-          loader.hide()
           this.password = ''
           throw new Error(data.message)
         }
@@ -154,9 +141,7 @@ export default {
         this.$store.commit('setCurrentUser', data.user)
 
         this.$router.push('/admin/main')
-        loader.hide()
       } catch(error) {
-        loader.hide()
         this.password = ''
         this.isProcessing = false
         Toast.fire({
