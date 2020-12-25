@@ -168,7 +168,7 @@ export default {
       } catch (error) {
         Toast.fire({
           icon: 'error',
-          title: '無法更新餐廳資料，請稍後再試'
+          title: error
         })
       }
     }

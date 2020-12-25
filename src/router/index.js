@@ -6,7 +6,7 @@ Vue.use(VueRouter)
 
 const authorizeIsUser = (to, from, next) => {
   const currentUser = store.state.currentUser
-  if (currentUser && !(currentUser.role === 'User')) {
+  if (currentUser && !(currentUser.role === 'user')) {
     next('/admin/main')
     console.log(currentUser)
     return
