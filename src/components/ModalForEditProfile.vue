@@ -16,10 +16,10 @@
           </div>
           <div class="for-inputs">
             <input class="tweet-content name" v-model="user.name" type="text" placeholder="" name="name" />
-            <span class="word-count">{{ user.name.length }}/50</span>
+            <span class="word-count">{{user.name ? user.name.length : 0 }}/50</span>
 
             <textarea class="tweet-content intro" v-model="user.introduction" type="textarea" placeholder="" name="introduction" ></textarea>
-            <span class="word-count">{{ user.introduction.length }}/160</span>
+            <span class="word-count">{{user.introduction ?  user.introduction.length : 0 }}/160</span>
           </div>
           <div class="icon camera-two">
             <input class="coverFile" ref="coverFile" name="cover" accept="image/*" @change="coverChange" type="file">
