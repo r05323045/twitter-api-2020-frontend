@@ -2,7 +2,7 @@
   <div class="profile">
     <div class="header">
       <div class="arrow">
-        <div @click="$router.push('/main').catch(()=>{})" class="icon back"></div>
+        <div @click="$router.go(-1)" class="icon back"></div>
       </div>
       <div class="simple-info">
         <div class="name">{{ user.name }}</div>
@@ -33,8 +33,14 @@
       <div class="account">{{ user.user ? user.user.account : '' }}</div>
       <div class="intro">{{ user.user ? user.user.introduction : '' }}</div>
       <div class="number-followers">
-        <span @click="$router.push('/user/self/following')" class="followings">{{ user.following ? user.following.count : 0 }} 個</span><span @click="$router.push('/user/self/following')" class="type followings">跟隨中</span>
-        <span @click="$router.push('/user/self/follower')" class="followers">{{ user.follower ? user.follower.count : 0 }} 個</span><span @click="$router.push('/user/self/follower')" class="type followers">跟隨者</span>
+        <div v-if="this.$route.path === '/user/self' || this.$route.path === `/user/other/${currentUser.id}`" >
+          <span @click="$router.push('/user/self/following')" class="followings">{{ user.following ? user.following.count : 0 }} 個</span><span @click="$router.push('/user/self/following')" class="type followings">跟隨中</span>
+          <span @click="$router.push('/user/self/follower')" class="followers">{{ user.follower ? user.follower.count : 0 }} 個</span><span @click="$router.push('/user/self/follower')" class="type followers">跟隨者</span>
+        </div>
+        <div class="hey" v-if="!(this.$route.path === '/user/self' || this.$route.path === `/user/other/${currentUser.id}`)" >
+          <span @click="$router.push(`/user/other/${user.user.id}/following`)" class="followings">{{ user.following ? user.following.count : 0 }} 個</span><span @click="$router.push(`/user/other/${user.user.id}/following`)" class="type followings">跟隨中</span>
+          <span @click="$router.push(`/user/other/${user.user.id}/follower`)" class="followers">{{ user.follower ? user.follower.count : 0 }} 個</span><span @click="$router.push(`/user/other/${user.user.id}}/follower`)" class="type followers">跟隨者</span>
+        </div>
       </div>
     </div>
     <div class="tab">

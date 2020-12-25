@@ -1,8 +1,8 @@
 <template>
-  <div class="row page-container">
+  <div class="row other-page-container">
     <Navbar class="col-3" />
-    <SelfUserFollowers v-show="$route.path === '/user/self/follower'" :initialFollowers="followers" :currentUser="user" />
-    <SelfUserFollowers v-show="$route.path === '/user/self/following'" :initialFollowers="followings" :currentUser="user" />
+    <SelfUserFollowers v-show="$route.path.indexOf('follower') > 0" :initialFollowers="followers" :currentUser="user" />
+    <SelfUserFollowers v-show="$route.path.indexOf('following') > 0" :initialFollowers="followings" :currentUser="user" />
     <RecommendUsers class="col-4" />
   </div>
      
@@ -16,7 +16,6 @@ import UsersAPI from './../apis/users'
 import { Toast } from '@/utils/helpers'
 import { mapState } from 'vuex'
 export default {
-  name: 'SelfFollowers',
   components: {
     Navbar,
     SelfUserFollowers,
@@ -34,10 +33,11 @@ export default {
   },
   created() {
     this.$bus.$on('followAction', action => {
-      if (this.$route.path.indexOf('/self') > 0)
-      this.followAction(action)
+      if (this.$route.params) {
+        this.followAction(action)
+      } 
     })
-    this.fetchFollowers(this.currentUser.id)
+    this.fetchFollowers(this.$route.params.id)
     this.fetchProfile()
 
   },
@@ -49,7 +49,7 @@ export default {
       this.followings.sort((a, b) => {
         return a.Followship.createdAt < b.Followship.createdAt ? 1 : -1;
       })
-      this.fetchFollowers(this.currentUser.id)
+      this.fetchFollowers(this.$route.params.id)
     }
   },
   methods: {
@@ -58,7 +58,7 @@ export default {
         isFullPage: true,
         opacity: 1
       }, { default: this.$createElement('MyLoading') })
-      const userId = this.currentUser.id
+      const userId = this.$route.params.id
       try {
         const { data } = await UsersAPI.getProfile({userId})
         this.user = data
@@ -105,7 +105,7 @@ export default {
 
     },
     followAction () {
-      this.fetchFollowers(this.currentUser.id)
+      this.fetchFollowers(this.$route.params.id)
       this.fetchProfile()
     }
   }
@@ -113,7 +113,7 @@ export default {
 </script>
 
 <style>
-  .page-container {
+  .other-page-container {
     /* outline: red solid;   */
     min-width: 1440px;
     height: 100%;

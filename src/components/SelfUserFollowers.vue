@@ -2,18 +2,27 @@
 <template>
   <div class="follower-main">
     <div class="upper">
-      <img class="arrow" src="@/asset/Vector@2x.png" alt="">
+      <img class="arrow" @click="$router.go(-1)" src="@/asset/Vector@2x.png" alt="">
       <div class="title">
         <h3>{{ currentUser.name }}</h3>
         <span v-if="currentUser.tweets">{{ currentUser.tweets.length }} 推文</span>
       </div>
     </div>
-    <div class="tab">
+    <div class="tab" v-if="this.$route.path.indexOf('/user/self') > 0">
       <div class="item" :class="{ active: this.$route.path === '/user/self/follower' }" @click="$router.push('/user/self/follower')"> 
         <div class="text">追隨者</div>
       </div>
       
       <div class="item" :class="{ active: $route.path === '/user/self/following' }" @click="$router.push('/user/self/following')">
+        <div class="text">正在跟隨</div>
+      </div>
+    </div>
+    <div class="tab" v-if="!(this.$route.path.indexOf('/user/self') > 0)">
+      <div class="item" :class="{ active: this.$route.path.indexOf('follower') > 0 }" @click="$router.push(`/user/other/${currentUser.user.id}/follower`)"> 
+        <div class="text">追隨者</div>
+      </div>
+      
+      <div class="item" :class="{ active: this.$route.path.indexOf('following') > 0 }" @click="$router.push(`/user/other/${currentUser.user.id}/following`)">
         <div class="text">正在跟隨</div>
       </div>
     </div>
@@ -121,6 +130,7 @@ $divider: #E6ECF0;
       display: flex;
       flex-direction: row;
       .arrow {
+        cursor: pointer;
         width: 17px;
         height: 14px;
         margin: 20px 43px 0 20px;
