@@ -137,7 +137,7 @@ export default {
         console.log(error)
         Toast.fire({
           icon: 'error',                    
-          title: '系統錯誤，請再試一次'
+          title: error
         })
       }
     },
