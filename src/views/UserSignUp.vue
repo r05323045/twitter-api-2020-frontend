@@ -5,13 +5,13 @@
         <img src="https://media.cakeresume.com/image/upload/s--S9Jdcf0R--/c_pad,fl_png8,h_400,w_400/v1548316744/ribjsyna9cm9tm4pkv63.png">
       </div>
       <div class="title">建立你的帳號</div>
-      <form @submit.stop.prevent="handleSubmit">
+      <form>
         <div class="form-label-group mb-2">
           <!-- <label for="account">帳號</label> -->
           <input
             id="account"
             name="account"
-            v-model="account"
+            v-model="user.account"
             type="text"
             class="form-control"
             placeholder="account"
@@ -25,7 +25,7 @@
           <input
             id="name"
             name="name"
-            v-model="name"
+            v-model="user.name"
             type="text"
             class="form-control"
             placeholder="name"
@@ -40,7 +40,7 @@
           <input
             id="email"
             name="email"
-            v-model="email"
+            v-model="user.email"
             type="email"
             class="form-control"
             placeholder="email"
@@ -54,7 +54,7 @@
           <input
             id="password"
             name="password"
-            v-model="password"
+            v-model="user.password"
             type="password"
             class="form-control"
             placeholder="Password"
@@ -68,7 +68,7 @@
           <input
             id="Checkpassword"
             name="Checkpassword"
-            v-model="Checkpassword"
+            v-model="user.Checkpassword"
             type="password"
             class="form-control"
             placeholder="Password Check"
@@ -78,7 +78,7 @@
         </div>
       
         <div class="link">
-          <button type="submit" class="signup-button" :disabled="user.isProcessing" >{{ user.isProcessing ? "處理中..." : "註冊" }}</button> 
+          <div @click="handleSubmit" class="signup-button" >{{ user.isProcessing ? "處理中..." : "註冊" }}</div> 
           <span class="signin-button"  @click="$router.push('/signin')">取消</span>
         </div>
       </form>
@@ -98,8 +98,7 @@ export default {
         name: '',
         email: '',
         password:'',
-        Checkpassword: '', 
-        isProcessing: false,
+        Checkpassword: ''
       }
     }
   },
@@ -122,39 +121,20 @@ export default {
           this.user.Checkpassword = ''
           return
         }
-        // const form = e.target
-        // const formData = new FormData(form)
-        // const {account, name, email, password, Checkpassword} = formData
-        // this.Users.push({
-        //   // account: this.user.account,
-        //   // name: this.user.name,
-        //   // email: this.user.email,
-        //   // password: this.user.password,
-        //   // Checkpassword: this.user.Checkpassword, 
-        //   formData
-        // })
-
-        // const form = e.target
-        // const formData = new FormData(form)
-        // for (let [name, value] of formData.entries()) {
-        //   console.log(name + ': ' + value)
-        // }
-        const { data } = await authorizationAPI.signUp.create({
-          name: this.user.name,
-          email: this.user.email,
-          account: this.user.account,
-          password: this.user.password,
-          passwordCheck: this.user.Checkpassword
-        })
+        const { data } = await authorizationAPI.signUp({ account: this.user.account, name: this.user.name, email: this.user.email, password: this.user.password, checkPassword: this.user.Checkpassword})
         
-        console.log('12345')
         if (data.status !== "success") {
           throw new Error(data.message)
         }
-        console.log('account signed up sucessfully')
+        Toast.fire({
+          icon: 'success',                    
+          title: '註冊成功'
+        })
+
         this.$router.push('/signin')
 
       } catch (error) { 
+        console.log(error)
         Toast.fire({
           icon: 'error',                    
           title: '系統錯誤，請再試一次'
@@ -166,10 +146,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
-$orange: #f46524;
+$orange: #FF6600;
 $deeporange: #F34A16;
-$lightgray: #f6f8fa;
-$lightblue: #00B7EF;
+$lightgray: #F5F8FA;
+$lightblue: #0099FF;
+$lightdark: #657786;
+$bitdark: #657786;
 .signup {
   margin: auto;
   max-width: 540px;
@@ -212,6 +194,7 @@ $lightblue: #00B7EF;
       display: flex;
       flex-direction: column;
       .signup-button {
+        cursor: pointer;
         width: 540px;
         height: 50px;
         
@@ -225,6 +208,11 @@ $lightblue: #00B7EF;
         font-style: normal;
         font-weight: bold;
         font-size: 18px;
+        transition: ease-in 0.2s;
+        &:hover {
+          background-color: $deeporange;
+          box-shadow: 0 0 3px 1px $lightdark;
+        }
       }
       .signin-button {
         font-family: Noto Sans TC;
@@ -235,6 +223,7 @@ $lightblue: #00B7EF;
         text-decoration-line: underline;
         color: #0099FF;
         width: 540px;
+        cursor: pointer;
       }
     }
     

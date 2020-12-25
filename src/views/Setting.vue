@@ -1,7 +1,7 @@
 <template>
   <div class="main-setting"> 
     <Navbar />
-    <SubSetting class="main"/>
+    <SubSetting/>
   </div>
   
 </template>

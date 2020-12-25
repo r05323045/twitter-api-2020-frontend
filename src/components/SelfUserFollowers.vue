@@ -113,6 +113,7 @@ $lightgray: #F5F8FA;
 $bitdark: #657786;
 $divider: #E6ECF0;
   .follower-main {
+    border-left: 1px solid $divider;
     width: 600px;
     display: flex;
     flex-direction: column;

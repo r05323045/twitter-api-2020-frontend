@@ -6,8 +6,9 @@ Vue.use(VueRouter)
 
 const authorizeIsUser = (to, from, next) => {
   const currentUser = store.state.currentUser
-  if (currentUser && !(currentUser.role === 'user')) {
+  if (currentUser && !(currentUser.role === 'User')) {
     next('/admin/main')
+    console.log(currentUser)
     return
   }
   next()
@@ -38,8 +39,7 @@ const routes = [
   {
     path: '/signup',
     name: 'UserSignUp',
-    component: () => import('@/views/UserSignUp.vue'),
-    beforeEnter: authorizeIsUser
+    component: () => import('@/views/UserSignUp.vue')
   },
   {
     path: '/user/self/follower',

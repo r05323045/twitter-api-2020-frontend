@@ -42,6 +42,12 @@ export default {
   },
   watch: {
     '$route.path': function () {
+      this.followers.sort((a, b) => {
+        return a.Followship.createdAt < b.Followship.createdAt ? 1 : -1;
+      })
+      this.followings.sort((a, b) => {
+        return a.Followship.createdAt < b.Followship.createdAt ? 1 : -1;
+      })
       this.fetchFollowers(this.currentUser.id)
     }
   },
@@ -83,7 +89,12 @@ export default {
         this.followers = followerData.data[2].Followers
         const followingData = await UsersAPI.getFollowings({ userId })
         this.followings = followingData.data[2].Followings
-
+        this.followers.sort((a, b) => {
+          return a.Followship.createdAt < b.Followship.createdAt ? 1 : -1;
+        })
+        this.followings.sort((a, b) => {
+          return a.Followship.createdAt < b.Followship.createdAt ? 1 : -1;
+        })
       } catch {
         Toast.fire({
           icon: 'error',
@@ -104,7 +115,6 @@ export default {
   .page-container {
     /* outline: red solid;   */
     min-width: 1440px;
-    margin-top: 15px;
     height: 100%;
   }
   /* .content {

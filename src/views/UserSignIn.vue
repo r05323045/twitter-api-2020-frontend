@@ -1,6 +1,6 @@
 <template>
   <div class="signin">
-    <div class="container">
+    <div class="signin-container">
       <div class="logo">
         <div class="icon logo"></div>
       </div>
@@ -169,7 +169,7 @@ $bitdark: #657786;
 .signin {
   margin: auto;
   max-width: 540px;
-  .container {
+  .signin-container {
     padding-top: 60px;
     .logo {
       margin-bottom: 30px;
