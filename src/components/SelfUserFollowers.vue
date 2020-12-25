@@ -8,7 +8,7 @@
         <span v-if="currentUser.tweets">{{ currentUser.tweets.length }} 推文</span>
       </div>
     </div>
-    <div class="tab" v-if="this.$route.path.indexOf('/user/self') > 0">
+    <div class="tab self" v-if="this.$route.path.indexOf('/self') > 0">
       <div class="item" :class="{ active: this.$route.path === '/user/self/follower' }" @click="$router.push('/user/self/follower')"> 
         <div class="text">追隨者</div>
       </div>
@@ -17,7 +17,7 @@
         <div class="text">正在跟隨</div>
       </div>
     </div>
-    <div class="tab" v-if="!(this.$route.path.indexOf('/user/self') > 0)">
+    <div class="tab ohter" v-if="!(this.$route.path.indexOf('/self') > 0)">
       <div class="item" :class="{ active: this.$route.path.indexOf('follower') > 0 }" @click="$router.push(`/user/other/${currentUser.user.id}/follower`)"> 
         <div class="text">追隨者</div>
       </div>
@@ -28,7 +28,7 @@
     </div>
     <div class="followListContent">
       <div>
-        <div v-for="follower in initialFollowers" :key="follower.id" class="singlContent">
+        <div v-for="follower in followers" :key="follower.id" class="singlContent">
           <img  v-if="follower" :src="follower.avatar" alt="">
           <div class="text">
             <h5 v-if="follower" class="title">{{follower.name}}</h5>
@@ -36,14 +36,14 @@
             <p  v-if="follower" class="content">{{follower.introduction}}</p>
           </div>
           <button 
-            v-if="follower && currentUser.following"
-            v-show="currentUser.following.rows.map(row => row.followingId).includes(follower.id)"
+            v-if="follower"
+            v-show="follower.isFollowed"
             class="btn-follow unfollow" @click="deleteFollowing(follower.id)">
             正在跟隨
           </button>
           <button
-            v-if="follower && currentUser.following"
-            v-show="!currentUser.following.rows.map(row => row.followingId).includes(follower.id)"
+            v-if="follower"
+            v-show="!follower.isFollowed"
             class="btn-follow"
             @click="addFollowing(follower.id)">
             跟隨
@@ -63,6 +63,11 @@
 import { Toast } from '@/utils/helpers'
 import followshipsAPI from '@/apis/followships'
 export default {
+  data () {
+    return {
+      followers: []
+    }
+  },
   props: {
     initialFollowers: {
       type: Array
@@ -73,12 +78,15 @@ export default {
   },
   watch: {
     initialFollowers: function () {
-
+      this.followers = this.initialFollowers
     },
     currentUsers: function () {
       
     },
     deep: true
+  },
+  created () {
+    this.followers = this.initialFollowers
   },
   methods: {
     async addFollowing (userId) {
@@ -89,6 +97,11 @@ export default {
           throw new Error(data.message)
         }
         this.$bus.$emit('followAction', { type: 'follow', userId: userId})
+        this.followers.forEach(follower => {
+          if (follower.id === userId) {
+            follower.isFollowed = true
+          }
+        })
       } catch (error) {
         Toast.fire({
           icon: 'error',
@@ -104,6 +117,11 @@ export default {
           throw new Error(data.message)
         }
         this.$bus.$emit('followAction', { type: 'unfollow', userId: userId})
+        this.followers.forEach(follower => {
+          if (follower.id === userId) {
+            follower.isFollowed = false
+          }
+        })
       } catch (error) {
         Toast.fire({
           icon: 'error',

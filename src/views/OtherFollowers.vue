@@ -49,7 +49,6 @@ export default {
       this.followings.sort((a, b) => {
         return a.Followship.createdAt < b.Followship.createdAt ? 1 : -1;
       })
-      this.fetchFollowers(this.$route.params.id)
     }
   },
   methods: {
