@@ -41,6 +41,11 @@ const routes = [
     component: () => import('@/views/UserSignUp.vue')
   },
   {
+    path: '/chat',
+    component: () => import('@/views/Chat.vue'),
+    beforeEnter: authorizeIsUser
+  },
+  {
     path: '/user/self/follower',
     name: 'SelfFollowers',
     component: () => import('@/views/SelfFollowers.vue'),
