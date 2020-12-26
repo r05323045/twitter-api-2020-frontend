@@ -13,6 +13,18 @@
         個人資料
       </div>
       <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/setting').catch(()=>{})" :class="{ active: $route.path === '/setting' }">
+        <div class="icon noti"></div>
+        通知
+      </div>
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/setting').catch(()=>{})" :class="{ active: $route.path === '/setting' }">
+        <img class="icon msg-noti" src="../assets/icon_msg_noti.svg">
+        公開聊天室
+      </div>
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/setting').catch(()=>{})" :class="{ active: $route.path === '/setting' }">
+        <div class="icon messenge"></div>
+        私人訊息
+      </div>
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/setting').catch(()=>{})" :class="{ active: $route.path === '/setting' }">
         <div class="icon cog"></div>
         設定
       </div>
@@ -143,6 +155,9 @@ $lightdark: #9197A3;
         .icon {
           background-color: $orange;
         }
+        .icon.ms-noti {
+          background-color: none;
+        }
       }
       .icon {
         background-color: #000000;
@@ -160,6 +175,15 @@ $lightdark: #9197A3;
       }
       .icon.cog {
         mask: url(../assets/icon_cog.svg) no-repeat center;
+      }
+      .icon.messenge {
+        mask: url(../assets/icon_msg.svg) no-repeat center;
+      }
+      .icon.noti {
+        mask: url(../assets/icon_noti.svg) no-repeat center;
+      }
+      .icon.msg-noti {
+        background-color: #ffffff !important;
       }
       .btn-tweet {
         border: none;

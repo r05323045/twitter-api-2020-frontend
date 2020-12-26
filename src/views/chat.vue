@@ -1,52 +1,43 @@
 <template>
-  <div class="card mt-3">
-      <div class="card-body">
-          <div class="card-title">
-              <h3>Chat Group</h3>
-              <hr>
-          </div>
-          <div class="card-body">
-              <div class="messages">
-                  
-              </div>
-          </div>
-      </div>
-      <div class="card-footer">
-          <form @submit.prevent="sendMessage">
-              <div class="gorm-group">
-                  <label for="user">User:</label>
-                  <input type="text" v-model="user" class="form-control">
-              </div>
-              <div class="gorm-group pb-3">
-                  <label for="message">Message:</label>
-                  <input type="text" v-model="message" class="form-control">
-              </div>
-              <button type="submit" class="btn btn-success">Send</button>
-          </form>
-      </div>
+  <div class="chat-main">
+    <Navbar></Navbar>
+    <div class="chat-container">
+      <Chatroom></Chatroom>
+    </div>
   </div>
 </template>
 
 <script>
-import io from 'socket.io-client';
+import Navbar from '@/components/Navbar.vue'
+import { mapState } from 'vuex'
+import Chatroom from '@/components/Chatroom.vue'
 export default {
-  data() {
-    return {
-      user: '',
-      message: '',
-      messages: [],
-      socket : io('localhost:3001')
-    }
+  components: {
+    Navbar,
+    Chatroom,
   },
-  methods: {
-    sendMessage(e) {
-        e.preventDefault();
-      this.socket.emit('SEND_MESSAGE', {
-        user: this.user,
-        message: this.message
-      })
-      this.message = ''
-    }
-  },
+  computed: {
+    ...mapState(['currentUser', 'isAuthenticated']),
+  }
 }
 </script>
+
+<style lang="scss">
+$orange: #FF6600;
+$deeporange: #F34A16;
+$lightdark: #9197A3;
+$divider: #E6ECF0;
+.chat-main {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  .chat-container {
+    width: 100%;
+    max-height: 100vh;
+    overflow-y: scroll;
+    border-left: 1px solid $divider;
+    padding: 0;
+  }
+}
+</style>

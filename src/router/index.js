@@ -30,6 +30,11 @@ const routes = [
     beforeEnter: authorizeIsUser
   },
   {
+    path: '/chat',
+    component: () => import('@/views/Chat.vue'),
+    beforeEnter: authorizeIsUser
+  },
+  {
     path: '/main',
     name: 'Main',
     component: () => import('@/views/Main.vue'),
