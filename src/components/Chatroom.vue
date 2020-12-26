@@ -2,21 +2,17 @@
   <div class="chat-room">
     <div class="chat-users">
       <div class="title">
-        訊息
+        上線使用者 ({{ onlineUsers.length }})
         <div class="icon messege"></div>
       </div>
       <div class="list-group">
-        <div  v-show="!(!more && idx > 4)" v-for="(user, idx) in topUsers" @click="controlActive(idx, user)" :key="user.id" class="list-group-item">
+        <div  v-show="!(!more && idx > 4)" v-for="(user, idx) in onlineUsers" @click="controlActive(idx, user)" :key="user.id" class="list-group-item">
           <div v-show="messengeActive[idx]" class="active-bar"></div>
           <div class="avatar" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})" :style="{ background: `url(${user.avatar}) no-repeat center/cover` }"></div>
-          <div class="messenge-time">{{ user.createdAt | fromNow }}</div>
-          <div class="info-wrapper">
-            <div class="info">
-              <div class="name" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})">{{ user.name }}</div>
-              <div class="account" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})">{{ user.account }}</div>
-            </div>
-            <div class="messenge-text">{{ user.introduction }}</div>
-          </div>  
+          <div class="info">  
+            <div class="name" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})">{{ user.name }}</div>
+            <div class="account" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})">{{ user.account }}</div>
+          </div>
         </div>
       </div>
       <div></div>
@@ -26,8 +22,8 @@
 </template>
 
 <script>
-import usersAPI from '@/apis/users'
 import { Toast } from '@/utils/helpers'
+import chatAPI from '@/apis/chats'
 import { mapState } from 'vuex'
 import MessengeBoard from '@/components/MessengeBoard.vue' 
 export default {
@@ -37,15 +33,20 @@ export default {
   data () {
     return {
       topUsers: [],
+      onlineUsers: [],
       more: false,
       messengeActive: [],
       userChatTo: {}
     }
   },
-  created () {
-    this.fetchTopUsers()
+  mounted () {
+    this.enterChatroom()
+    this.fetchChatroom()
     this.messengeActive = new Array(this.topUsers.length).fill(false)
     this.messengeActive[0] = true
+  },
+  beforeDestroy () {
+    this.leaveChatroom()
   },
   computed: {
     ...mapState(['currentUser', 'isAuthenticated'])
@@ -56,30 +57,68 @@ export default {
       this.messengeActive[index] = true
       this.userChatTo = user
     },
-    async fetchTopUsers () {
+    async fetchChatroom () {
       const loader = this.$loading.show({
         isFullPage: true,
         opacity: 1
       }, { default: this.$createElement('MyLoading') })
       try {
-        const { data } = await usersAPI.getTopUsers()
-        this.topUsers = data.users.map(user => ({
-          id: user.id,
-          name: user.name,
-          avatar: user.avatar,
-          account: user.account,
-          followerCount: user.FollowerCount,
-          introduction: user.introduction,
-          createdAt: user.createdAt,
-          isFollowed: user.isFollowed
-        })).filter(user => user.id !== this.currentUser.id)
-        this.userChatTo = this.topUsers[0]
+        const { data } = await chatAPI.getChatRoom()
+        this.onlineUsers = data.map(user => ({
+          id: user.User.id,
+          name: user.User.name,
+          avatar: user.User.avatar,
+          account: user.User.account,
+          introduction: user.User.introduction,
+        }))
         loader.hide()
+      } catch (error) {
+        loader.hide()
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '目前無法取得訊息，請稍候'
+        })
+      }
+    },
+    async accessChatroom () {
+      try {
+        const { data } = await chatAPI.enterChatRoom()
+        console.log(data)
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
       } catch (error) {
         console.log(error)
         Toast.fire({
           icon: 'error',
-          title: '目前無法為你推薦追蹤，請稍候'
+          title: '無法進入聊天室'
+        })
+      }
+    },
+    async leaveChatroom () {
+      try {
+        const { data } = await chatAPI.deleteChatRoom()
+        console.log(data)
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async enterChatroom () {
+      try {
+        const { data } = await chatAPI.postChatRoom()
+        console.log(data)
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法進入聊天室'
         })
       }
     },
@@ -130,11 +169,11 @@ $divider: #E6ECF0;
         border-top: 1px solid $divider;
         border-bottom: 1px solid $divider;
         height: 71px;
-        padding: 10px 15px 0 15px;
+        padding: 10px 15px 10px 15px;
         background: none;
         display: flex;
         flex-direction: row;
-        align-items: flex-start;
+        align-items: center;
         cursor: pointer;
         transition: ease-in 0.2s;
         &:hover {
@@ -158,51 +197,35 @@ $divider: #E6ECF0;
             filter: brightness(.9);
           }
         }
-        .messenge-time {
-          position: absolute;
-          top: 10px;
-          right: 15px;
-          font-weight: 500;
-          font-size: 15px;
-          line-height: 22px;
-          color: $bitdark;
-        }
-        .info-wrapper{
-          width: 100%;
-          position: relative;
+        .info {
           display: flex;
-          flex-direction: column;
-          .info {
-            display: flex;
-            flex-direction: row;
-            .name {
-              text-align: left;
-              margin: 0 5px 3px 0;
-              font-size: 15px;
-              line-height: 15px;
-              font-weight: 700;
-              cursor: pointer;
-              &:hover {
-                text-decoration: underline;
-              }
-            }
-            .account {
-              text-align: left;
-              font-size: 15px;
-              line-height: 15px;
-              font-weight: 700;
-              color: $bitdark;
-              cursor: pointer;
-              &:hover {
-                text-decoration: underline;
-              }
+          flex-direction: row;
+          align-items: flex-end;
+          height: 28px;
+          .name {
+            text-align: left;
+            margin-right: 10px;
+            font-weight: 900;
+            font-size: 19px;
+            height: 28px;
+            line-height: 28px;
+            cursor: pointer;
+            &:hover {
+              text-decoration: underline;
             }
           }
-          .messenge-text {
+          .account {
             text-align: left;
             font-weight: 500;
             font-size: 15px;
             line-height: 22px;
+            vertical-align: bottom;
+            height: 24px;
+            color: $bitdark;
+            cursor: pointer;
+            &:hover {
+              text-decoration: underline;
+            }
           }
         }
       }

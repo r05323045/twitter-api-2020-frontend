@@ -12,15 +12,15 @@
         <div class="icon user"></div>
         個人資料
       </div>
-      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/setting').catch(()=>{})" :class="{ active: $route.path === '/setting' }">
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/').catch(()=>{})" :class="{ active: $route.path === '/' }">
         <div class="icon noti"></div>
         通知
       </div>
-      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/setting').catch(()=>{})" :class="{ active: $route.path === '/setting' }">
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/chat').catch(()=>{})" :class="{ active: $route.path === '/chat' }">
         <img class="icon msg-noti" src="../assets/icon_msg_noti.svg">
         公開聊天室
       </div>
-      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/setting').catch(()=>{})" :class="{ active: $route.path === '/setting' }">
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/').catch(()=>{})" :class="{ active: $route.path === '/' }">
         <div class="icon messenge"></div>
         私人訊息
       </div>
