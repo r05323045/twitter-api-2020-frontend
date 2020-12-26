@@ -1,8 +1,8 @@
 <template>
   <div class="row page-container">
     <Navbar class="col-3" />
-    <SelfUserFollowers v-show="$route.path === '/user/self/follower'" :initialFollowers="followers" :currentUser="user" />
-    <SelfUserFollowers v-show="$route.path === '/user/self/following'" :initialFollowers="followings" :currentUser="user" />
+    <SelfUserFollowers v-show="$route.path === '/user/self/follower'" :initialFollowers="followers" :nowUser="user" />
+    <SelfUserFollowers v-show="$route.path === '/user/self/following'" :initialFollowers="followings" :nowUser="user" />
     <RecommendUsers class="col-4" />
   </div>
      

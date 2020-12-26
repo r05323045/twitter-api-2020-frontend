@@ -4,8 +4,8 @@
     <div class="upper">
       <img class="arrow" @click="$router.go(-1)" src="@/asset/Vector@2x.png" alt="">
       <div class="title">
-        <h3>{{ currentUser.name }}</h3>
-        <span v-if="currentUser.tweets">{{ currentUser.tweets.length }} 推文</span>
+        <h3>{{ nowUser.name }}</h3>
+        <span v-if="nowUser.tweets">{{ nowUser.tweets.length }} 推文</span>
       </div>
     </div>
     <div class="tab self" v-if="this.$route.path.indexOf('/self') > 0">
@@ -18,32 +18,32 @@
       </div>
     </div>
     <div class="tab ohter" v-if="!(this.$route.path.indexOf('/self') > 0)">
-      <div class="item" :class="{ active: this.$route.path.indexOf('follower') > 0 }" @click="$router.push(`/user/other/${currentUser.user.id}/follower`)"> 
+      <div class="item" :class="{ active: this.$route.path.indexOf('follower') > 0 }" @click="$router.push(`/user/other/${nowUser.user.id}/follower`).catch(()=>{})"> 
         <div class="text">追隨者</div>
       </div>
       
-      <div class="item" :class="{ active: this.$route.path.indexOf('following') > 0 }" @click="$router.push(`/user/other/${currentUser.user.id}/following`)">
+      <div class="item" :class="{ active: this.$route.path.indexOf('following') > 0 }" @click="$router.push(`/user/other/${nowUser.user.id}/following`).catch(()=>{})">
         <div class="text">正在跟隨</div>
       </div>
     </div>
     <div class="followListContent">
       <div>
         <div v-for="follower in followers" :key="follower.id" class="singleContent">
-          <img  v-if="follower" :src="follower.avatar" alt="">
+          <img  v-if="follower" :src="follower.avatar" alt="" @click="$router.push(`/user/other/${nowUser.user.id}`).catch(()=>{})">
           <div class="text">
-            <h5 v-if="follower" class="title">{{follower.name}}</h5>
-            <h5  v-if="follower" class="account">{{follower.account}}</h5>
+            <h5 v-if="follower" class="title" @click="$router.push(`/user/other/${nowUser.user.id}`).catch(()=>{})">{{follower.name}}</h5>
+            <h5  v-if="follower" class="account" @click="$router.push(`/user/other/${nowUser.user.id}`).catch(()=>{})">{{follower.account}}</h5>
             <p  v-if="follower" class="content">{{follower.introduction}}</p>
           </div>
           <button 
             v-if="follower"
-            v-show="follower.isFollowed"
+            v-show="follower.isFollowed && follower.id !== currentUser.id"
             class="btn-follow unfollow" @click="deleteFollowing(follower.id)">
             正在跟隨
           </button>
           <button
             v-if="follower"
-            v-show="!follower.isFollowed"
+            v-show="!follower.isFollowed && follower.id !== currentUser.id"
             class="btn-follow"
             @click="addFollowing(follower.id)">
             跟隨
@@ -61,6 +61,7 @@
 
 <script>
 import { Toast } from '@/utils/helpers'
+import { mapState } from 'vuex'
 import followshipsAPI from '@/apis/followships'
 export default {
   data () {
@@ -72,15 +73,18 @@ export default {
     initialFollowers: {
       type: Array
     },
-    currentUser: {
+    nowUser: {
       type: Object
     }
+  },
+  computed: {
+    ...mapState(['currentUser', 'isAuthenticated'])
   },
   watch: {
     initialFollowers: function () {
       this.followers = this.initialFollowers
     },
-    currentUsers: function () {
+    nowUser: function () {
       
     },
     deep: true
