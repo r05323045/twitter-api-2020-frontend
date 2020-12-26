@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import { Toast } from '@/utils/helpers'
 import io from 'socket.io-client'
 import chatAPI from '@/apis/chats'
 import { mapState } from 'vuex'
@@ -60,7 +61,7 @@ export default {
       name: '',
       message: '',
       messages: [],
-      socket : io('simple-twitter-demo-ac.herokuapp.com')
+      socket : io('https://simple-twitter-demo-ac.herokuapp.com')
     }
   },
   created () {
@@ -86,6 +87,12 @@ export default {
   methods: {
     sendMessage(e) {
       e.preventDefault()
+      if (this.message === '') {
+        Toast.fire({
+          icon: 'error',
+          title: '請輸入訊息'
+        })
+      }
       this.socket.emit('send message', {id: this.currentUser.id, avatar: this.currentUser.avatar, message: this.message, createdAt: new Date()})
       this.message = ''
     },
