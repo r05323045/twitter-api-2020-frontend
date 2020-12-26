@@ -42,6 +42,7 @@
 
 <script>
 import io from 'socket.io-client'
+import chatAPI from '@/apis/chats'
 import { mapState } from 'vuex'
 export default {
   props: {
@@ -65,11 +66,15 @@ export default {
   created () {
     this.socket.emit('chatting', this.currentUser)
   },
+  beforeDestroy () {
+    this.leaveChatroom()
+  },
   watch: {
     messages () {
       const scroll = document.querySelector('.board-wrapper')
       scroll.scrollTop = scroll.scrollHeight
       scroll.animate({scrollTop: scroll.scrollHeight})
+      this.$emit('someoneCommein')
     }
   },
   computed: {
@@ -80,7 +85,18 @@ export default {
       e.preventDefault()
       this.socket.emit('send message', {id: this.currentUser.id, avatar: this.currentUser.avatar, message: this.message, createdAt: new Date()})
       this.message = ''
-    }
+    },
+    async leaveChatroom () {
+      try {
+        const { data } = await chatAPI.deleteChatRoom()
+        console.log(data)
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    },
   },
   mounted() {
     this.socket.on('msg', (data) => {

@@ -11,15 +11,5 @@ export default {
     return apiHelper.get('/chatroom', {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
-  },
-  postChatRoom () {
-    return apiHelper.post('/chatroom', {
-      headers: { Authorization: `Bearer ${getToken()}` }
-    })
-  },
-  enterChatRoom () {
-    return apiHelper.post('/chatroom', {
-      headers: { Authorization: `Bearer ${getToken()}` }
-    })
   }
 }

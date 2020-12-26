@@ -6,7 +6,7 @@
         <div class="icon messege"></div>
       </div>
       <div class="list-group">
-        <div  v-show="!(!more && idx > 4)" v-for="(user, idx) in onlineUsers" @click="controlActive(idx, user)" :key="user.id" class="list-group-item">
+        <div  v-show="!(!more && idx > 4)" v-for="(user, idx) in onlineUsers" @click="controlActive(idx, user)" :key="`${user.id + Math.random()}`" class="list-group-item">
           <div v-show="messengeActive[idx]" class="active-bar"></div>
           <div class="avatar" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})" :style="{ background: `url(${user.avatar}) no-repeat center/cover` }"></div>
           <div class="info">  
@@ -17,14 +17,14 @@
       </div>
       <div></div>
     </div>
-    <MessengeBoard :userChatTo="userChatTo"></MessengeBoard>
+    <MessengeBoard :userChatTo="userChatTo" @someoneComein="fetchChatroom" ></MessengeBoard>
   </div>
 </template>
 
 <script>
 import { Toast } from '@/utils/helpers'
-import chatAPI from '@/apis/chats'
 import { mapState } from 'vuex'
+import chatAPI from '@/apis/chats'
 import MessengeBoard from '@/components/MessengeBoard.vue' 
 export default {
   components: {
@@ -40,13 +40,9 @@ export default {
     }
   },
   mounted () {
-    this.enterChatroom()
     this.fetchChatroom()
     this.messengeActive = new Array(this.topUsers.length).fill(false)
     this.messengeActive[0] = true
-  },
-  beforeDestroy () {
-    this.leaveChatroom()
   },
   computed: {
     ...mapState(['currentUser', 'isAuthenticated'])
@@ -78,47 +74,6 @@ export default {
         Toast.fire({
           icon: 'error',
           title: '目前無法取得訊息，請稍候'
-        })
-      }
-    },
-    async accessChatroom () {
-      try {
-        const { data } = await chatAPI.enterChatRoom()
-        console.log(data)
-        if (data.status !== 'success') {
-          throw new Error(data.message)
-        }
-      } catch (error) {
-        console.log(error)
-        Toast.fire({
-          icon: 'error',
-          title: '無法進入聊天室'
-        })
-      }
-    },
-    async leaveChatroom () {
-      try {
-        const { data } = await chatAPI.deleteChatRoom()
-        console.log(data)
-        if (data.status !== 'success') {
-          throw new Error(data.message)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    },
-    async enterChatroom () {
-      try {
-        const { data } = await chatAPI.postChatRoom()
-        console.log(data)
-        if (data.status !== 'success') {
-          throw new Error(data.message)
-        }
-      } catch (error) {
-        console.log(error)
-        Toast.fire({
-          icon: 'error',
-          title: '無法進入聊天室'
         })
       }
     },
