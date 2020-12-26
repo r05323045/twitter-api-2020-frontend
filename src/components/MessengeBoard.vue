@@ -60,7 +60,7 @@ export default {
       name: '',
       message: '',
       messages: [],
-      socket : io('localhost:3000')
+      socket : io('simple-twitter-demo-ac.herokuapp.com')
     }
   },
   created () {
