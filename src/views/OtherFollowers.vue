@@ -37,19 +37,13 @@ export default {
         this.followAction(action)
       } 
     })
-    this.fetchTopUsers ()
     this.fetchFollowers(this.$route.params.id)
     this.fetchProfile()
 
   },
   watch: {
     '$route.path': function () {
-      this.followers.sort((a, b) => {
-        return a.Followship.createdAt < b.Followship.createdAt ? 1 : -1;
-      })
-      this.followings.sort((a, b) => {
-        return a.Followship.createdAt < b.Followship.createdAt ? 1 : -1;
-      })
+      this.fetchFollowers(this.$route.params.id)
     }
   },
   methods: {
@@ -62,14 +56,6 @@ export default {
       try {
         const { data } = await UsersAPI.getProfile({userId})
         this.user = data
-        if (this.user.following.rows.map(d => d.followerId).includes(userId)) {
-          this.user.following.rows = this.user.following.rows.filter(d => d.followerId !== userId)
-          this.user.following.count = this.user.following.count - 1
-        }
-        if (this.user.follower.rows.map(d => d.followerId).includes(userId)) {
-          this.user.follower.rows = this.user.follower.rows.filter(d => d.followerId !== userId)
-          this.user.follower.count = this.user.follower.count - 1
-        }
         this.user.tweets = this.user.tweets.map(tweet => ({
           id: tweet.id,
           userId: tweet.User.id,
@@ -119,28 +105,22 @@ export default {
     async fetchFollowers(userId) {
       try {
         const followerData = await UsersAPI.getFollowers({ userId })
-        this.followers = followerData.data[1].Followers.filter(d => d.id !== userId)
-        this.followers.forEach(d => {
-          this.topUsers.forEach(r => {
-            if (d.id === r.id) {
-              d.isFollowed = r.isFollowed
+        this.followers = followerData.data[2].Followers.sort((a, b) => {return a.Followship.createdAt < b.Followship.createdAt ? 1 : -1})
+        this.followers.forEach(r => {
+          followerData.data[1].rows.forEach(d => {
+            if(r.id === d.followerId) {
+              r.isFollowed = d.isFollowed
             }
           })
         })
         const followingData = await UsersAPI.getFollowings({ userId })
-        this.followings = followingData.data[1].Followings.filter(d => d.id !== userId)
-        this.followings.forEach(d => {
-          this.topUsers.forEach(r => {
-            if (d.id === r.id) {
-              d.isFollowed = r.isFollowed
+        this.followings = followingData.data[2].Followings.sort((a, b) => {return a.Followship.createdAt < b.Followship.createdAt ? 1 : -1})
+        this.followings.forEach(r => {
+          followingData.data[1].rows.forEach(d => {
+            if(r.id === d.followerId) {
+              r.isFollowed = d.isFollowed
             }
           })
-        })
-        this.followers.sort((a, b) => {
-          return a.Followship.createdAt < b.Followship.createdAt ? 1 : -1;
-        })
-        this.followings.sort((a, b) => {
-          return a.Followship.createdAt < b.Followship.createdAt ? 1 : -1;
         })
       } catch {
         Toast.fire({
@@ -151,7 +131,6 @@ export default {
 
     },
     followAction () {
-      this.fetchTopUsers ()
       this.fetchFollowers(this.$route.params.id)
       this.fetchProfile()
     }

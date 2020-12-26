@@ -133,8 +133,8 @@ export default {
       try {
         const { data } = await usersAPI.getProfile({userId})
         this.user = data
-        if (this.user.following.rows.map(d => d.followerId).includes(userId)) {
-          this.user.following.rows = this.user.following.rows.filter(d => d.followerId !== userId)
+        if (this.user.following.rows.map(d => d.followingId).includes(userId)) {
+          this.user.following.rows = this.user.following.rows.filter(d => d.followingId !== userId)
           this.user.following.count = this.user.following.count - 1
         }
         if (this.user.follower.rows.map(d => d.followerId).includes(userId)) {
