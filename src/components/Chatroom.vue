@@ -3,7 +3,7 @@
     <div class="chat-users">
       <div class="title">
         上線使用者 ({{ onlineUsers.length }})
-        <div class="icon messege"></div>
+        <div v-show="$route.path !== '/chat'" class="icon messege"></div>
       </div>
       <div class="list-group">
         <div  v-show="!(!more && idx > 4)" v-for="(user, idx) in onlineUsers" @click="controlActive(idx, user)" :key="`${user.id + Math.random()}`" class="list-group-item">
@@ -73,7 +73,7 @@ export default {
         console.log(error)
         Toast.fire({
           icon: 'error',
-          title: '目前無法取得訊息，請稍候'
+          title: '目前無法連線聊天室，請稍候'
         })
       }
     },

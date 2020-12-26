@@ -60,7 +60,7 @@ export default {
       name: '',
       message: '',
       messages: [],
-      socket : io('simple-twitter-demo-ac.herokuapp.com')
+      socket : io('localhost:3000')
     }
   },
   created () {
@@ -68,6 +68,9 @@ export default {
   },
   beforeDestroy () {
     this.leaveChatroom()
+  },
+  Destroy () {
+    window.removeEventListener('beforeunload', this.leaveChatroom())
   },
   watch: {
     messages () {
@@ -99,6 +102,7 @@ export default {
     },
   },
   mounted() {
+    window.addEventListener('beforeunload', this.leaveChatroom())
     this.socket.on('msg', (data) => {
       this.messages = [...this.messages, {id: data.id, avatar: data.avatar, message: data.message, createdAt: data.createdAt}]
       this.messages.sort((a, b) => {
