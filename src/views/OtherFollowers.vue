@@ -117,7 +117,7 @@ export default {
         this.followings = followingData.data[2].Followings.sort((a, b) => {return a.Followship.createdAt < b.Followship.createdAt ? 1 : -1})
         this.followings.forEach(r => {
           followingData.data[1].rows.forEach(d => {
-            if(r.id === d.followerId) {
+            if(r.id === d.followingId) {
               r.isFollowed = d.isFollowed
             }
           })
