@@ -2,29 +2,26 @@
   <div class="chat-room">
     <div class="chat-users">
       <div class="title">
-        上線使用者 ({{ onlineUsers.length }})
-        <div class="icon messege"></div>
+        上線使用者 ({{ onlineUsers ? onlineUsers.length : 0 }})
+        <div v-show="$route.path !== '/chat'" class="icon messege"></div>
       </div>
-      <div class="list-group">
-        <div  v-show="!(!more && idx > 4)" v-for="(user, idx) in onlineUsers" @click="controlActive(idx, user)" :key="`${user.id + Math.random()}`" class="list-group-item">
+      <div class="list-group" v-if="onlineUsers.length > 0">
+        <div v-for="(user, idx) in onlineUsers" :key="`${user.id + Math.random()}`" class="list-group-item">
           <div v-show="messengeActive[idx]" class="active-bar"></div>
-          <div class="avatar" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})" :style="{ background: `url(${user.avatar}) no-repeat center/cover` }"></div>
+          <div class="avatar" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})" :style="{ background: `url(${user.User ? user.User.avatar : ''}) no-repeat center/cover` }"></div>
           <div class="info">  
-            <div class="name" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})">{{ user.name }}</div>
-            <div class="account" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})">{{ user.account }}</div>
+            <div class="name" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})">{{user.User ? user.User.name : ''}}</div>
+            <div class="account" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})">{{user.User ? user.User.account : '' }}</div>
           </div>
         </div>
       </div>
-      <div></div>
     </div>
-    <MessengeBoard :userChatTo="userChatTo" @someoneComein="fetchChatroom" ></MessengeBoard>
+    <MessengeBoard :userChatTo="userChatTo" @someoneComein="updateOnelineUsers" ></MessengeBoard>
   </div>
 </template>
 
 <script>
-import { Toast } from '@/utils/helpers'
 import { mapState } from 'vuex'
-import chatAPI from '@/apis/chats'
 import MessengeBoard from '@/components/MessengeBoard.vue' 
 export default {
   components: {
@@ -32,7 +29,7 @@ export default {
   },
   data () {
     return {
-      topUsers: [],
+      onlineNumber: 0,
       onlineUsers: [],
       more: false,
       messengeActive: [],
@@ -40,41 +37,30 @@ export default {
     }
   },
   mounted () {
-    this.fetchChatroom()
-    this.messengeActive = new Array(this.topUsers.length).fill(false)
-    this.messengeActive[0] = true
+    this.onlineUsers = [ this.currentUser ]
+    //this.messengeActive = new Array(this.onlineUsers.length).fill(false)
   },
   computed: {
     ...mapState(['currentUser', 'isAuthenticated'])
   },
+  watch: {
+    onlineUsers: function () {
+      return this.onlineUsers
+    }
+  },
   methods: {
+    /*
     controlActive (index, user) {
       this.messengeActive = new Array(this.topUsers.length).fill(false)
       this.messengeActive[index] = true
       this.userChatTo = user
     },
-    async fetchChatroom () {
-      const loader = this.$loading.show({
-        isFullPage: true,
-        opacity: 1
-      }, { default: this.$createElement('MyLoading') })
-      try {
-        const { data } = await chatAPI.getChatRoom()
-        this.onlineUsers = data.map(user => ({
-          id: user.User.id,
-          name: user.User.name,
-          avatar: user.User.avatar,
-          account: user.User.account,
-          introduction: user.User.introduction,
-        }))
-        loader.hide()
-      } catch (error) {
-        loader.hide()
-        console.log(error)
-        Toast.fire({
-          icon: 'error',
-          title: '目前無法取得訊息，請稍候'
-        })
+    */
+    updateOnelineUsers (data) {
+      this.onlineUsers = data
+      if (!this.onlineUsers.map(d => d.User.id).includes(this.currentUser.id)) {
+        const onlineFormat = { ...this.currentUser, User: {name: this.currentUser.name, account: this.currentUser.account, avatar: this.currentUser.avatar}}
+        this.onlineUsers = [...this.onlineUsers, onlineFormat]
       }
     },
   }

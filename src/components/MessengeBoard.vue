@@ -9,27 +9,27 @@
         公開聊天室
       </div>
     </div>
-    <div class="board-wrapper">
-      <div class="broacast-message-wrapper">
-        <div class="broacast-message" v-for="(broacast, index) in broacastMessages" :key="`broadcast-${index}`">{{ broacast }}</div>
-      </div>
+    <div id="board-wrapper" class="board-wrapper" @click="scrollToBottom">
       <div class="messages">
-        <div class="message-wrapper" v-for="(message, index) in messages" :key="`msg-${index}`">
-          <div class="other message" v-if="currentUser.id !== message.id">
-            <div class="avatar" :style="{ background: `url(${message.avatar}) no-repeat center/cover` }"></div>
+        <div v-for="(message, index) in messages" :key="`msg-${index}`">
+          <div class="broacast-message-wrapper" v-if="message.type === 'userComein' && currentUser.id !== message.UserId">
+            <div class="broacast-message">{{ message.message }}</div>
+          </div>
+          <div class="other message" v-if="message.type !== 'userComein' && currentUser.id !== message.UserId">
+            <div class="avatar" :style="{ background: `url(${message.User ? message.User.avatar : message.avatar}) no-repeat center/cover` }"></div>
             <div class="wrapper">
               <div class="text">{{ message.message }}</div>
               <div class="time">{{ message.createdAt | fromNow }}</div>
             </div>
           </div>
-          <div class="self message" v-if="currentUser.id === message.id">
+          <div class="self message" v-if="message.type !== 'userComein' && currentUser.id === message.UserId">
             <div class="text">{{ message.message }}</div>
             <div class="time">{{ message.createdAt | fromNow }}</div>
           </div>
         </div>
       </div>
     </div>
-    <form @submit.prevent="sendMessage">
+    <form @submit.prevent="sendMessage" @click="scrollToBottom">
       <div class="text-wrapper">
         <input v-model="message" class="text" placeholder="輸入訊息..." onfocus="this.placeholder = ''" onblur="this.placeholder = '輸入訊息...'" />
         <div class="icon-wrapper" type="submit" @click="sendMessage">
@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import io from 'socket.io-client'
+import { Toast } from '@/utils/helpers'
 import chatAPI from '@/apis/chats'
 import { mapState } from 'vuex'
 export default {
@@ -60,36 +60,79 @@ export default {
       name: '',
       message: '',
       messages: [],
-      socket : io('localhost:3000')
     }
   },
   created () {
-    this.socket.emit('chatting', this.currentUser)
+    window.addEventListener('beforeunload', this.leaveChatroom())
+  },
+  mounted() {
+    this.fetchChatroom()
+    this.$socket.emit('chatting', { ...this.currentUser, createdAt: new Date(), type: 'userComein' })
+    this.$socket.on('userOnline', (data) => {
+      this.$emit('someoneComein', data)
+      const scroll = this.$el.querySelector('#board-wrapper')
+      scroll.scrollTop = scroll.scrollHeight
+      scroll.animate({scrollTop: scroll.scrollHeight})
+    })
+    this.$socket.on('msg', (data) => {
+      this.messages = [...this.messages, {UserId: data.UserId, avatar: data.avatar, message: data.message, createdAt: data.createdAt, type: data.type, User: data.User}]
+      this.messages.sort((a, b) => {
+        return a.createdAt > b.createdAt ? 1 : -1;
+      })
+      const scroll = this.$el.querySelector('#board-wrapper')
+      scroll.scrollTop = scroll.scrollHeight
+      scroll.animate({scrollTop: scroll.scrollHeight})
+    }),
+    this.$socket.on('newclientlogin', (data) => {
+      this.messages = [...this.messages, {UserId: data.UserId, avatar: data.avatar, message: data.message, createdAt: data.createdAt, type: data.type, User: data.User}]
+      this.messages.sort((a, b) => {
+        return a.createdAt > b.createdAt ? 1 : -1;
+      })
+      const scroll = this.$el.querySelector('#board-wrapper')
+      scroll.scrollTop = scroll.scrollHeight
+      scroll.animate({scrollTop: scroll.scrollHeight})
+    })
   },
   beforeDestroy () {
     this.leaveChatroom()
+    this.$socket.emit('leave', this.currentUser.id)
   },
   watch: {
     messages () {
-      const scroll = document.querySelector('.board-wrapper')
+      const scroll = this.$el.querySelector('#board-wrapper')
       scroll.scrollTop = scroll.scrollHeight
       scroll.animate({scrollTop: scroll.scrollHeight})
-      this.$emit('someoneCommein')
     }
+  },
+  updated() {
+    this.scrollToBottom()
   },
   computed: {
     ...mapState(['currentUser', 'isAuthenticated'])
   },
   methods: {
+    scrollToBottom () {
+      const scroll = this.$el.querySelector('#board-wrapper')
+      scroll.scrollTop = scroll.scrollHeight
+      scroll.animate({scrollTop: scroll.scrollHeight})
+    },
     sendMessage(e) {
       e.preventDefault()
-      this.socket.emit('send message', {id: this.currentUser.id, avatar: this.currentUser.avatar, message: this.message, createdAt: new Date()})
+      if (this.message === '') {
+        Toast.fire({
+          icon: 'error',
+          title: '請輸入訊息'
+        })
+      }
+      this.$socket.emit('send message', {UserId: this.currentUser.id, avatar: this.currentUser.avatar, message: this.message, createdAt: new Date(), type: 'chat', User: this.currentUser})
       this.message = ''
+      const scroll = this.$el.querySelector('#board-wrapper')
+      scroll.scrollTop = scroll.scrollHeight
+      scroll.animate({scrollTop: scroll.scrollHeight})
     },
     async leaveChatroom () {
       try {
         const { data } = await chatAPI.deleteChatRoom()
-        console.log(data)
         if (data.status !== 'success') {
           throw new Error(data.message)
         }
@@ -97,22 +140,30 @@ export default {
         console.log(error)
       }
     },
-  },
-  mounted() {
-    this.socket.on('msg', (data) => {
-      this.messages = [...this.messages, {id: data.id, avatar: data.avatar, message: data.message, createdAt: data.createdAt}]
-      this.messages.sort((a, b) => {
-        return a.createdAt > b.createdAt ? 1 : -1;
-      })
-      this.selfMessages = this.messages.filter(d => d.id === this.currentUser.id)
-      this.otherMessages = this.messages.filter(d => d.id !== this.currentUser.id)
-    }),
-    this.socket.on('newclientlogin', (data) => {
-      this.broacastMessages = [...this.broacastMessages, data]
-    })
-    this.socket.on('online', (data) => {
-      this.onlineNumber = data
-    })
+    async fetchChatroom () {
+      const loader = this.$loading.show({
+        isFullPage: true,
+        opacity: 1
+      }, { default: this.$createElement('MyLoading') })
+      try {
+        const { data } = await chatAPI.getChatRoom()
+        this.messages = data.histroy.map(d => ({
+          ...d,
+          type: d.message.indexOf('上線') > 0 ? 'userComein' : 'chat',
+        }))
+        const scroll = this.$el.querySelector('#board-wrapper')
+        scroll.scrollTop = scroll.scrollHeight
+        scroll.animate({scrollTop: scroll.scrollHeight})
+        loader.hide()
+      } catch (error) {
+        loader.hide()
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '目前無法連線聊天室，請稍候'
+        })
+      }
+    },
   }
 }
 </script>
