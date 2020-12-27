@@ -40,7 +40,6 @@ export default {
     }
   },
   mounted () {
-    this.fetchChatroom()
     this.messengeActive = new Array(this.topUsers.length).fill(false)
     this.messengeActive[0] = true
   },
@@ -60,7 +59,8 @@ export default {
       }, { default: this.$createElement('MyLoading') })
       try {
         const { data } = await chatAPI.getChatRoom()
-        if (data.chatUser) {
+        console.log(data)
+        if (data.chatUser.length > 0) {
           this.onlineUsers = data.chatUser.map(user => ({
           id: user.User.id,
           name: user.User.name,
@@ -69,13 +69,13 @@ export default {
           introduction: user.User.introduction,
         }))
         } else {
-          this.onlineUsers = this.currentUser.map(user => ({
-            id: user.User.id,
-            name: user.User.name,
-            avatar: user.User.avatar,
-            account: user.User.account,
-            introduction: user.User.introduction,
-          }))
+          this.onlineUsers = [{
+            id: this.currentUser.id,
+            name: this.currentUser.name,
+            avatar: this.currentUser.avatar,
+            account: this.currentUser.account,
+            introduction: this.currentUser.introduction,
+          }]
         }
         loader.hide()
       } catch (error) {
