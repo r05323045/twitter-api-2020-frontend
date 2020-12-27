@@ -6,7 +6,7 @@
         <div v-show="$route.path !== '/chat'" class="icon messege"></div>
       </div>
       <div class="list-group" v-if="onlineUsers.length > 0">
-        <div v-for="(user, idx) in onlineUsers" @click="controlActive(idx, user)" :key="`${user.id + Math.random()}`" class="list-group-item">
+        <div v-for="(user, idx) in onlineUsers" :key="`${user.id + Math.random()}`" class="list-group-item">
           <div v-show="messengeActive[idx]" class="active-bar"></div>
           <div class="avatar" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})" :style="{ background: `url(${user.User ? user.User.avatar : ''}) no-repeat center/cover` }"></div>
           <div class="info">  
@@ -21,9 +21,7 @@
 </template>
 
 <script>
-import { Toast } from '@/utils/helpers'
 import { mapState } from 'vuex'
-import chatAPI from '@/apis/chats'
 import MessengeBoard from '@/components/MessengeBoard.vue' 
 export default {
   components: {
@@ -63,40 +61,6 @@ export default {
       if (!this.onlineUsers.map(d => d.User.id).includes(this.currentUser.id)) {
         const onlineFormat = { ...this.currentUser, User: {name: this.currentUser.name, account: this.currentUser.account, avatar: this.currentUser.avatar}}
         this.onlineUsers = [...this.onlineUsers, onlineFormat]
-      }
-    },
-    async fetchChatroom () {
-      const loader = this.$loading.show({
-        isFullPage: true,
-        opacity: 1
-      }, { default: this.$createElement('MyLoading') })
-      try {
-        const { data } = await chatAPI.getChatRoom()
-        if (data.chatUser.length > 0) {
-          this.onlineUsers = data.chatUser.map(user => ({
-          id: user.User.id,
-          name: user.User.name,
-          avatar: user.User.avatar,
-          account: user.User.account,
-          introduction: user.User.introduction,
-        }))
-        } else {
-          this.onlineUsers = [{
-            id: this.currentUser.id,
-            name: this.currentUser.name,
-            avatar: this.currentUser.avatar,
-            account: this.currentUser.account,
-            introduction: this.currentUser.introduction,
-          }]
-        }
-        loader.hide()
-      } catch (error) {
-        loader.hide()
-        console.log(error)
-        Toast.fire({
-          icon: 'error',
-          title: '目前無法連線聊天室，請稍候'
-        })
       }
     },
   }
