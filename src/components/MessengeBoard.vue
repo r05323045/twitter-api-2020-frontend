@@ -118,8 +118,6 @@ export default {
       this.messages.sort((a, b) => {
         return a.createdAt > b.createdAt ? 1 : -1;
       })
-      this.selfMessages = this.messages.filter(d => d.id === this.currentUser.id)
-      this.otherMessages = this.messages.filter(d => d.id !== this.currentUser.id)
     }),
     this.socket.on('newclientlogin', (data) => {
       this.broacastMessages = [...this.broacastMessages, data]
