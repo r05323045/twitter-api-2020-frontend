@@ -62,21 +62,33 @@ export default {
       messages: [],
     }
   },
-  created () {
+  mounted() {
     this.$socket.emit('chatting', { ...this.currentUser, createdAt: new Date(), type: 'userComein' })
+    this.$socket.on('userOnline', (data) => {
+      this.$emit('someoneComein', data)
+    })
+    this.$socket.on('msg', (data) => {
+      this.messages = [...this.messages, {id: data.id, avatar: data.avatar, message: data.message, createdAt: data.createdAt, type: data.type}]
+      this.messages.sort((a, b) => {
+        return a.createdAt > b.createdAt ? 1 : -1;
+      })
+    }),
+    this.$socket.on('newclientlogin', (data) => {
+      this.messages = [...this.messages, {id: data.id, avatar: data.avatar, message: data.message, createdAt: data.createdAt, type: data.type}]
+      this.messages.sort((a, b) => {
+        return a.createdAt > b.createdAt ? 1 : -1;
+      })
+    })
   },
   beforeDestroy () {
-    this.leaveChatroom()
-  },
-  Destroy () {
-    window.removeEventListener('beforeunload', this.leaveChatroom())
+    this.leaveChatroom ()
+    this.$socket.emit('leave', this.currentUser.id)
   },
   watch: {
     messages () {
       const scroll = document.querySelector('.board-wrapper')
       scroll.scrollTop = scroll.scrollHeight
       scroll.animate({scrollTop: scroll.scrollHeight})
-      this.$emit('someoneCommein')
     }
   },
   computed: {
@@ -107,25 +119,6 @@ export default {
         console.log(error)
       }
     },
-  },
-  mounted() {
-    window.addEventListener('beforeunload', this.leaveChatroom())
-    this.$socket.on('msg', (data) => {
-      this.messages = [...this.messages, {id: data.id, avatar: data.avatar, message: data.message, createdAt: data.createdAt, type: data.type}]
-      this.messages.sort((a, b) => {
-        return a.createdAt > b.createdAt ? 1 : -1;
-      })
-    }),
-    this.$socket.on('newclientlogin', (data) => {
-      console.log(data)
-      this.messages = [...this.messages, {id: data.id, avatar: data.avatar, message: data.message, createdAt: data.createdAt, type: data.type}]
-      this.messages.sort((a, b) => {
-        return a.createdAt > b.createdAt ? 1 : -1;
-      })
-    })
-    this.$socket.on('online', (data) => {
-      this.onlineNumber = data
-    })
   }
 }
 </script>
