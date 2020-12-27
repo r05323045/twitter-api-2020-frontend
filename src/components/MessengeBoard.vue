@@ -62,6 +62,9 @@ export default {
       messages: [],
     }
   },
+  created () {
+    window.addEventListener('beforeunload', this.leaveChatroom())
+  },
   mounted() {
     this.fetchChatroom()
     this.$socket.emit('chatting', { ...this.currentUser, createdAt: new Date(), type: 'userComein' })
