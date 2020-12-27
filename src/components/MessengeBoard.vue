@@ -100,7 +100,6 @@ export default {
     async leaveChatroom () {
       try {
         const { data } = await chatAPI.deleteChatRoom()
-        console.log(data)
         if (data.status !== 'success') {
           throw new Error(data.message)
         }
