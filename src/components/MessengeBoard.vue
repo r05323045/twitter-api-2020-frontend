@@ -61,7 +61,7 @@ export default {
       name: '',
       message: '',
       messages: [],
-      socket : io('https://simple-twitter-demo-ac.herokuapp.com')
+      socket : io('http://localhost:3000')
     }
   },
   created () {
@@ -87,6 +87,9 @@ export default {
   methods: {
     sendMessage(e) {
       e.preventDefault()
+      const scroll = document.querySelector('.board-wrapper')
+      scroll.scrollTop = scroll.scrollHeight
+      scroll.animate({scrollTop: scroll.scrollHeight})
       if (this.message === '') {
         Toast.fire({
           icon: 'error',
