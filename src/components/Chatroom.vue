@@ -60,13 +60,23 @@ export default {
       }, { default: this.$createElement('MyLoading') })
       try {
         const { data } = await chatAPI.getChatRoom()
-        this.onlineUsers = data.map(user => ({
+        if (data.chatUser) {
+          this.onlineUsers = data.chatUser.map(user => ({
           id: user.User.id,
           name: user.User.name,
           avatar: user.User.avatar,
           account: user.User.account,
           introduction: user.User.introduction,
         }))
+        } else {
+          this.onlineUsers = this.currentUser.map(user => ({
+            id: user.User.id,
+            name: user.User.name,
+            avatar: user.User.avatar,
+            account: user.User.account,
+            introduction: user.User.introduction,
+          }))
+        }
         loader.hide()
       } catch (error) {
         loader.hide()
