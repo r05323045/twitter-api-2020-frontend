@@ -42,7 +42,6 @@
 
 <script>
 import { Toast } from '@/utils/helpers'
-import io from 'socket.io-client'
 import chatAPI from '@/apis/chats'
 import { mapState } from 'vuex'
 export default {
@@ -61,11 +60,10 @@ export default {
       name: '',
       message: '',
       messages: [],
-      socket : io('http://localhost:3000')
     }
   },
   created () {
-    this.socket.emit('chatting', this.currentUser)
+    this.$socket.emit('chatting', this.currentUser)
   },
   beforeDestroy () {
     this.leaveChatroom()
@@ -96,7 +94,7 @@ export default {
           title: '請輸入訊息'
         })
       }
-      this.socket.emit('send message', {id: this.currentUser.id, avatar: this.currentUser.avatar, message: this.message, createdAt: new Date()})
+      this.$socket.emit('send message', {id: this.currentUser.id, avatar: this.currentUser.avatar, message: this.message, createdAt: new Date()})
       this.message = ''
     },
     async leaveChatroom () {
@@ -113,16 +111,16 @@ export default {
   },
   mounted() {
     window.addEventListener('beforeunload', this.leaveChatroom())
-    this.socket.on('msg', (data) => {
+    this.$socket.on('msg', (data) => {
       this.messages = [...this.messages, {id: data.id, avatar: data.avatar, message: data.message, createdAt: data.createdAt}]
       this.messages.sort((a, b) => {
         return a.createdAt > b.createdAt ? 1 : -1;
       })
     }),
-    this.socket.on('newclientlogin', (data) => {
+    this.$socket.on('newclientlogin', (data) => {
       this.broacastMessages = [...this.broacastMessages, data]
     })
-    this.socket.on('online', (data) => {
+    this.$socket.on('online', (data) => {
       this.onlineNumber = data
     })
   }

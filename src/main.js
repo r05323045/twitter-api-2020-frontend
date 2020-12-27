@@ -7,10 +7,20 @@ import moment from 'moment'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/vue-loading.css'
 import MyLoading from '@/components/MyLoading'
+import io from 'socket.io-client'
 
 Vue.use(VModal)
 Vue.config.productionTip = false
 Vue.prototype.$bus = new Vue()
+
+const socket = io('https://simple-twitter-demo-ac.herokuapp.com', {
+  withCredentials: true,
+  extraHeaders: {
+    'my-custom-header': 'my-custom-header'
+  }
+})
+
+Vue.prototype.$socket = socket
 
 Vue.filter('fromNow', function (datetime) {
   if (!datetime) {
