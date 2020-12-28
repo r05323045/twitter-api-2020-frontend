@@ -1,10 +1,9 @@
 # twitter-api-2020-frontend 
 
+Simple social platform inspire by Twitter (To be honestly, definitely inspired by [ALPHA Camp](https://tw.alphacamp.co/))
+
 <p align="left">
-  Simple social platform inspire by Twitter
-</p>
-<p align="left">
-  <a  href="https://r05323045.github.io/twitter-api-2020-frontend/">Explore The Website</a>
+  &#8594; <a  href="https://r05323045.github.io/twitter-api-2020-frontend/">Explore The Website</a>
 </p>
 
 <br/><br/>
@@ -33,7 +32,7 @@
 **Admin Dashboard**
 <br/><br/>
 <p align="center">
-  <img src="./public/images/Profile.png" />
+  <img src="./public/images/Admin-Dashboard.png" />
 </p>
 
 ---
