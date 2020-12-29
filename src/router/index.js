@@ -4,7 +4,6 @@ import store from './../store'
 
 Vue.use(VueRouter)
 
-/*
 const authorizeIsUser = (to, from, next) => {
   const currentUser = store.state.currentUser
   if (currentUser && !(currentUser.role === 'user')) {
@@ -22,20 +21,19 @@ const authorizeIsAdmin = (to, from, next) => {
   }
   next()
 }
-*/
 
 const routes = [
   {
     path: '/',
     name: 'root',
-    redirect: '/main'
-    // beforeEnter: authorizeIsUser
+    redirect: '/main',
+    beforeEnter: authorizeIsUser
   },
   {
     path: '/main',
     name: 'Main',
-    component: () => import('@/views/Main.vue')
-    // beforeEnter: authorizeIsUser
+    component: () => import('@/views/Main.vue'),
+    beforeEnter: authorizeIsUser
   },
   {
     path: '/signup',
@@ -44,48 +42,48 @@ const routes = [
   },
   {
     path: '/chat',
-    component: () => import('@/views/Chat.vue')
-    // beforeEnter: authorizeIsUser
+    component: () => import('@/views/Chat.vue'),
+    beforeEnter: authorizeIsUser
   },
   {
     path: '/user/self/follower',
     name: 'SelfFollowers',
-    component: () => import('@/views/SelfFollowers.vue')
-    // beforeEnter: authorizeIsUser
+    component: () => import('@/views/SelfFollowers.vue'),
+    beforeEnter: authorizeIsUser
   },
   {
     path: '/user/self',
     name: 'UserProfile',
-    component: () => import('@/views/UserProfile.vue')
-    // beforeEnter: authorizeIsUser
+    component: () => import('@/views/UserProfile.vue'),
+    beforeEnter: authorizeIsUser
   },
   {
     path: '/user/other/:id',
     name: 'otherProfile',
-    component: () => import('@/views/UserProfile.vue')
-    // beforeEnter: authorizeIsUser
+    component: () => import('@/views/UserProfile.vue'),
+    beforeEnter: authorizeIsUser
   },
   {
     path: '/user/self/following',
     name: 'SelfFollowing',
-    component: () => import('@/views/SelfFollowers.vue')
-    // beforeEnter: authorizeIsUser
+    component: () => import('@/views/SelfFollowers.vue'),
+    beforeEnter: authorizeIsUser
   },
   {
     path: '/user/other/:id/following',
-    component: () => import('@/views/OtherFollowers.vue')
-    // beforeEnter: authorizeIsUser
+    component: () => import('@/views/OtherFollowers.vue'),
+    beforeEnter: authorizeIsUser
   },
   {
     path: '/user/other/:id/follower',
-    component: () => import('@/views/OtherFollowers.vue')
-    // beforeEnter: authorizeIsUser
+    component: () => import('@/views/OtherFollowers.vue'),
+    beforeEnter: authorizeIsUser
   },
   {
     path: '/setting',
     name: 'Setting',
-    component: () => import('@/views/Setting.vue')
-    // beforeEnter: authorizeIsUser
+    component: () => import('@/views/Setting.vue'),
+    beforeEnter: authorizeIsUser
   },
   {
     path: '/signin',
@@ -94,8 +92,8 @@ const routes = [
   {
     path: '/reply_list/:id',
     name: 'SingleTweet',
-    component: () => import('@/views/SingleTweet.vue')
-    // beforeEnter: authorizeIsUser
+    component: () => import('@/views/SingleTweet.vue'),
+    beforeEnter: authorizeIsUser
   },
   {
     path: '/admin',
@@ -112,14 +110,14 @@ const routes = [
       {
         path: 'main',
 
-        component: () => import('@/views/admin/AdminMain.vue')
-        // beforeEnter: authorizeIsAdmin
+        component: () => import('@/views/admin/AdminMain.vue'),
+        beforeEnter: authorizeIsAdmin
       },
       {
         path: 'users',
         name: 'AdminUsers',
-        component: () => import('@/views/admin/AdminUsers.vue')
-        // beforeEnter: authorizeIsAdmin
+        component: () => import('@/views/admin/AdminUsers.vue'),
+        beforeEnter: authorizeIsAdmin
       }
     ]
   },
@@ -135,12 +133,10 @@ const router = new VueRouter({
   routes
 })
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach((to, from, next) => {
   const tokenInLocalStorage = localStorage.getItem('token')
   const tokenInStore = store.state.token
   let isAuthenticated = store.state.isAuthenticated
-
-  // const withoutAuthentication = ['/signin', '/signup', '/admin/signin']
 
   if (tokenInLocalStorage && tokenInLocalStorage !== tokenInStore) {
     (async () => {
@@ -148,17 +144,10 @@ router.beforeEach(async (to, from, next) => {
     })()
   }
 
-  if (!tokenInLocalStorage) {
+  if (!isAuthenticated && to.path !== '/signin' && to.path !== '/signup' && to.path !== '/admin/signin') {
     next('/signin')
     return
   }
-
-  /*
-  if (!isAuthenticated && !withoutAuthentication.includes(to.path)) {
-    next('/signin')
-    return
-  }
-  */
 
   if (isAuthenticated && to.path === '/signin') {
     next('/main')
