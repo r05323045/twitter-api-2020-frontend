@@ -123,6 +123,7 @@ export default {
           icon: 'error',
           title: '請輸入訊息'
         })
+        return
       }
       this.$socket.emit('send message', {UserId: this.currentUser.id, avatar: this.currentUser.avatar, message: this.message, createdAt: new Date(), type: 'chat', User: this.currentUser})
       this.message = ''
