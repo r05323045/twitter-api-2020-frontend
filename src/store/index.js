@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import createPersistedState from 'vuex-persistedstate'
 import usersAPI from './../apis/users'
 
 Vue.use(Vuex)
@@ -19,6 +20,7 @@ export default new Vuex.Store({
     isAuthenticated: false,
     token: ''
   },
+  plugins: [createPersistedState()],
   mutations: {
     setCurrentUser (state, currentUser) {
       state.currentUser = {
