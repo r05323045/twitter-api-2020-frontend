@@ -10,7 +10,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 export default {
   name: 'App',
   created () {
-    if (sessionStorage.getItem('store') ) {
+    if (localStorage.getItem('store') ) {
       this.$store.replaceState(Object.assign({}, this.$store.state,JSON.parse(localStorage.getItem('store'))))
     }
     window.addEventListener('beforeunload', localStorage.setItem('state', JSON.stringify(this.$store.state)))
