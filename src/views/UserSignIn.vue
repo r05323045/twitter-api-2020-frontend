@@ -22,10 +22,10 @@
         <button v-if="routeIsAdmin" :disabled="isProcessing" class="btn btn-signin admin" type="submit" @click.prevent="adminSignin">登入</button>
       </form>
       <div  class="link">
-        <span v-if="!routeIsAdmin" @click="$router.push('/signup')">註冊 Alphitter</span>
+        <span v-if="!routeIsAdmin" @click="$router.push('/signup').catch(()=>{})">註冊 Alphitter</span>
         <p v-if="!routeIsAdmin">&bull;</p>
-        <span v-if="!routeIsAdmin" @click="$router.push('/admin/signin')">後台登入</span>
-        <span v-if="routeIsAdmin" @click="$router.push('/signin')">前台登入</span>
+        <span v-if="!routeIsAdmin" @click="$router.push('/admin/signin').catch(()=>{})">後台登入</span>
+        <span v-if="routeIsAdmin" @click="$router.push('/signin').catch(()=>{})">前台登入</span>
       </div>
     </div>
   </div>
