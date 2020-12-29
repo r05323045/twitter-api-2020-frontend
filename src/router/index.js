@@ -140,7 +140,7 @@ router.beforeEach(async (to, from, next) => {
   const tokenInStore = store.state.token
   let isAuthenticated = store.state.isAuthenticated
 
-  const withoutAuthentication = ['/signin', '/signup', '/admin/signin']
+  // const withoutAuthentication = ['/signin', '/signup', '/admin/signin']
 
   if (tokenInLocalStorage && tokenInLocalStorage !== tokenInStore) {
     (async () => {
@@ -148,10 +148,17 @@ router.beforeEach(async (to, from, next) => {
     })()
   }
 
+  if (!tokenInLocalStorage) {
+    next('/signin')
+    return
+  }
+
+  /*
   if (!isAuthenticated && !withoutAuthentication.includes(to.path)) {
     next('/signin')
     return
   }
+  */
 
   if (isAuthenticated && to.path === '/signin') {
     next('/main')
