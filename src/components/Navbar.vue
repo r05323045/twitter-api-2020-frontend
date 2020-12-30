@@ -16,6 +16,10 @@
         <img class="icon msg-noti" src="../assets/icon_msg_noti.svg">
         公開聊天室
       </div>
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/private').catch(()=>{})" :class="{ active: $route.path === '/private' }">
+        <div class="icon messenge"></div>
+        私人訊息
+      </div>
       <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/setting').catch(()=>{})" :class="{ active: $route.path === '/setting' }">
         <div class="icon cog"></div>
         設定

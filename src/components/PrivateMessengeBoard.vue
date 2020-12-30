@@ -1,8 +1,9 @@
 <template>
-  <div class="messenge-board" v-if="$refs">
+  <div class="messenge-board" v-if="userChatTo">
     <div class="top-wrapper">
-      <div class="public-text">
-        公開聊天室
+      <div v-show="false" class="info">
+        <div class="name">{{ userChatTo.name }}</div>
+        <div class="account">{{ userChatTo.account }}</div>
       </div>
     </div>
     <div ref="boardWrapper" class="board-wrapper" @click="scrollToBottom">
@@ -38,44 +39,34 @@
 
 <script>
 import { Toast } from '@/utils/helpers'
-import chatAPI from '@/apis/chats'
 import { mapState } from 'vuex'
 export default {
-  data() {
-    return {
-      message: '',
-      messages: [],
+  props: {
+    userChatTo: {
+      type: Object
+    },
+    messages: {
+      type: Array
+    },
+    targetChannel: {
+      type: String
     }
   },
-  created () {
-    window.addEventListener('beforeunload', this.leaveChatroom())
+  data() {
+    return {
+      message: ''
+    }
   },
   mounted() {
-    this.fetchChatroom()
-    this.$socket.emit('chatting', { ...this.currentUser, createdAt: new Date(), type: 'userComein' })
-    this.$socket.on('userOnline', (data) => {
-      this.$emit('someoneComein', data)
-      const scroll = this.$refs.boardWrapper
-      if (scroll) {
-        scroll.scrollTop = scroll.scrollHeight
-        scroll.animate({scrollTop: scroll.scrollHeight})
-      }
-    })
-    this.$socket.on('msg', (data) => {
-      this.messages = [...this.messages, {UserId: data.UserId, avatar: data.avatar, message: data.message, createdAt: data.createdAt, type: data.type, User: data.User}]
-      this.messages.sort((a, b) => {
-        return a.createdAt > b.createdAt ? 1 : -1;
-      })
-      const scroll = this.$refs.boardWrapper
-      if (scroll) {
-        scroll.scrollTop = scroll.scrollHeight
-        scroll.animate({scrollTop: scroll.scrollHeight})
-      }
-    }),
-    this.$socket.on('newclientlogin', (data) => {
-      this.messages = [...this.messages, {UserId: data.UserId, avatar: data.avatar, message: data.message, createdAt: data.createdAt, type: data.type, User: data.User}]
-      this.messages.sort((a, b) => {
-        return a.createdAt > b.createdAt ? 1 : -1;
+    this.$socket.on('private_msg', (data) => {
+      this.$emit('sendPrivateMessage', {
+        UserId: data.UserId,
+        avatar: data.avatar,
+        message: data.message,
+        createdAt: data.createdAt,
+        type: data.type,
+        User: data.User,
+        targetChannel: this.targetChannel
       })
       const scroll = this.$refs.boardWrapper
       if (scroll) {
@@ -85,17 +76,13 @@ export default {
     })
   },
   beforeDestroy () {
-    this.leaveChatroom()
-    this.$socket.emit('leave', this.currentUser.id)
   },
   watch: {
     messages () {
-      if (this.el) {
-        const scroll = this.$refs.boardWrapper
-        if (scroll) {
-          scroll.scrollTop = scroll.scrollHeight
-          scroll.animate({scrollTop: scroll.scrollHeight})
-        }
+      const scroll = this.$refs.boardWrapper
+      if (scroll) {
+        scroll.scrollTop = scroll.scrollHeight
+        scroll.animate({scrollTop: scroll.scrollHeight})
       }
     }
   },
@@ -122,51 +109,22 @@ export default {
         })
         return
       }
-      this.$socket.emit('send message', {UserId: this.currentUser.id, avatar: this.currentUser.avatar, message: this.message, createdAt: new Date(), type: 'chat', User: this.currentUser})
+      this.$socket.emit('private chatroom',{
+        UserId: this.currentUser.id,
+        avatar: this.currentUser.avatar,
+        message: this.message,
+        createdAt: new Date(),
+        type: 'chat',
+        User: this.currentUser,
+        targetChannel: this.targetChannel
+      })
       this.message = ''
       const scroll = this.$refs.boardWrapper
       if (scroll) {
         scroll.scrollTop = scroll.scrollHeight
         scroll.animate({scrollTop: scroll.scrollHeight})
       }
-    },
-    async leaveChatroom () {
-      try {
-        const { data } = await chatAPI.deleteChatRoom()
-        if (data.status !== 'success') {
-          throw new Error(data.message)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    },
-    async fetchChatroom () {
-      const loader = this.$loading.show({
-        isFullPage: true,
-        opacity: 1
-      }, { default: this.$createElement('MyLoading') })
-      try {
-        const { data } = await chatAPI.getChatRoom()
-        this.messages = data.histroy.map(d => ({
-          ...d,
-          type: d.message.indexOf('上線') > 0 ? 'userComein' : 'chat',
-        }))
-        this.messages = this.messages.filter(message => message.targetChannel === '0')
-        const scroll = this.$refs.boardWrapper
-        if (scroll) {
-          scroll.scrollTop = scroll.scrollHeight
-          scroll.animate({scrollTop: scroll.scrollHeight})
-        }
-        loader.hide()
-      } catch (error) {
-        loader.hide()
-        console.log(error)
-        Toast.fire({
-          icon: 'error',
-          title: '目前無法連線聊天室，請稍候'
-        })
-      }
-    },
+    }
   }
 }
 </script>

@@ -46,6 +46,11 @@ const routes = [
     beforeEnter: authorizeIsUser
   },
   {
+    path: '/private',
+    component: () => import('@/views/Private.vue'),
+    beforeEnter: authorizeIsUser
+  },
+  {
     path: '/user/self/follower',
     name: 'SelfFollowers',
     component: () => import('@/views/SelfFollowers.vue'),

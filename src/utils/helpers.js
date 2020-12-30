@@ -2,7 +2,7 @@ import axios from 'axios'
 import Swal from 'sweetalert2'
 
 // const proxyURL = 'https://cors-anywhere.herokuapp.com/'
-const baseURL = 'https://simple-twitter-demo-ac.herokuapp.com/api'
+const baseURL = 'http://localhost:3000/api'
 
 export const apiHelper = axios.create({
   baseURL
