@@ -76,6 +76,7 @@ export default {
       this.userChatTo = Object.assign({}, user)
       this.targetChannel = Number(this.userChatTo.id) > Number(this.currentUser.id) ? `${this.currentUser.id}_${this.userChatTo.id}` : `${this.userChatTo.id}_${this.currentUser.id}`
       this.histroyMessages = this.allHistoryMessages.filter(message => message.targetChannel === this.targetChannel)
+      this.readMessages(this.userChatTo.id)
     },
     async fetchChatroom () {
       const loader = this.$loading.show({
