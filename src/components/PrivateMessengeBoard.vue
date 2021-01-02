@@ -1,39 +1,44 @@
 <template>
   <div class="messenge-board" v-if="userChatTo">
-    <div class="top-wrapper">
-      <div class="info">
-        <div class="name" @click="$router.push(`/user/other/${userChatTo.id}`).catch(()=>{})">{{ userChatTo.name }}</div>
-        <div class="account" @click="$router.push(`/user/other/${userChatTo.id}`).catch(()=>{})">{{ userChatTo.account }}</div>
+    <div v-show="userChatTo.id">
+      <div class="top-wrapper">
+        <div class="info">
+          <div class="name" @click="$router.push(`/user/other/${userChatTo.id}`).catch(()=>{})">{{ userChatTo.name }}</div>
+          <div class="account" @click="$router.push(`/user/other/${userChatTo.id}`).catch(()=>{})">{{ userChatTo.account }}</div>
+        </div>
       </div>
-    </div>
-    <div ref="boardWrapper" class="board-wrapper" @click="scrollToBottom">
-      <div class="messages">
-        <div v-for="(message, index) in messages" :key="`msg-${index}`">
-          <div class="broacast-message-wrapper" v-if="message.type === 'userComein' && currentUser.id !== message.UserId">
-            <div class="broacast-message">{{ message.message }}</div>
-          </div>
-          <div class="other message" v-if="message.type !== 'userComein' && currentUser.id !== message.UserId">
-            <div class="avatar" :style="{ background: `url(${message.User ? message.User.avatar : message.avatar}) no-repeat center/cover` }"></div>
-            <div class="wrapper">
+      <div ref="boardWrapper" class="board-wrapper" @click="scrollToBottom">
+        <div class="messages">
+          <div v-for="(message, index) in messages" :key="`msg-${index}`">
+            <div class="broacast-message-wrapper" v-if="message.type === 'userComein' && currentUser.id !== message.UserId">
+              <div class="broacast-message">{{ message.message }}</div>
+            </div>
+            <div class="other message" v-if="message.type !== 'userComein' && currentUser.id !== message.UserId">
+              <div class="avatar" :style="{ background: `url(${message.User ? message.User.avatar : message.avatar}) no-repeat center/cover` }"></div>
+              <div class="wrapper">
+                <div class="text">{{ message.message }}</div>
+                <div class="time">{{ message.createdAt | fromNow }}</div>
+              </div>
+            </div>
+            <div class="self message" v-if="message.type !== 'userComein' && currentUser.id === message.UserId">
               <div class="text">{{ message.message }}</div>
               <div class="time">{{ message.createdAt | fromNow }}</div>
             </div>
           </div>
-          <div class="self message" v-if="message.type !== 'userComein' && currentUser.id === message.UserId">
-            <div class="text">{{ message.message }}</div>
-            <div class="time">{{ message.createdAt | fromNow }}</div>
+        </div>
+      </div>
+      <form @submit.prevent="sendMessage" @click="scrollToBottom">
+        <div class="text-wrapper">
+          <input v-model="message" class="text" placeholder="輸入訊息..." onfocus="this.placeholder = ''" onblur="this.placeholder = '輸入訊息...'" />
+          <div class="icon-wrapper" type="submit" @click="sendMessage">
+            <div class="icon send"></div>
           </div>
         </div>
-      </div>
+      </form>
     </div>
-    <form @submit.prevent="sendMessage" @click="scrollToBottom">
-      <div class="text-wrapper">
-        <input v-model="message" class="text" placeholder="輸入訊息..." onfocus="this.placeholder = ''" onblur="this.placeholder = '輸入訊息...'" />
-        <div class="icon-wrapper" type="submit" @click="sendMessage">
-          <div class="icon send"></div>
-        </div>
-      </div>
-    </form>
+    <div v-show="!userChatTo.id" class="no-message-noti">
+      <div>你沒有任何訊息</div>
+    </div>
   </div>
 </template>
 
@@ -327,6 +332,15 @@ $divider: #E6ECF0;
         cursor: pointer;
       }
     }
+  }
+  .no-message-noti {
+    height: 100%;
+    width: 100%;
+    font-size: 22px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 </style>

@@ -47,23 +47,19 @@ export default {
       this.fetchUsers(),
       this.fetchChatroom()
     ]).then(() => {
+        this.messengeActive = new Array(this.historyChatUsers.length).fill(false)
         if (this.$route.query.id) {
           this.userChatTo = this.historyChatUsers.filter(user => user.id === Number(this.$route.query.id))[0]
-          this.messengeActive = new Array(this.historyChatUsers.length).fill(false)
           const chatToIndex = this.historyChatUsers.map(user => user.id).indexOf(Number(this.$route.query.id))
           this.messengeActive[chatToIndex] = true
-          if (this.userChatTo) {
-            this.targetChannel = Number(this.userChatTo.id) > Number(this.currentUser.id) ? `${this.currentUser.id}_${this.userChatTo.id}` : `${this.userChatTo.id}_${this.currentUser.id}`
-            this.histroyMessages = this.allHistoryMessages.filter(message => message.targetChannel === this.targetChannel)
-          }
         } else {
           this.userChatTo = Object.assign({}, this.historyChatUsers[0] ? this.historyChatUsers[0] : {})
-          this.messengeActive = new Array(this.historyChatUsers.length).fill(false)
           this.messengeActive[0] = true
-          if (this.userChatTo) {
-            this.targetChannel = Number(this.userChatTo.id) > Number(this.currentUser.id) ? `${this.currentUser.id}_${this.userChatTo.id}` : `${this.userChatTo.id}_${this.currentUser.id}`
-            this.histroyMessages = this.allHistoryMessages.filter(message => message.targetChannel === this.targetChannel)
-          }
+        }
+        if (this.historyChatUsers.length > 0) {
+          this.targetChannel = Number(this.userChatTo.id) > Number(this.currentUser.id) ? `${this.currentUser.id}_${this.userChatTo.id}` : `${this.userChatTo.id}_${this.currentUser.id}`
+          this.histroyMessages = this.allHistoryMessages.filter(message => message.targetChannel === this.targetChannel)
+          this.readMessages(this.userChatTo.id)
         }
     })
   },
@@ -144,7 +140,21 @@ export default {
           title: '目前無法取得資料，請稍候'
         })
       }
-    }
+    },
+    async readMessages (userId) {
+      try {
+        const { data } = await chatAPI.readMessages({ userId })
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '目前無法已讀訊息，請稍候'
+        })
+      }
+    },
   }
 }
 </script>
