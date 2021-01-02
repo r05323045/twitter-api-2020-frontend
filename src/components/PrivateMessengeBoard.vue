@@ -80,6 +80,12 @@ export default {
         scroll.animate({scrollTop: scroll.scrollHeight})
       }
     })
+    this.$socket.on('unread_msg', (data) => {
+      if (data.sendTo === this.currentUser.id && data.UserId !== this.userChatTo.id) {
+        this.$bus.$emit('updateUnreadMessages')
+        this.$bus.$emit('updateChatUsers', data)
+      }
+    })
   },
   beforeDestroy () {
   },

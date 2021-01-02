@@ -13,10 +13,19 @@
             <div class="name" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})">{{ user.name }}</div>
             <div class="account" @click="$router.push(`/user/other/${user.id}`).catch(()=>{})">{{ user.account }}</div>
           </div>
+          <div class="unread-wrapper" v-if="user.unread > 0">
+            <div class="unread">{{ user.unread }}</div>
+          </div>
         </div>
       </div>
     </div>
-    <PrivateMessengeBoard :userChatTo="userChatTo" :messages="histroyMessages" :targetChannel="targetChannel" @sendPrivateMessage="receiveMessage"></PrivateMessengeBoard>
+    <PrivateMessengeBoard
+      :userChatTo="userChatTo" 
+      :messages="histroyMessages" 
+      :targetChannel="targetChannel" 
+      @sendPrivateMessage="receiveMessage"
+    >
+    </PrivateMessengeBoard>
   </div>
 </template>
 
@@ -38,11 +47,15 @@ export default {
       historyChatUserId: [],
       allHistoryMessages: [],
       histroyMessages: [],
+      unreadMessages: [],
       targetChannel: '',
       users: []
     }
   },
   created () {
+    this.$bus.$on('updateChatUsers', (message) => {
+      this.updateChatUsers(message)
+    })
     return Promise.all([
       this.fetchUsers(),
       this.fetchChatroom()
@@ -77,6 +90,8 @@ export default {
       this.targetChannel = Number(this.userChatTo.id) > Number(this.currentUser.id) ? `${this.currentUser.id}_${this.userChatTo.id}` : `${this.userChatTo.id}_${this.currentUser.id}`
       this.histroyMessages = this.allHistoryMessages.filter(message => message.targetChannel === this.targetChannel)
       this.readMessages(this.userChatTo.id)
+      const chatToIndex = this.historyChatUsers.map(user => user.id).indexOf(user.id)
+      this.historyChatUsers[chatToIndex].unread = 0
     },
     async fetchChatroom () {
       const loader = this.$loading.show({
@@ -102,10 +117,11 @@ export default {
           const history = this.allHistoryMessages.filter(message => message.targetChannel === channel)
           if (history.length > 0) {
             history.sort((a, b) => { return a.createdAt < b.createdAt ? 1 : -1 })
-            user.lastChat = history[history.length - 1].createdAt
+            user.lastChat = history[0].createdAt
           } else {
             user.lastChat = Date.now()
           }
+          user.unread = 0
         })
         this.historyChatUsers.sort((a, b) => { return a.lastChat < b.lastChat ? 1 : -1 })
         const scroll = this.$refs.boardWrapper
@@ -148,6 +164,7 @@ export default {
         if (data.status !== 'success') {
           throw new Error(data.message)
         }
+        this.$bus.$emit('updateUnreadMessages')
       } catch (error) {
         console.log(error)
         Toast.fire({
@@ -156,6 +173,13 @@ export default {
         })
       }
     },
+    async updateChatUsers (message) {
+      this.allHistoryMessages = [...this.allHistoryMessages, message]
+      this.historyChatUsers = this.historyChatUsers.map(user => ({
+        ...user,
+        unread: message.UserId === user.id ? user.unread += 1 : user.unread
+      }))
+    }
   }
 }
 </script>
@@ -260,6 +284,19 @@ $divider: #E6ECF0;
             &:hover {
               text-decoration: underline;
             }
+          }
+        }
+        .unread-wrapper {
+          flex-grow: 1;
+          .unread {
+            margin: auto;
+            font-size: 16px;
+            font-weight: 700;
+            width: 24px;
+            height: 24px;
+            color: #ffffff;
+            border-radius: 30px;
+            background-color: $bitdark;
           }
         }
       }

@@ -73,6 +73,9 @@ export default {
   },
   created () {
     this.fetchUnreadMessages()
+    this.$bus.$on('updateUnreadMessages', () => {
+      this.fetchUnreadMessages()
+    })
   },
   methods: {
     logout () {
@@ -116,7 +119,7 @@ export default {
     async fetchUnreadMessages () {
       try {
         const { data } = await chatAPI.getUnreadMessages()
-        this.countUnreadMessages = data
+        this.countUnreadMessages = data ? data.length : 0
         const scroll = this.$refs.boardWrapper
         if (scroll) {
           scroll.scrollTop = scroll.scrollHeight
@@ -249,6 +252,7 @@ $lightdark: #9197A3;
         .unread-messages {
           margin: auto;
           font-size: 16px;
+          font-weight: 700;
           width: 24px;
           height: 24px;
           color: #ffffff;
