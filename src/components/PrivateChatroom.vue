@@ -175,6 +175,16 @@ export default {
     },
     async updateChatUsers (message) {
       this.allHistoryMessages = [...this.allHistoryMessages, message]
+      if (!this.historyChatUsers.map(user => user.id).includes(message.UserId)) {
+        const chatUser = message.User
+        chatUser.lastChat = message.createdAt
+        chatUser.unread = 0
+        this.historyChatUsers = [...this.historyChatUsers, chatUser]
+        this.historyChatUsers.sort((a, b) => { return a.lastChat < b.lastChat ? 1 : -1 })
+        this.messengeActive = new Array(this.historyChatUsers.length).fill(false)
+        const chatToIndex = this.historyChatUsers.map(user => user.id).indexOf(Number(this.userChatTo.id))
+        this.messengeActive[chatToIndex] = true
+      }
       this.historyChatUsers = this.historyChatUsers.map(user => ({
         ...user,
         unread: message.UserId === user.id ? user.unread += 1 : user.unread
