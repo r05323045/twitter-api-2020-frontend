@@ -17,8 +17,12 @@
         公開聊天室
       </div>
       <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/private').catch(()=>{})" :class="{ active: $route.path === '/private' }">
+        <div v-if="countUnreadMessages > 0" class="unread-noti"></div>
         <div class="icon messenge"></div>
         私人訊息
+        <div v-if="countUnreadMessages > 0" class="unread-messages-wrapper">
+          <div class="unread-messages">{{ countUnreadMessages }}</div>
+        </div>
       </div>
       <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/setting').catch(()=>{})" :class="{ active: $route.path === '/setting' }">
         <div class="icon cog"></div>
@@ -50,6 +54,7 @@
 
 import { mapState } from 'vuex'
 import TweetsAPI from '@/apis/tweets'
+import chatAPI from '@/apis/chats'
 import { Toast } from '@/utils/helpers'
 import ModalForNewTweet from '@/components/ModalForNewTweet.vue'
 export default {
@@ -59,11 +64,15 @@ export default {
   },
   data () {
     return {
-      showNewTweetModal: false
+      showNewTweetModal: false,
+      countUnreadMessages: 0
     }
   },
   computed: {
     ...mapState(['currentUser', 'isAuthenticated'])
+  },
+  created () {
+    this.fetchUnreadMessages()
   },
   methods: {
     logout () {
@@ -103,7 +112,24 @@ export default {
           title: '目前無法推文，請稍候'
         })
       }
-    }
+    },
+    async fetchUnreadMessages () {
+      try {
+        const { data } = await chatAPI.getUnreadMessages()
+        this.countUnreadMessages = data
+        const scroll = this.$refs.boardWrapper
+        if (scroll) {
+          scroll.scrollTop = scroll.scrollHeight
+          scroll.animate({scrollTop: scroll.scrollHeight})
+        }
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '目前無法取得未讀訊息，請稍候'
+        })
+      }
+    },
   }
 }
 
@@ -138,6 +164,7 @@ $lightdark: #9197A3;
     margin-top: 24px;
     width: 100%;
     .nav-item {
+      position: relative;
       width: 100%;
       display: flex;
       align-items: center;
@@ -153,6 +180,9 @@ $lightdark: #9197A3;
         }
         .icon.ms-noti {
           background-color: none;
+        }
+        .unread-messages-wrapper .unread-messages {
+          background-color: $orange;
         }
       }
       .icon {
@@ -203,10 +233,36 @@ $lightdark: #9197A3;
           outline: 0;
         }
       }
+      .unread-noti {
+        z-index: 999;
+        position: absolute;
+        top: 18px;
+        left: 18px;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: $orange;
+        color: #ffffff;
+      }
+      .unread-messages-wrapper {
+        flex-grow: 1;
+        .unread-messages {
+          margin: auto;
+          font-size: 16px;
+          width: 24px;
+          height: 24px;
+          color: #ffffff;
+          border-radius: 30px;
+          background-color: #000000;
+        }
+      }
     }
     .nav-item.active {
         color: $orange;
         .icon {
+          background-color: $orange;
+        }
+        .unread-messages {
           background-color: $orange;
         }
       }
