@@ -13,7 +13,7 @@ Vue.use(VModal)
 Vue.config.productionTip = false
 Vue.prototype.$bus = new Vue()
 
-const socket = io('http://simple-twitter-demo-ac.herokuapp.com', {
+const socket = io('http://localhost:3000', {
   withCredentials: true,
   extraHeaders: {
     'my-custom-header': 'my-custom-header'

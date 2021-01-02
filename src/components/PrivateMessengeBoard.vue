@@ -1,9 +1,9 @@
 <template>
   <div class="messenge-board" v-if="userChatTo">
     <div class="top-wrapper">
-      <div v-show="false" class="info">
-        <div class="name">{{ userChatTo.name }}</div>
-        <div class="account">{{ userChatTo.account }}</div>
+      <div class="info">
+        <div class="name" @click="$router.push(`/user/other/${userChatTo.id}`).catch(()=>{})">{{ userChatTo.name }}</div>
+        <div class="account" @click="$router.push(`/user/other/${userChatTo.id}`).catch(()=>{})">{{ userChatTo.account }}</div>
       </div>
     </div>
     <div ref="boardWrapper" class="board-wrapper" @click="scrollToBottom">
@@ -66,6 +66,7 @@ export default {
         createdAt: data.createdAt,
         type: data.type,
         User: data.User,
+        sendTo: data.sendTo,
         targetChannel: this.targetChannel
       })
       const scroll = this.$refs.boardWrapper
@@ -116,6 +117,7 @@ export default {
         createdAt: new Date(),
         type: 'chat',
         User: this.currentUser,
+        sendTo: this.userChatTo.id,
         targetChannel: this.targetChannel
       })
       this.message = ''
@@ -153,6 +155,10 @@ $divider: #E6ECF0;
         font-weight: 900;
         font-size: 19px;
         line-height: 28px;
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+        }
       }
       .account {
         position: absolute;
@@ -160,6 +166,10 @@ $divider: #E6ECF0;
         font-weight: 500;
         font-size: 13px;
         color: $bitdark;
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
     .public-text {

@@ -147,11 +147,7 @@ export default {
       }, { default: this.$createElement('MyLoading') })
       try {
         const { data } = await chatAPI.getChatRoom()
-        this.messages = data.histroy.map(d => ({
-          ...d,
-          type: d.message.indexOf('上線') > 0 ? 'userComein' : 'chat',
-        }))
-        this.messages = this.messages.filter(message => message.targetChannel === '0')
+        this.messages = data.histroy.filter(message => message.targetChannel === '0')
         const scroll = this.$refs.boardWrapper
         if (scroll) {
           scroll.scrollTop = scroll.scrollHeight

@@ -88,10 +88,7 @@ export default {
       }, { default: this.$createElement('MyLoading') })
       try {
         const { data } = await chatAPI.getChatRoom()
-        this.allHistoryMessages = data.histroy.map(d => ({
-          ...d,
-          type: d.message.indexOf('上線') > 0 ? 'userComein' : 'chat',
-        }))
+        this.allHistoryMessages = data.histroy.filter(d => d.type === 'chat' && d.targetChannel !== '0')
         if (this.allHistoryMessages) {
           const chatRelationships = this.allHistoryMessages.map(message => message.targetChannel).map(channel => channel.split('_')).filter(d => d.length > 1).filter(d => d.includes(String(this.currentUser.id)))
           chatRelationships.forEach(relation => {
