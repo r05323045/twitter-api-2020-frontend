@@ -15,7 +15,7 @@
       <button v-if="this.$route.path === '/user/self' || this.$route.path === `/user/other/${currentUser.id}`" class="btn-edit" @click="afterClickEditProfile">編輯個人資料</button>
       <div v-if="!(this.$route.path === '/user/self' || this.$route.path === `/user/other/${currentUser.id}`)" class="other-button-wrapper">
         <div class="btn-messege">
-          <a v-if="user.user" :href="`mailto:${user.user.email}`"><div class="icon messege"></div></a>
+          <a v-if="user.user" @click="$router.push(`/private?id=${user.user.id}`).catch(()=>{})"><div class="icon messege"></div></a>
         </div>
         <div v-if="user.user">
           <div v-if="subscribeStorage.filter(event => (event.from === this.currentUser.id && event.to === user.user.id)).length === 0" class="btn-noti" @click="subscribeUser(user.user.id)">

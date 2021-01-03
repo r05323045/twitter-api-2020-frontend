@@ -52,5 +52,11 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
 
     })
+  },
+
+  getUsers () {
+    return apiHelper.get('/users', {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
   }
 }

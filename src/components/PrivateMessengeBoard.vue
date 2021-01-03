@@ -1,101 +1,100 @@
 <template>
-  <div class="messenge-board" v-if="$refs">
-    <div class="top-wrapper">
-      <div class="public-text">
-        公開聊天室
+  <div class="messenge-board" v-if="userChatTo">
+    <div v-show="userChatTo.id">
+      <div class="top-wrapper">
+        <div class="info">
+          <div class="name" @click="$router.push(`/user/other/${userChatTo.id}`).catch(()=>{})">{{ userChatTo.name }}</div>
+          <div class="account" @click="$router.push(`/user/other/${userChatTo.id}`).catch(()=>{})">{{ userChatTo.account }}</div>
+        </div>
       </div>
-    </div>
-    <div ref="boardWrapper" class="board-wrapper" @click="scrollToBottom">
-      <div class="messages">
-        <div v-for="(message, index) in messages" :key="`msg-${index}`">
-          <div class="broacast-message-wrapper" v-if="message.type === 'userComein' && currentUser.id !== message.UserId">
-            <div class="broacast-message">{{ message.message }}</div>
-          </div>
-          <div class="other message" v-if="message.type !== 'userComein' && currentUser.id !== message.UserId">
-            <div class="avatar" :style="{ background: `url(${message.User ? message.User.avatar : message.avatar}) no-repeat center/cover` }"></div>
-            <div class="wrapper">
+      <div ref="boardWrapper" class="board-wrapper" @click="scrollToBottom">
+        <div class="messages">
+          <div v-for="(message, index) in messages" :key="`msg-${index}`">
+            <div class="broacast-message-wrapper" v-if="message.type === 'userComein' && currentUser.id !== message.UserId">
+              <div class="broacast-message">{{ message.message }}</div>
+            </div>
+            <div class="other message" v-if="message.type !== 'userComein' && currentUser.id !== message.UserId">
+              <div class="avatar" :style="{ background: `url(${message.User ? message.User.avatar : message.avatar}) no-repeat center/cover` }"></div>
+              <div class="wrapper">
+                <div class="text">{{ message.message }}</div>
+                <div class="time">{{ message.createdAt | fromNow }}</div>
+              </div>
+            </div>
+            <div class="self message" v-if="message.type !== 'userComein' && currentUser.id === message.UserId">
               <div class="text">{{ message.message }}</div>
               <div class="time">{{ message.createdAt | fromNow }}</div>
             </div>
           </div>
-          <div class="self message" v-if="message.type !== 'userComein' && currentUser.id === message.UserId">
-            <div class="text">{{ message.message }}</div>
-            <div class="time">{{ message.createdAt | fromNow }}</div>
+        </div>
+      </div>
+      <form @submit.prevent="sendMessage" @click="scrollToBottom">
+        <div class="text-wrapper">
+          <input v-model="message" class="text" placeholder="輸入訊息..." onfocus="this.placeholder = ''" onblur="this.placeholder = '輸入訊息...'" />
+          <div class="icon-wrapper" type="submit" @click="sendMessage">
+            <div class="icon send"></div>
           </div>
         </div>
-      </div>
+      </form>
     </div>
-    <form @submit.prevent="sendMessage" @click="scrollToBottom">
-      <div class="text-wrapper">
-        <input v-model="message" class="text" placeholder="輸入訊息..." onfocus="this.placeholder = ''" onblur="this.placeholder = '輸入訊息...'" />
-        <div class="icon-wrapper" type="submit" @click="sendMessage">
-          <div class="icon send"></div>
-        </div>
-      </div>
-    </form>
+    <div v-show="!userChatTo.id" class="no-message-noti">
+      <div>你沒有任何訊息</div>
+    </div>
   </div>
 </template>
 
 <script>
 import { Toast } from '@/utils/helpers'
-import chatAPI from '@/apis/chats'
 import { mapState } from 'vuex'
 export default {
-  data() {
-    return {
-      message: '',
-      messages: [],
+  props: {
+    userChatTo: {
+      type: Object
+    },
+    messages: {
+      type: Array
+    },
+    targetChannel: {
+      type: String
     }
   },
-  created () {
-    window.addEventListener('beforeunload', this.leaveChatroom())
+  data() {
+    return {
+      message: ''
+    }
   },
   mounted() {
-    this.fetchChatroom()
-    this.$socket.emit('chatting', { ...this.currentUser, createdAt: new Date(), type: 'userComein' })
-    this.$socket.on('userOnline', (data) => {
-      this.$emit('someoneComein', data)
+    this.$socket.on('private_msg', (data) => {
+      this.$emit('sendPrivateMessage', {
+        UserId: data.UserId,
+        avatar: data.avatar,
+        message: data.message,
+        createdAt: data.createdAt,
+        type: data.type,
+        User: data.User,
+        sendTo: data.sendTo,
+        targetChannel: this.targetChannel
+      })
       const scroll = this.$refs.boardWrapper
       if (scroll) {
         scroll.scrollTop = scroll.scrollHeight
         scroll.animate({scrollTop: scroll.scrollHeight})
       }
     })
-    this.$socket.on('msg', (data) => {
-      this.messages = [...this.messages, {UserId: data.UserId, avatar: data.avatar, message: data.message, createdAt: data.createdAt, type: data.type, User: data.User}]
-      this.messages.sort((a, b) => {
-        return a.createdAt > b.createdAt ? 1 : -1;
-      })
-      const scroll = this.$refs.boardWrapper
-      if (scroll) {
-        scroll.scrollTop = scroll.scrollHeight
-        scroll.animate({scrollTop: scroll.scrollHeight})
-      }
-    }),
-    this.$socket.on('newclientlogin', (data) => {
-      this.messages = [...this.messages, {UserId: data.UserId, avatar: data.avatar, message: data.message, createdAt: data.createdAt, type: data.type, User: data.User}]
-      this.messages.sort((a, b) => {
-        return a.createdAt > b.createdAt ? 1 : -1;
-      })
-      const scroll = this.$refs.boardWrapper
-      if (scroll) {
-        scroll.scrollTop = scroll.scrollHeight
-        scroll.animate({scrollTop: scroll.scrollHeight})
+    this.$socket.on('unread_msg', (data) => {
+      if (data.sendTo === this.currentUser.id && data.UserId !== this.userChatTo.id) {
+        this.$bus.$emit('updateUnreadMessages')
+        this.$bus.$emit('updateChatUsers', data)
       }
     })
   },
   beforeDestroy () {
-    this.leaveChatroom()
-    this.$socket.emit('leave', this.currentUser.id)
   },
   watch: {
     messages () {
-      if (this.el) {
-        const scroll = this.$refs.boardWrapper
-        if (scroll) {
-          scroll.scrollTop = scroll.scrollHeight
-          scroll.animate({scrollTop: scroll.scrollHeight})
-        }
+      const scroll = this.$refs.boardWrapper
+      if (scroll) {
+        scroll.scrollTop = scroll.scrollHeight
+        scroll.animate({scrollTop: scroll.scrollHeight})
       }
     }
   },
@@ -122,47 +121,23 @@ export default {
         })
         return
       }
-      this.$socket.emit('send message', {UserId: this.currentUser.id, avatar: this.currentUser.avatar, message: this.message, createdAt: new Date(), type: 'chat', User: this.currentUser})
+      this.$socket.emit('private chatroom',{
+        UserId: this.currentUser.id,
+        avatar: this.currentUser.avatar,
+        message: this.message,
+        createdAt: new Date(),
+        type: 'chat',
+        User: this.currentUser,
+        sendTo: this.userChatTo.id,
+        targetChannel: this.targetChannel
+      })
       this.message = ''
       const scroll = this.$refs.boardWrapper
       if (scroll) {
         scroll.scrollTop = scroll.scrollHeight
         scroll.animate({scrollTop: scroll.scrollHeight})
       }
-    },
-    async leaveChatroom () {
-      try {
-        const { data } = await chatAPI.deleteChatRoom()
-        if (data.status !== 'success') {
-          throw new Error(data.message)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    },
-    async fetchChatroom () {
-      const loader = this.$loading.show({
-        isFullPage: true,
-        opacity: 1
-      }, { default: this.$createElement('MyLoading') })
-      try {
-        const { data } = await chatAPI.getChatRoom()
-        this.messages = data.histroy.filter(message => message.targetChannel === '0')
-        const scroll = this.$refs.boardWrapper
-        if (scroll) {
-          scroll.scrollTop = scroll.scrollHeight
-          scroll.animate({scrollTop: scroll.scrollHeight})
-        }
-        loader.hide()
-      } catch (error) {
-        loader.hide()
-        console.log(error)
-        Toast.fire({
-          icon: 'error',
-          title: '目前無法連線聊天室，請稍候'
-        })
-      }
-    },
+    }
   }
 }
 </script>
@@ -191,6 +166,10 @@ $divider: #E6ECF0;
         font-weight: 900;
         font-size: 19px;
         line-height: 28px;
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+        }
       }
       .account {
         position: absolute;
@@ -198,6 +177,10 @@ $divider: #E6ECF0;
         font-weight: 500;
         font-size: 13px;
         color: $bitdark;
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
     .public-text {
@@ -355,6 +338,15 @@ $divider: #E6ECF0;
         cursor: pointer;
       }
     }
+  }
+  .no-message-noti {
+    height: 100%;
+    width: 100%;
+    font-size: 22px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 </style>

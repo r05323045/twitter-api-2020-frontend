@@ -46,6 +46,11 @@ const routes = [
     beforeEnter: authorizeIsUser
   },
   {
+    path: '/private',
+    component: () => import('@/views/Private.vue'),
+    beforeEnter: authorizeIsUser
+  },
+  {
     path: '/user/self/follower',
     name: 'SelfFollowers',
     component: () => import('@/views/SelfFollowers.vue'),
@@ -142,6 +147,7 @@ router.beforeEach((to, from, next) => {
     (async () => {
       isAuthenticated = await store.dispatch('fetchCurrentUser')
     })()
+    next()
   }
 
   if (!isAuthenticated && to.path !== '/signin' && to.path !== '/signup' && to.path !== '/admin/signin') {
