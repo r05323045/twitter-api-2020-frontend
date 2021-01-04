@@ -123,7 +123,7 @@ export default {
           } else {
             user.lastChat = Date.now()
           }
-          user.unread = 0
+          user.unread = history.filter(message => message.isRead === false && message.sendTo === this.currentUser.id).length
         })
         this.historyChatUsers.sort((a, b) => { return a.lastChat < b.lastChat ? 1 : -1 })
         const scroll = this.$refs.boardWrapper
