@@ -76,6 +76,11 @@ export default {
     this.$bus.$on('updateUnreadMessages', () => {
       this.fetchUnreadMessages()
     })
+    this.$socket.on('unread_msg', () => {
+      if (this.$route.path !== '/private') {
+        this.fetchUnreadMessages()
+      }
+    })
   },
   methods: {
     logout () {

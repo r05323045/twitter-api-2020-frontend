@@ -45,6 +45,7 @@ export default {
     return {
       message: '',
       messages: [],
+      userComeinObject: {}
     }
   },
   created () {
@@ -77,6 +78,16 @@ export default {
       this.messages.sort((a, b) => {
         return a.createdAt > b.createdAt ? 1 : -1;
       })
+      if (!Object.keys(this.userComeinObject).includes(data.message)) {
+        this.userComeinObject[data.message] = data.createdAt
+      }
+      let removeList = []
+        this.messages.forEach(message => {
+          if (message.type === 'userComein' && message.createdAt < this.userComeinObject[message.message]) {
+            removeList.push(message.createdAt)
+          }
+        })
+      this.messages = this.messages.filter(m => removeList.includes(m.createdAt) === false)
       const scroll = this.$refs.boardWrapper
       if (scroll) {
         scroll.scrollTop = scroll.scrollHeight
@@ -148,6 +159,16 @@ export default {
       try {
         const { data } = await chatAPI.getChatRoom()
         this.messages = data.histroy.filter(message => message.targetChannel === '0')
+        this.messages.filter(message => message.type === 'userComein').forEach(m => {
+          this.userComeinObject[m.message] = m.createdAt
+        })
+        let removeList = []
+        this.messages.forEach(message => {
+          if (message.type === 'userComein' && message.createdAt < this.userComeinObject[message.message]) {
+            removeList.push(message.id)
+          }
+        })
+        this.messages = this.messages.filter(m => removeList.includes(m.id) === false)
         const scroll = this.$refs.boardWrapper
         if (scroll) {
           scroll.scrollTop = scroll.scrollHeight

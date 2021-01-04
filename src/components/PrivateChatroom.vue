@@ -55,6 +55,7 @@ export default {
   created () {
     this.$bus.$on('updateChatUsers', (message) => {
       this.updateChatUsers(message)
+      this.readMessages(this.userChatTo.id)
     })
     return Promise.all([
       this.fetchUsers(),
@@ -81,6 +82,7 @@ export default {
   },
   methods: {
     receiveMessage (message) {
+      this.allHistoryMessages = [...this.allHistoryMessages, message]
       this.histroyMessages = [...this.histroyMessages, message]
     },
     controlActive (user, index) {
