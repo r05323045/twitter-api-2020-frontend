@@ -55,6 +55,7 @@ export default {
   created () {
     this.$bus.$on('updateChatUsers', (message) => {
       this.updateChatUsers(message)
+      this.readMessages(this.userChatTo.id)
     })
     return Promise.all([
       this.fetchUsers(),
@@ -81,6 +82,7 @@ export default {
   },
   methods: {
     receiveMessage (message) {
+      this.allHistoryMessages = [...this.allHistoryMessages, message]
       this.histroyMessages = [...this.histroyMessages, message]
     },
     controlActive (user, index) {
@@ -121,7 +123,7 @@ export default {
           } else {
             user.lastChat = Date.now()
           }
-          user.unread = 0
+          user.unread = history.filter(message => message.isRead === false && message.sendTo === this.currentUser.id).length
         })
         this.historyChatUsers.sort((a, b) => { return a.lastChat < b.lastChat ? 1 : -1 })
         const scroll = this.$refs.boardWrapper
