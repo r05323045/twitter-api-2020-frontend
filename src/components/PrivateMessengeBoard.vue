@@ -96,6 +96,8 @@ export default {
         scroll.scrollTop = scroll.scrollHeight
         scroll.animate({scrollTop: scroll.scrollHeight})
       }
+    },
+    targetChannel () {
     }
   },
   updated() {
@@ -121,7 +123,7 @@ export default {
         })
         return
       }
-      this.$socket.emit('private chatroom',{
+      this.$socket.emit('private message',{
         UserId: this.currentUser.id,
         avatar: this.currentUser.avatar,
         message: this.message,

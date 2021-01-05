@@ -71,11 +71,16 @@ export default {
           this.messengeActive[0] = true
         }
         if (this.historyChatUsers.length > 0) {
+          this.historyChatUsers[0].unread = 0
           this.targetChannel = Number(this.userChatTo.id) > Number(this.currentUser.id) ? `${this.currentUser.id}_${this.userChatTo.id}` : `${this.userChatTo.id}_${this.currentUser.id}`
           this.histroyMessages = this.allHistoryMessages.filter(message => message.targetChannel === this.targetChannel)
           this.readMessages(this.userChatTo.id)
+          this.$socket.emit('private chatroom', this.targetChannel)
         }
     })
+  },
+  beforeDestroy () {
+    this.$socket.emit('leave private chatroom', this.targetChannel)
   },
   computed: {
     ...mapState(['currentUser', 'isAuthenticated'])
@@ -83,17 +88,20 @@ export default {
   methods: {
     receiveMessage (message) {
       this.allHistoryMessages = [...this.allHistoryMessages, message]
-      this.histroyMessages = [...this.histroyMessages, message]
+      this.histroyMessages = this.allHistoryMessages.filter(message => message.targetChannel === this.targetChannel)
     },
     controlActive (user, index) {
       this.messengeActive = new Array(this.historyChatUsers.length).fill(false)
       this.messengeActive[index] = true
+      this.readMessages(this.userChatTo.id)
       this.userChatTo = Object.assign({}, user)
+      this.$socket.emit('leave private chatroom', this.targetChannel)
       this.targetChannel = Number(this.userChatTo.id) > Number(this.currentUser.id) ? `${this.currentUser.id}_${this.userChatTo.id}` : `${this.userChatTo.id}_${this.currentUser.id}`
       this.histroyMessages = this.allHistoryMessages.filter(message => message.targetChannel === this.targetChannel)
       this.readMessages(this.userChatTo.id)
       const chatToIndex = this.historyChatUsers.map(user => user.id).indexOf(user.id)
       this.historyChatUsers[chatToIndex].unread = 0
+      this.$socket.emit('private chatroom', this.targetChannel)
     },
     async fetchChatroom () {
       const loader = this.$loading.show({
@@ -123,7 +131,9 @@ export default {
           } else {
             user.lastChat = Date.now()
           }
-          user.unread = history.filter(message => message.isRead === false && message.sendTo === this.currentUser.id).length
+          if (history.length > 0) {
+            user.unread = history.filter(message => message.isRead === false && message.sendTo === this.currentUser.id).length
+          }
         })
         this.historyChatUsers.sort((a, b) => { return a.lastChat < b.lastChat ? 1 : -1 })
         const scroll = this.$refs.boardWrapper
