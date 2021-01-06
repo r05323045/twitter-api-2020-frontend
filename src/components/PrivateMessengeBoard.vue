@@ -1,5 +1,5 @@
 <template>
-  <div class="messenge-board" v-if="userChatTo">
+  <div class="messenge-board">
     <div v-show="userChatTo.id">
       <div class="top-wrapper">
         <div class="info">
@@ -91,13 +91,13 @@ export default {
   },
   watch: {
     messages () {
-      const scroll = this.$refs.boardWrapper
-      if (scroll) {
-        scroll.scrollTop = scroll.scrollHeight
-        scroll.animate({scrollTop: scroll.scrollHeight})
-      }
+      this.scrollToBottom()
+    },
+    userChatTo () {
+      this.scrollToBottom()
     },
     targetChannel () {
+      this.scrollToBottom()
     }
   },
   updated() {
