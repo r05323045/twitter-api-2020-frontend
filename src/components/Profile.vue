@@ -18,10 +18,10 @@
           <a v-if="user.user" @click="$router.push(`/private?id=${user.user.id}`).catch(()=>{})"><div class="icon messege"></div></a>
         </div>
         <div v-if="user.user">
-          <div v-if="subscribeStorage.filter(event => (event.from === this.currentUser.id && event.to === user.user.id)).length === 0" class="btn-noti" @click="subscribeUser(user.user.id)">
+          <div v-if="!user.isSubscribed" class="btn-noti" @click="addSubscribe(user.user.id)">
             <div class="icon subscribe"></div>
           </div>
-          <div v-if="subscribeStorage.filter(event => (event.from === this.currentUser.id && event.to === user.user.id)).length > 0" class="btn-noti already" @click="unsubscribeUser(user.user.id)">
+          <div v-if="user.isSubscribed" class="btn-noti already" @click="deleteSubscribe(user.user.id)">
             <div class="icon subscribe"></div>
           </div>
         </div>
@@ -62,13 +62,13 @@
 </template>
 
 <script>
+import subscribesAPI from '@/apis/subscribes'
 import followshipsAPI from '@/apis/followships'
 import TweetList from '@/components/TweetList.vue'
 import usersAPI from '@/apis/users'
 import { Toast } from '@/utils/helpers'
 import { mapState } from 'vuex'
 import ModalForEditProfile from '@/components/ModalForEditProfile.vue'
-const STORAGE_KEY = 'twitter-api-vue'
 
 export default {
   name: 'Profile',
@@ -82,12 +82,10 @@ export default {
       tabOption: '推文',
       showEditProfileModal: false,
       userLikes: [],
-      userReplies: [],
-      subscribeStorage: []
+      userReplies: []
     }
   },
   created () {
-    this.subscribeStorage = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []
     this.$bus.$on('tweetAction', action => {
       this.tweetAction(action)
     })
@@ -133,6 +131,7 @@ export default {
       try {
         const { data } = await usersAPI.getProfile({userId})
         this.user = data
+        console.log(this.user)
         if (this.user.following.rows.map(d => d.followingId).includes(userId)) {
           this.user.following.rows = this.user.following.rows.filter(d => d.followingId !== userId)
           this.user.following.count = this.user.following.count - 1
@@ -241,6 +240,35 @@ export default {
           title: '無法取消追蹤，請稍後再試'
         })
       }
+    },async addSubscribe (userId) {
+      try {
+        const { data } = await subscribesAPI.addSubscribe({ userId })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+        this.user.isSubscribed = true
+      } catch (error) {
+        Toast.fire({
+          icon: 'error',
+          title: '無法加入追蹤，請稍後再試'
+        })
+      }
+    },
+    async deleteSubscribe (userId) {
+      try {
+        const { data } = await subscribesAPI.deleteSubscribe({ userId })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+        this.user.isSubscribed = false
+      } catch (error) {
+        Toast.fire({
+          icon: 'error',
+          title: '無法取消追蹤，請稍後再試'
+        })
+      }
     },
     tweetAction (action) {
       const userId = this.$route.path === '/user/self' ? this.currentUser.id : this.$route.params.id
@@ -283,14 +311,6 @@ export default {
           this.user.follower.count = action.type === 'follow' ? this.user.follower.count + 1 : this.user.follower.count - 1
         }
       }
-    },
-    subscribeUser(id) {
-      this.subscribeStorage.push({from: this.currentUser.id, to: id})
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.subscribeStorage))
-    },
-    unsubscribeUser(id) {
-      this.subscribeStorage = this.subscribeStorage.filter(event => !(event.from === this.currentUser.id && event.to === id))
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.subscribeStorage))
     },
     afterClickEditProfile() {
       this.showEditProfileModal = true

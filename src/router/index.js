@@ -41,6 +41,11 @@ const routes = [
     component: () => import('@/views/UserSignUp.vue')
   },
   {
+    path: '/notification',
+    component: () => import('@/views/Notification.vue'),
+    beforeEnter: authorizeIsUser
+  },
+  {
     path: '/chat',
     component: () => import('@/views/Chat.vue'),
     beforeEnter: authorizeIsUser

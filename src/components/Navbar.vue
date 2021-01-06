@@ -12,6 +12,10 @@
         <div class="icon user"></div>
         個人資料
       </div>
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/notification').catch(()=>{})" :class="{ active: $route.path === '/notification' }">
+        <div class="icon noti"></div>
+        通知
+      </div>
       <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/chat').catch(()=>{})" :class="{ active: $route.path === '/chat' }">
         <img class="icon msg-noti" src="../assets/icon_msg_noti.svg">
         公開聊天室
@@ -110,6 +114,11 @@ export default {
         if (data.status !== 'success') {
           throw new Error(data.message)
         }
+        
+        this.$socket.emit('notify', {
+          senderId: this.currentUser.id,
+          messageData: `${this.currentUser.name} 有新的推文通知`,
+        })
 
         this.$bus.$emit('renewTweets')
         this.showNewTweetModal = false
