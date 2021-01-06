@@ -85,6 +85,12 @@ export default {
         this.fetchUnreadMessages()
       }
     })
+    this.$socket.emit('init notification', this.currentUser.id)
+
+    this.$socket.on('get notification', (data) => {
+      console.log(data)
+    })
+
   },
   methods: {
     logout () {
@@ -114,10 +120,10 @@ export default {
         if (data.status !== 'success') {
           throw new Error(data.message)
         }
-        
+
         this.$socket.emit('notify', {
           senderId: this.currentUser.id,
-          messageData: `${this.currentUser.name} 有新的推文通知`,
+          messageData: `${this.currentUser.name} 有新的推文`,
         })
 
         this.$bus.$emit('renewTweets')
