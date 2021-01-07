@@ -216,7 +216,7 @@ export default {
           throw new Error(data.message)
         }
         this.user.isFollowed = true
-        this.$bus.$emit('followAction', { type: 'follow', userId: userId})
+        this.$bus.$emit('followAction', { type: 'follow', userId: userId, followship: data.followship})
       } catch (error) {
         Toast.fire({
           icon: 'error',
@@ -239,7 +239,8 @@ export default {
           title: '無法取消追蹤，請稍後再試'
         })
       }
-    },async addSubscribe (userId) {
+    },
+    async addSubscribe (userId) {
       try {
         const { data } = await subscribesAPI.addSubscribe({ userId })
 

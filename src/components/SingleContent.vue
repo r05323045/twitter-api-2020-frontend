@@ -118,7 +118,7 @@ export default {
         if (data.status !== 'success') {
           throw new Error(data.message)
         }
-        console.log(data)
+        
         if (data.tweet.UserId > 0 && data.tweet.UserId !== this.currentUser.id) {
         this.$socket.emit('personal notification', {
           senderId: this.currentUser.id,
