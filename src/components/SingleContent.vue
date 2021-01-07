@@ -118,6 +118,17 @@ export default {
         if (data.status !== 'success') {
           throw new Error(data.message)
         }
+        console.log(data)
+        if (data.tweet.UserId > 0 && data.tweet.UserId !== this.currentUser.id) {
+        this.$socket.emit('personal notification', {
+          senderId: this.currentUser.id,
+          titleData: `你的貼文有新的回覆`,
+          contentData: comment,
+          url: `/reply_list/${tweetId}`,
+          type: 'reply',
+          recipientId: data.tweet.UserId
+        })
+      }
 
         await this.fetchTweet(this.tweetId)
         this.replies.count += 1

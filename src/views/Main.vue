@@ -98,9 +98,9 @@ export default {
       }
     },
     tweetAction (action) {
-      
+
       if (action.tweetUserId > 0 && action.tweetUserId !== this.currentUser.id) {
-        this.$socket.emit('like notification', {
+        this.$socket.emit('personal notification', {
           senderId: this.currentUser.id,
           titleData: `${this.currentUser.name} 喜歡你的貼文`,
           url: `/reply_list/${action.tweetId}`,
