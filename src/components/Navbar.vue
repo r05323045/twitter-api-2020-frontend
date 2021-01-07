@@ -125,7 +125,7 @@ export default {
           senderId: this.currentUser.id,
           titleData: `${this.currentUser.name} 有新的推文`,
           contentData: description,
-          url: data.tweetId,
+          url: `/reply_list/${data.tweetId}`,
           type: 'tweet'
         })
 

@@ -137,7 +137,7 @@ export default {
         if (data.status !== 'success') {
           throw new Error(data.message)
         }
-        this.$bus.$emit('tweetAction', { type: 'like', tweetId: tweetId})
+        this.$bus.$emit('tweetAction', { type: 'like', tweetId: tweetId, tweetUserId: data.tweet.UserId})
       } catch (error) {
         console.log(error)
         Toast.fire({
