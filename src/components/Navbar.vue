@@ -121,9 +121,12 @@ export default {
           throw new Error(data.message)
         }
 
-        this.$socket.emit('notify', {
+        this.$socket.emit('tweet notification', {
           senderId: this.currentUser.id,
-          messageData: `${this.currentUser.name} 有新的推文`,
+          titleData: `${this.currentUser.name} 有新的推文`,
+          contentData: description,
+          url: data.tweetId,
+          type: 'tweet'
         })
 
         this.$bus.$emit('renewTweets')
