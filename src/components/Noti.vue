@@ -1,9 +1,9 @@
 <template>
-  <div class="noti">
+  <div class="noti" v-if="notifications.length > 0">
     <div class="header">
       通知
     </div>
-    <div class="list-item" v-for="notification in notifications" :key="notification.id">
+    <div @click="$router.push(notification.url).catch(()=>{})" class="list-item" v-for="notification in notifications" :key="notification.id">
       <div class="avatar"></div>
       <div class="top-wrapper">
         <div class="info">
@@ -44,6 +44,9 @@ export default {
       try {
         const { data } = await subscribeAPI.getNotifications()
         this.notifications = data
+        this.notifications .sort((a, b) => {
+          return a.createdAt < b.createdAt ? 1 : -1;
+        })
         loader.hide()
       } catch (error) {
         loader.hide()
@@ -117,10 +120,6 @@ $bitdark: #657786;
           font-weight: 700;
           margin-right: 5px;
           cursor: pointer;
-          &:hover {
-            font-weight: 500;
-            text-decoration: underline;
-          }
         }
         .time {
           font-weight: 500;
