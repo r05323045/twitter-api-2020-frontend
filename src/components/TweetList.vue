@@ -57,11 +57,10 @@ export default {
     async likeTweet (tweetId) {
       try {
         const { data } = await likesAPI.likeTweet({ tweetId })
-
         if (data.status !== 'success') {
           throw new Error(data.message)
         }
-        this.$bus.$emit('tweetAction', { type: 'like', tweetId: tweetId})
+        this.$bus.$emit('tweetAction', { type: 'like', tweetId: tweetId, tweetUserId: data.tweet.UserId})
       } catch (error) {
         console.log(error)
         Toast.fire({

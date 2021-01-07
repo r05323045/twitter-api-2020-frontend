@@ -1,5 +1,5 @@
 <template>
-  <div class="messenge-board" v-if="userChatTo">
+  <div class="messenge-board">
     <div v-show="userChatTo.id">
       <div class="top-wrapper">
         <div class="info">
@@ -91,11 +91,13 @@ export default {
   },
   watch: {
     messages () {
-      const scroll = this.$refs.boardWrapper
-      if (scroll) {
-        scroll.scrollTop = scroll.scrollHeight
-        scroll.animate({scrollTop: scroll.scrollHeight})
-      }
+      this.scrollToBottom()
+    },
+    userChatTo () {
+      this.scrollToBottom()
+    },
+    targetChannel () {
+      this.scrollToBottom()
     }
   },
   updated() {
@@ -121,7 +123,7 @@ export default {
         })
         return
       }
-      this.$socket.emit('private chatroom',{
+      this.$socket.emit('private message',{
         UserId: this.currentUser.id,
         avatar: this.currentUser.avatar,
         message: this.message,

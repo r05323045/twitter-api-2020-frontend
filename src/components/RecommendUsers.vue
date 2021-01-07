@@ -73,7 +73,7 @@ export default {
         if (data.status !== 'success') {
           throw new Error(data.message)
         }
-        this.$bus.$emit('followAction', { type: 'follow', userId: userId})
+        this.$bus.$emit('followAction', { type: 'follow', userId: userId, followship: data.followship})
         this.topUsers = this.topUsers.map(user => {
           if (user.id !== userId) {
             return user
@@ -119,6 +119,19 @@ export default {
       }
     },
     followAction (action) {
+
+      console.log(action)
+
+      if (action.type === 'follow' && action.followship.followerId > 0 && action.followship.followingId !== this.currentUser.id) {
+        this.$socket.emit('personal notification', {
+          senderId: this.currentUser.id,
+          titleData: `${this.currentUser.name} 開始追蹤你`,
+          url: `/user/self/follower`,
+          type: 'follow',
+          recipientId: action.followship.followingId
+        })
+      }
+
       this.topUsers = this.topUsers.map(user => {
         if (user.id !== action.userId) {
           return user

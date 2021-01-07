@@ -96,7 +96,7 @@ export default {
         if (data.status !== 'success') {
           throw new Error(data.message)
         }
-        this.$bus.$emit('followAction', { type: 'follow', userId: userId})
+        this.$bus.$emit('followAction', { type: 'follow', userId: userId, followship: data.followship})
         this.followers.forEach(follower => {
           if (follower.id === userId) {
             follower.isFollowed = true

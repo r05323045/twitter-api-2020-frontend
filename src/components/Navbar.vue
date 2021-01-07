@@ -12,6 +12,10 @@
         <div class="icon user"></div>
         個人資料
       </div>
+      <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/notification').catch(()=>{})" :class="{ active: $route.path === '/notification' }">
+        <div class="icon noti"></div>
+        通知
+      </div>
       <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/chat').catch(()=>{})" :class="{ active: $route.path === '/chat' }">
         <img class="icon msg-noti" src="../assets/icon_msg_noti.svg">
         公開聊天室
@@ -81,6 +85,12 @@ export default {
         this.fetchUnreadMessages()
       }
     })
+    this.$socket.emit('init notification', this.currentUser.id)
+
+    this.$socket.on('get notification', () => {
+      this.$bus.$emit('updateNotifications')
+    })
+
   },
   methods: {
     logout () {
@@ -110,6 +120,14 @@ export default {
         if (data.status !== 'success') {
           throw new Error(data.message)
         }
+
+        this.$socket.emit('tweet notification', {
+          senderId: this.currentUser.id,
+          titleData: `${this.currentUser.name} 有新的推文`,
+          contentData: description,
+          url: `/reply_list/${data.tweetId}`,
+          type: 'tweet'
+        })
 
         this.$bus.$emit('renewTweets')
         this.showNewTweetModal = false

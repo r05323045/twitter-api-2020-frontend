@@ -98,6 +98,17 @@ export default {
       }
     },
     tweetAction (action) {
+
+      if (action.tweetUserId > 0 && action.tweetUserId !== this.currentUser.id) {
+        this.$socket.emit('personal notification', {
+          senderId: this.currentUser.id,
+          titleData: `${this.currentUser.name} 喜歡你的貼文`,
+          url: `/reply_list/${action.tweetId}`,
+          type: 'like',
+          recipientId: action.tweetUserId
+        })
+      }
+
       this.tweets = this.tweets.map(tweet => {
         if (tweet.id !== action.tweetId) {
           return tweet
@@ -133,6 +144,14 @@ export default {
         if (data.status !== 'success') {
           throw new Error(data.message)
         }
+
+        this.$socket.emit('tweet notification', {
+          senderId: this.currentUser.id,
+          titleData: `${this.currentUser.name} 有新的推文`,
+          contentData: description,
+          url: `/reply_list/${data.tweetId}`,
+          type: 'tweet'
+        })
 
         await this.fetchTweets()
         this.tweets.sort((a, b) => {
