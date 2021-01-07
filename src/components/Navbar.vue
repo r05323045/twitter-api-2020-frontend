@@ -87,8 +87,8 @@ export default {
     })
     this.$socket.emit('init notification', this.currentUser.id)
 
-    this.$socket.on('get notification', (data) => {
-      console.log(data)
+    this.$socket.on('get notification', () => {
+      this.$bus.$emit('updateNotifications')
     })
 
   },

@@ -3,12 +3,54 @@
     <div class="header">
       通知
     </div>
+    <div v-for="notification in notifications" :key="notification.id">
+      <div class="title">{{ notification.titleData }}</div>
+      <div v-if="notification.contentData" class="content">{{ notification.contentData }}</div>
+      <div class="time">{{ notification.createdAt | fromNow }}</div>
+    </div>
   </div>
 </template>
 
 <script>
-
-export default {}
+import subscribeAPI from '@/apis/subscribes'
+import { Toast } from '@/utils/helpers'
+import { mapState } from 'vuex'
+export default {
+  data() {
+    return {
+      notifications: []
+    }
+  },
+  created () {
+    this.fetchNotifications()
+    this.$bus.$on('updateNotifications', () => {
+      this.fetchNotifications()
+    })
+  },  
+  computed: {
+    ...mapState(['currentUser', 'isAuthenticated']),
+  },
+  methods: {
+    async fetchNotifications () {
+      const loader = this.$loading.show({
+        isFullPage: true,
+        opacity: 1
+      }, { default: this.$createElement('MyLoading') })
+      try {
+        const { data } = await subscribeAPI.getNotifications()
+        this.notifications = data
+        loader.hide()
+      } catch (error) {
+        loader.hide()
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '目前無法取得通知，請稍候'
+        })
+      }
+    },
+  }
+}
 
 </script>
 

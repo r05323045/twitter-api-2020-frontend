@@ -11,5 +11,10 @@ export default {
     return apiHelper.delete(`/subscribes/${userId}`, {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
+  },
+  getNotifications () {
+    return apiHelper.get('/notifications', {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
   }
 }
