@@ -3,10 +3,15 @@
     <div class="header">
       通知
     </div>
-    <div v-for="notification in notifications" :key="notification.id">
-      <div class="title">{{ notification.titleData }}</div>
-      <div v-if="notification.contentData" class="content">{{ notification.contentData }}</div>
-      <div class="time">{{ notification.createdAt | fromNow }}</div>
+    <div class="list-item" v-for="notification in notifications" :key="notification.id">
+      <div class="avatar"></div>
+      <div class="top-wrapper">
+        <div class="info">
+          <div class="title">{{ notification.titleData }}</div>
+          <div class="time">&bull; {{ notification.createdAt | fromNow }}</div>
+        </div>
+        <div v-if="notification.contentData" class="content">{{ notification.contentData }}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -76,6 +81,67 @@ $bitdark: #657786;
     font-size: 18px;
     font-weight: 700;
     text-align: left;
+  }
+  .list-item {
+    padding: 10px 0 10px 0;
+    border-bottom: 1px solid $divider;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    cursor: pointer;
+    transition: ease-in 0.2s;
+    &:hover {
+      backdrop-filter: brightness(.95);
+    }
+    .avatar {
+      height: 50px;
+      min-width: 50px;
+      border-radius: 100px;
+      margin: 3px 0 0 15px;
+      background: $bitdark;
+    }
+    .top-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-left: 10px;
+      .info {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        height: 22px;
+        line-height: 22px;
+        .title {
+          font-weight: 700;
+          margin-right: 5px;
+          cursor: pointer;
+          &:hover {
+            font-weight: 500;
+            text-decoration: underline;
+          }
+        }
+        .time {
+          font-weight: 500;
+          font-size: 15px;
+          line-height: 22px;
+          color: #657786;
+          text-align: start;
+        }
+      }
+      .content {
+        margin-top: 5px;
+        width: 100%;
+        max-width: 510px;
+        overflow: hidden;
+        font-size: 15px;
+        color: $bitdark;
+        font-weight: 500;
+        line-height: 22px;
+        text-align: left;
+      }
+    }
   }
 }
 </style>
