@@ -1,17 +1,22 @@
 <template>
-  <div class="noti" v-if="notifications.length > 0">
+  <div class="noti">
     <div class="header">
       通知
     </div>
-    <div @click="$router.push(notification.url).catch(()=>{})" class="list-item" v-for="notification in notifications" :key="notification.id">
-      <div class="avatar"></div>
-      <div class="top-wrapper">
-        <div class="info">
-          <div class="title">{{ notification.titleData }}</div>
-          <div class="time">&bull; {{ notification.createdAt | fromNow }}</div>
+    <div v-if="notifications.length > 0">
+      <div @click="$router.push(notification.url).catch(()=>{})" class="list-item" v-for="notification in notifications" :key="notification.id">
+        <div class="avatar"></div>
+        <div class="top-wrapper">
+          <div class="info">
+            <div class="title">{{ notification.titleData }}</div>
+            <div class="time">&bull; {{ notification.createdAt | fromNow }}</div>
+          </div>
+          <div v-if="notification.contentData" class="content">{{ notification.contentData }}</div>
         </div>
-        <div v-if="notification.contentData" class="content">{{ notification.contentData }}</div>
       </div>
+    </div>
+    <div class="nothing-here" v-if="notifications.length === 0">
+       <div>你沒有任何通知</div>
     </div>
   </div>
 </template>
@@ -141,6 +146,15 @@ $bitdark: #657786;
         text-align: left;
       }
     }
+  }
+  .nothing-here {
+    height: 100%;
+    width: 100%;
+    font-size: 22px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 </style>
