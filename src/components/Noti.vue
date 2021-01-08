@@ -5,7 +5,7 @@
     </div>
     <div v-if="notifications.length > 0">
       <div @click="$router.push(notification.url).catch(()=>{})" class="list-item" v-for="notification in notifications" :key="notification.id">
-        <div class="avatar"></div>
+        <div class="avatar" :style="{ background: `url(${notification.avatar}) no-repeat center/cover` }" @click.stop="$router.push(`/user/other/${notification.senderId}`).catch(()=>{})"></div>
         <div class="top-wrapper">
           <div class="info">
             <div class="title">{{ notification.titleData }}</div>
@@ -48,6 +48,7 @@ export default {
       }, { default: this.$createElement('MyLoading') })
       try {
         const { data } = await subscribeAPI.getNotifications()
+        console.log(data)
         this.notifications = data
         this.notifications .sort((a, b) => {
           return a.createdAt < b.createdAt ? 1 : -1;
@@ -107,6 +108,10 @@ $bitdark: #657786;
       border-radius: 100px;
       margin: 3px 0 0 15px;
       background: $bitdark;
+      cursor: pointer;
+      &:hover {
+        filter: brightness(.9);
+      }
     }
     .top-wrapper {
       display: flex;
