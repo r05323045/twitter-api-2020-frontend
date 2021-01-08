@@ -129,8 +129,9 @@ export default {
             recipientId: data.tweet.UserId
           })
         }
-
+        this.replies = { ...this.replies, userId: this.currentUser.id}
         this.$socket.emit('reply notification', this.replies)
+        console.log(this.replies)
 
         await this.fetchTweet(this.tweetId)
         this.replies.count += 1
