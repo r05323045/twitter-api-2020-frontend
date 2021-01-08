@@ -48,7 +48,6 @@ export default {
       }, { default: this.$createElement('MyLoading') })
       try {
         const { data } = await subscribeAPI.getNotifications()
-        console.log(data)
         this.notifications = data
         this.notifications .sort((a, b) => {
           return a.createdAt < b.createdAt ? 1 : -1;
