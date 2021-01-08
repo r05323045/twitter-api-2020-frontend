@@ -30,11 +30,11 @@
     
     <div class="replies">
       <div class="single-reply" v-for="(row, index) in replies.rows" :key="`reply_${index}`">  
-        <img :src="row.User ? row.User.avatar : ''" alt="">
+        <img :src="row.User ? row.User.avatar : ''" @click="$router.push(`/user/other/${row.User ? row.User.id : '/'}`).catch(()=>{})">
         <div class="reply-content">
           <div class="title">
-            <span class="name">{{row.User ? row.User.name : ''}}</span>
-            <span class="account">{{row.User ?  row.User.account : ''}}</span>
+            <span class="name" @click="$router.push(`/user/other/${row.User ? row.User.id : '/'}`).catch(()=>{})">{{row.User ? row.User.name : ''}}</span>
+            <span class="account" @click="$router.push(`/user/other/${row.User ? row.User.id : '/'}`).catch(()=>{})">{{row.User ?  row.User.account : ''}}</span>
             <span class="time">・{{row.createdAt | fromNow}}</span>
           </div>
           <span class="to-whom">回覆 <span class="receiver">{{tweet.User ? tweet.User.account : ''}}</span></span>
@@ -129,8 +129,9 @@ export default {
             recipientId: data.tweet.UserId
           })
         }
-
+        this.replies = { ...this.replies, userId: this.currentUser.id}
         this.$socket.emit('reply notification', this.replies)
+        console.log(this.replies)
 
         await this.fetchTweet(this.tweetId)
         this.replies.count += 1

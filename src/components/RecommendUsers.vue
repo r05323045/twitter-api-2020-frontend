@@ -120,8 +120,6 @@ export default {
     },
     followAction (action) {
 
-      console.log(action)
-
       if (action.type === 'follow' && action.followship.followerId > 0 && action.followship.followingId !== this.currentUser.id) {
         this.$socket.emit('personal notification', {
           senderId: this.currentUser.id,

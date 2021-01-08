@@ -13,6 +13,7 @@
         個人資料
       </div>
       <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/notification').catch(()=>{})" :class="{ active: $route.path === '/notification' }">
+        <div v-if="countUnreadNoti > 0" class="unread-noti">{{ countUnreadNoti }}</div>
         <div class="icon noti"></div>
         通知
       </div>
@@ -21,12 +22,9 @@
         公開聊天室
       </div>
       <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/private').catch(()=>{})" :class="{ active: $route.path === '/private' }">
-        <div v-if="countUnreadMessages > 0" class="unread-noti"></div>
+        <div v-if="countUnreadMessages > 0" class="unread-noti">{{ countUnreadMessages }}</div>
         <div class="icon messenge"></div>
         私人訊息
-        <div v-if="countUnreadMessages > 0" class="unread-messages-wrapper">
-          <div class="unread-messages">{{ countUnreadMessages }}</div>
-        </div>
       </div>
       <div v-if="$route.path.indexOf('admin') < 0" class="nav-item" @click="$router.push('/setting').catch(()=>{})" :class="{ active: $route.path === '/setting' }">
         <div class="icon cog"></div>
@@ -59,6 +57,7 @@
 import { mapState } from 'vuex'
 import TweetsAPI from '@/apis/tweets'
 import chatAPI from '@/apis/chats'
+import subscribeAPI from '@/apis/subscribes'
 import { Toast } from '@/utils/helpers'
 import ModalForNewTweet from '@/components/ModalForNewTweet.vue'
 export default {
@@ -69,7 +68,9 @@ export default {
   data () {
     return {
       showNewTweetModal: false,
-      countUnreadMessages: 0
+      countUnreadMessages: 0,
+      countUnreadNoti: 0,
+      latestNoti: {}
     }
   },
   computed: {
@@ -88,7 +89,8 @@ export default {
     this.$socket.emit('init notification', this.currentUser.id)
 
     this.$socket.on('get notification', () => {
-      this.$bus.$emit('updateNotifications')
+      this.fetchUnreadMessages()
+      this.$bus.$emit('updateNotifications', this.latestNoti)
     })
 
   },
@@ -141,13 +143,17 @@ export default {
     },
     async fetchUnreadMessages () {
       try {
-        const { data } = await chatAPI.getUnreadMessages()
-        this.countUnreadMessages = data ? data.length : 0
-        const scroll = this.$refs.boardWrapper
-        if (scroll) {
-          scroll.scrollTop = scroll.scrollHeight
-          scroll.animate({scrollTop: scroll.scrollHeight})
-        }
+        Promise.all([chatAPI.getUnreadMessages(), subscribeAPI.getNotifications()])
+          .then(([data, notiData]) => {
+            this.countUnreadNoti = notiData.data ? notiData.data.length : 0
+            this.latestNoti = notiData.data ? notiData.data[0] : {}
+            this.countUnreadMessages = data ? data.length : 0
+            const scroll = this.$refs.boardWrapper
+            if (scroll) {
+              scroll.scrollTop = scroll.scrollHeight
+              scroll.animate({scrollTop: scroll.scrollHeight})
+            }
+          })
       } catch (error) {
         console.log(error)
         Toast.fire({
@@ -262,10 +268,11 @@ $lightdark: #9197A3;
       .unread-noti {
         z-index: 999;
         position: absolute;
-        top: 18px;
-        left: 18px;
-        width: 6px;
-        height: 6px;
+        font-size: 12px;
+        top: 12px;
+        left: 15px;
+        width: 18px;
+        height: 18px;
         border-radius: 50%;
         background-color: $orange;
         color: #ffffff;

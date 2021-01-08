@@ -70,11 +70,13 @@ export default {
           this.userChatTo = Object.assign({}, this.historyChatUsers[0] ? this.historyChatUsers[0] : {})
           this.messengeActive[0] = true
         }
-        this.historyChatUsers[0].unread = 0
-        this.targetChannel = Number(this.userChatTo.id) > Number(this.currentUser.id) ? `${this.currentUser.id}_${this.userChatTo.id}` : `${this.userChatTo.id}_${this.currentUser.id}`
-        this.histroyMessages = this.allHistoryMessages.filter(message => message.targetChannel === this.targetChannel)
-        this.readMessages(this.userChatTo.id)
-        this.$socket.emit('private chatroom', this.targetChannel)
+        if (this.historyChatUsers.length > 0) {
+          this.historyChatUsers[0].unread = 0
+          this.targetChannel = Number(this.userChatTo.id) > Number(this.currentUser.id) ? `${this.currentUser.id}_${this.userChatTo.id}` : `${this.userChatTo.id}_${this.currentUser.id}`
+          this.histroyMessages = this.allHistoryMessages.filter(message => message.targetChannel === this.targetChannel)
+          this.readMessages(this.userChatTo.id)
+          this.$socket.emit('private chatroom', this.targetChannel)
+        }
     })
   },
   beforeDestroy () {
@@ -86,9 +88,6 @@ export default {
   },
   watch: {
     historyChatUsers () {
-      if (this.historyChatUsers.length === 0) {
-        this.fetchChatroom()
-      }
     }
   },
   methods: {

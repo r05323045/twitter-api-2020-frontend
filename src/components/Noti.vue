@@ -3,15 +3,20 @@
     <div class="header">
       通知
     </div>
-    <div class="list-item" v-for="notification in notifications" :key="notification.id">
-      <div class="avatar"></div>
-      <div class="top-wrapper">
-        <div class="info">
-          <div class="title">{{ notification.titleData }}</div>
-          <div class="time">&bull; {{ notification.createdAt | fromNow }}</div>
+    <div v-if="notifications.length > 0">
+      <div @click="$router.push(notification.url).catch(()=>{})" class="list-item" v-for="(notification, idx) in notidata" :key="idx">
+        <div class="avatar" :style="{ background: `url(${notification.avatar}) no-repeat center/cover` }" @click.stop="$router.push(`/user/other/${notification.senderId}`).catch(()=>{})"></div>
+        <div class="top-wrapper">
+          <div class="info">
+            <div class="title">{{ notification.titleData }}</div>
+            <div class="time">&bull; {{ notification.createdAt | fromNow }}</div>
+          </div>
+          <div v-if="notification.contentData" class="content">{{ notification.contentData }}</div>
         </div>
-        <div v-if="notification.contentData" class="content">{{ notification.contentData }}</div>
       </div>
+    </div>
+    <div class="nothing-here" v-if="notifications.length === 0">
+       <div>你沒有任何通知</div>
     </div>
   </div>
 </template>
@@ -23,15 +28,22 @@ import { mapState } from 'vuex'
 export default {
   data() {
     return {
-      notifications: []
+      notifications: [],
+      notidata: []
     }
   },
   created () {
     this.fetchNotifications()
-    this.$bus.$on('updateNotifications', () => {
-      this.fetchNotifications()
+    this.$bus.$on('updateNotifications', (data) => {
+      this.notifications = [...this.notifications, data]
     })
-  },  
+  },
+  up: {
+    notifications () {
+      console.log(this.notifications)
+      this.notidata = this.notifications
+    }
+  },
   computed: {
     ...mapState(['currentUser', 'isAuthenticated']),
   },
@@ -44,6 +56,10 @@ export default {
       try {
         const { data } = await subscribeAPI.getNotifications()
         this.notifications = data
+        this.notifications .sort((a, b) => {
+          return a.createdAt < b.createdAt ? 1 : -1;
+        })
+        this.notidata = this.notifications
         loader.hide()
       } catch (error) {
         loader.hide()
@@ -99,6 +115,10 @@ $bitdark: #657786;
       border-radius: 100px;
       margin: 3px 0 0 15px;
       background: $bitdark;
+      cursor: pointer;
+      &:hover {
+        filter: brightness(.9);
+      }
     }
     .top-wrapper {
       display: flex;
@@ -117,10 +137,6 @@ $bitdark: #657786;
           font-weight: 700;
           margin-right: 5px;
           cursor: pointer;
-          &:hover {
-            font-weight: 500;
-            text-decoration: underline;
-          }
         }
         .time {
           font-weight: 500;
@@ -142,6 +158,15 @@ $bitdark: #657786;
         text-align: left;
       }
     }
+  }
+  .nothing-here {
+    height: 100%;
+    width: 100%;
+    font-size: 22px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 </style>
