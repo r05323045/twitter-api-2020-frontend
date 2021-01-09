@@ -90,11 +90,11 @@ export default {
 
     this.$socket.on('get notification', () => {
       this.fetchUnreadMessages()
-      this.$bus.$emit('updateNotifications', this.latestNoti)
+      this.$bus.$emit('updateNotifications')
     })
   },
   beforeDestroy () {
-    this.$bus.$off('pdateUnreadMessages')
+    this.$bus.$off('updateUnreadMessages')
   },
   methods: {
     logout () {
@@ -147,8 +147,7 @@ export default {
       try {
         Promise.all([chatAPI.getUnreadMessages(), subscribeAPI.getNotifications()])
           .then(([data, notiData]) => {
-            this.countUnreadNoti = notiData.data ? notiData.data.length : 0
-            this.latestNoti = notiData.data ? notiData.data[0] : {}
+            this.countUnreadNoti = notiData.data ? notiData.data.filter(d => d.isRead === false).length : 0
             this.countUnreadMessages = data ? data.length : 0
             const scroll = this.$refs.boardWrapper
             if (scroll) {

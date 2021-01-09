@@ -320,7 +320,7 @@ export default {
     afterClickEditProfile() {
       this.showEditProfileModal = true
     },
-     afterClickCross() {
+    afterClickCross() {
       this.showEditProfileModal = false
     },
     completeEdit (modalData) {

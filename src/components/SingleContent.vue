@@ -129,10 +129,11 @@ export default {
             recipientId: data.tweet.UserId
           })
         }
-        this.replies = { ...this.replies, userId: this.currentUser.id}
+        this.replies = { ...this.replies, userId: this.currentUser.id, comment: comment}
         if (this.replies.rows.length > 0) {
           this.replies.rows = this.replies.rows.filter(r => r.UserId !== this.currentUser.id)
         }
+        console.log(this.replies)
         this.$socket.emit('reply notification', this.replies)
 
         await this.fetchTweet(this.tweetId)
@@ -153,7 +154,18 @@ export default {
         if (data.status !== 'success') {
           throw new Error(data.message)
         }
-        this.$bus.$emit('tweetAction', { type: 'like', tweetId: tweetId, tweetUserId: data.tweet.UserId})
+        this.$bus.$emit('tweetAction', { type: 'like', tweetId: tweetId })
+
+        if (data.tweet.UserId > 0 && data.tweet.UserId !== this.currentUser.id) {
+          this.$socket.emit('personal notification', {
+            senderId: this.currentUser.id,
+            titleData: `${this.currentUser.name} 喜歡你的貼文`,
+            url: `/reply_list/${tweetId}`,
+            type: 'like',
+            recipientId: data.tweet.UserId
+          })
+        }
+
       } catch (error) {
         console.log(error)
         Toast.fire({

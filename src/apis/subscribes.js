@@ -17,8 +17,8 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
-  readNotifications () {
-    return apiHelper.put('/notifications/read', {
+  readNotifications (userId) {
+    return apiHelper.put('/notifications/read', { id: userId }, {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   }

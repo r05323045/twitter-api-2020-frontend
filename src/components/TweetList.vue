@@ -34,6 +34,7 @@
 <script>
 import likesAPI from '@/apis/likes'
 import { Toast } from '@/utils/helpers'
+import { mapState } from 'vuex'
 
 export default {
   name: 'TweetList',
@@ -45,6 +46,9 @@ export default {
       }
     },
     isReply: Boolean
+  },
+  computed: {
+    ...mapState(['currentUser', 'isAuthenticated'])
   },
   methods: {
     tweetDetail (tweet) {
@@ -61,6 +65,17 @@ export default {
           throw new Error(data.message)
         }
         this.$bus.$emit('tweetAction', { type: 'like', tweetId: tweetId, tweetUserId: data.tweet.UserId})
+
+        if (data.tweet.UserId > 0 && data.tweet.UserId !== this.currentUser.id) {
+          this.$socket.emit('personal notification', {
+            senderId: this.currentUser.id,
+            titleData: `${this.currentUser.name} 喜歡你的貼文`,
+            url: `/reply_list/${tweetId}`,
+            type: 'like',
+            recipientId: data.tweet.UserId
+          })
+        }
+        
       } catch (error) {
         console.log(error)
         Toast.fire({
