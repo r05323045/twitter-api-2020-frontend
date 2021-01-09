@@ -90,7 +90,7 @@ export default {
       } catch (error) {
         Toast.fire({
           icon: 'error',
-          title: '目前無法已讀訊息，請稍候'
+          title: '目前無法已讀通知，請稍候'
         })
       }
     }
@@ -186,6 +186,10 @@ $bitdark: #657786;
   }
   .list-item.read {
     background: $lightgray;
+    transition: ease-in 0.2s;
+    &:hover {
+      filter: brightness(.95);
+    }
   }
   .nothing-here {
     height: 100%;

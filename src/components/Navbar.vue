@@ -89,6 +89,7 @@ export default {
     this.$socket.emit('init notification', this.currentUser.id)
 
     this.$socket.on('get notification', () => {
+      console.log('hi')
       this.fetchUnreadMessages()
       this.$bus.$emit('updateNotifications')
     })

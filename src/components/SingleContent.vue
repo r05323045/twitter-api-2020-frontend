@@ -203,6 +203,7 @@ $lightgray: #F5F8FA;
 $bitdark: #657786;
 $divider: #E6ECF0;
   .reply-main {
+    overflow-y: scroll;
     width: 600px;
     height: 100%; 
     border-right: 1px solid #E6ECF0;
@@ -355,7 +356,6 @@ $divider: #E6ECF0;
       }
     }
     .replies {
-      overflow-y: scroll;
       height: 100%;
       width: 100%;
       display: flex;
