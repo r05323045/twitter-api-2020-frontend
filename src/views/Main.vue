@@ -56,6 +56,10 @@ export default {
     })
     this.fetchTweets()
   },
+  beforeDestroy () {
+    this.$bus.$off('tweetAction')
+    this.$bus.$off('renewTweets')
+  },
   methods: {
     checkTextLength () {
       if (this.tweetDescription.length > 139) {

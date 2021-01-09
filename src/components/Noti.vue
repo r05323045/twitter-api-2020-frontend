@@ -4,7 +4,7 @@
       通知
     </div>
     <div v-if="notifications.length > 0">
-      <div @click="$router.push(notification.url).catch(()=>{})" class="list-item" v-for="(notification, idx) in notidata" :key="idx">
+      <div @click="$router.push(notification.url).catch(()=>{})" class="list-item" v-for="notification in notifications" :key="Math.random() + notification.id">
         <div class="avatar" :style="{ background: `url(${notification.avatar}) no-repeat center/cover` }" @click.stop="$router.push(`/user/other/${notification.senderId}`).catch(()=>{})"></div>
         <div class="top-wrapper">
           <div class="info">
@@ -28,20 +28,22 @@ import { mapState } from 'vuex'
 export default {
   data() {
     return {
+      componentKey: 0,
       notifications: [],
       notidata: []
     }
   },
   created () {
     this.fetchNotifications()
-    this.$bus.$on('updateNotifications', (data) => {
-      this.notifications = [...this.notifications, data]
+    this.$bus.$on('updateNotifications', () => {
+      this.updateNotifications()
     })
   },
-  up: {
+  beforeDestroy () {
+    this.$bus.$off('updateNotifications')
+  },
+  watch: {
     notifications () {
-      console.log(this.notifications)
-      this.notidata = this.notifications
     }
   },
   computed: {
@@ -57,9 +59,8 @@ export default {
         const { data } = await subscribeAPI.getNotifications()
         this.notifications = data
         this.notifications .sort((a, b) => {
-          return a.createdAt < b.createdAt ? 1 : -1;
+          return a.createdAt < b.createdAt ? 1 : -1
         })
-        this.notidata = this.notifications
         loader.hide()
       } catch (error) {
         loader.hide()
@@ -70,6 +71,13 @@ export default {
         })
       }
     },
+    async updateNotifications () {
+      const { data } = await subscribeAPI.getNotifications()
+      this.notifications = data
+      this.notifications .sort((a, b) => {
+        return a.createdAt < b.createdAt ? 1 : -1
+      })
+    }
   }
 }
 

@@ -130,8 +130,10 @@ export default {
           })
         }
         this.replies = { ...this.replies, userId: this.currentUser.id}
+        if (this.replies.rows.length > 0) {
+          this.replies.rows = this.replies.rows.filter(r => r.UserId !== this.currentUser.id)
+        }
         this.$socket.emit('reply notification', this.replies)
-        console.log(this.replies)
 
         await this.fetchTweet(this.tweetId)
         this.replies.count += 1

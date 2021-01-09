@@ -38,6 +38,9 @@ export default {
       this.followAction(action)
     })
   },
+  beforeDestroy () {
+    this.$bus.$off('followAction')
+  },
   computed: {
     ...mapState(['currentUser', 'isAuthenticated'])
   },

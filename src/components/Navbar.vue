@@ -92,7 +92,9 @@ export default {
       this.fetchUnreadMessages()
       this.$bus.$emit('updateNotifications', this.latestNoti)
     })
-
+  },
+  beforeDestroy () {
+    this.$bus.$off('pdateUnreadMessages')
   },
   methods: {
     logout () {
