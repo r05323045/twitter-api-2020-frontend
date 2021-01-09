@@ -1,8 +1,8 @@
 <template>
   <div class="row other-page-container">
     <Navbar class="col-3" />
-    <SelfUserFollowers v-show="$route.path.indexOf('follower') > 0" :initialFollowers="followers" :currentUser="user" />
-    <SelfUserFollowers v-show="$route.path.indexOf('following') > 0" :initialFollowers="followings" :currentUser="user" />
+    <SelfUserFollowers v-show="$route.path.indexOf('follower') > 0" :initialFollowers="followers" :nowUser="user" />
+    <SelfUserFollowers v-show="$route.path.indexOf('following') > 0" :initialFollowers="followings" :nowUser="user" />
     <RecommendUsers class="col-4" />
   </div>
      
@@ -39,9 +39,6 @@ export default {
     })
     this.fetchFollowers(this.$route.params.id)
     this.fetchProfile()
-  },
-  beforeDestroy () {
-    this.$bus.$off('followAction')
   },
   watch: {
     '$route.path': function () {

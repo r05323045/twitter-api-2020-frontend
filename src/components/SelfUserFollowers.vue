@@ -4,8 +4,8 @@
     <div class="upper">
       <img class="arrow" @click="$router.go(-1)" src="@/asset/Vector@2x.png" alt="">
       <div class="title">
-        <h3>{{ currentUser.name }}</h3>
-        <span v-if="currentUser.tweets">{{ currentUser.tweets.length }} 推文</span>
+        <h3>{{ nowUser.name }}</h3>
+        <span v-if="nowUser.tweets">{{ nowUser.tweets.length }} 推文</span>
       </div>
     </div>
     <div class="tab self" v-if="this.$route.path.indexOf('/self') > 0">
@@ -18,11 +18,11 @@
       </div>
     </div>
     <div class="tab ohter" v-if="!(this.$route.path.indexOf('/self') > 0)">
-      <div class="item" :class="{ active: this.$route.path.indexOf('follower') > 0 }" @click="$router.push(`/user/other/${currentUser.user.id}/follower`)"> 
+      <div class="item" :class="{ active: this.$route.path.indexOf('follower') > 0 }" @click="$router.push(`/user/other/${nowUser.user.id}/follower`)"> 
         <div class="text">追隨者</div>
       </div>
       
-      <div class="item" :class="{ active: this.$route.path.indexOf('following') > 0 }" @click="$router.push(`/user/other/${currentUser.user.id}/following`)">
+      <div class="item" :class="{ active: this.$route.path.indexOf('following') > 0 }" @click="$router.push(`/user/other/${nowUser.user.id}/following`)">
         <div class="text">正在跟隨</div>
       </div>
     </div>
@@ -36,13 +36,13 @@
             <p  v-if="follower" class="content">{{follower.introduction}}</p>
           </div>
           <button 
-            v-if="follower"
+            v-if="follower && follower.id !== currentUser.id"
             v-show="follower.isFollowed"
             class="btn-follow unfollow" @click="deleteFollowing(follower.id)">
             正在跟隨
           </button>
           <button
-            v-if="follower"
+            v-if="follower && follower.id !== currentUser.id"
             v-show="!follower.isFollowed"
             class="btn-follow"
             @click="addFollowing(follower.id)">
@@ -50,18 +50,14 @@
           </button>
         </div>
       </div>
-
     </div>  
-
-
-
-
   </div>
 </template>
 
 <script>
 import { Toast } from '@/utils/helpers'
 import followshipsAPI from '@/apis/followships'
+import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -72,7 +68,7 @@ export default {
     initialFollowers: {
       type: Array
     },
-    currentUser: {
+    nowUser: {
       type: Object
     }
   },
@@ -80,13 +76,16 @@ export default {
     initialFollowers: function () {
       this.followers = this.initialFollowers
     },
-    currentUsers: function () {
+    nowUsers: function () {
       
     },
     deep: true
   },
   created () {
     this.followers = this.initialFollowers
+  },
+  computed: {
+    ...mapState(['currentUser', 'isAuthenticated'])
   },
   methods: {
     async addFollowing (userId) {
@@ -96,7 +95,18 @@ export default {
         if (data.status !== 'success') {
           throw new Error(data.message)
         }
-        this.$bus.$emit('followAction', { type: 'follow', userId: userId, followship: data.followship})
+
+        if (data.followship.followerId > 0 && data.followship.followingId !== this.currentUser.id) {
+          this.$socket.emit('personal notification', {
+            senderId: this.currentUser.id,
+            titleData: `${this.currentUser.name} 開始追蹤你`,
+            url: `/user/self/follower`,
+            type: 'follow',
+            recipientId: data.followship.followingId
+          })
+        }
+
+        this.$bus.$emit('followAction', { type: 'follow', userId: userId })
         this.followers.forEach(follower => {
           if (follower.id === userId) {
             follower.isFollowed = true

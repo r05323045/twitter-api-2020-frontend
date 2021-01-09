@@ -102,7 +102,6 @@ export default {
   },
   beforeDestroy () {
     this.$bus.$off('tweetAction')
-    this.$bus.$off('followAction')
     this.$bus.$off('renewTweets')
   },
   watch: {
@@ -248,6 +247,16 @@ export default {
     async addSubscribe (userId) {
       try {
         const { data } = await subscribesAPI.addSubscribe({ userId })
+
+        if (data.followship.followerId > 0 && data.followship.followingId !== this.currentUser.id) {
+          this.$socket.emit('personal notification', {
+            senderId: this.currentUser.id,
+            titleData: `${this.currentUser.name} 開始追蹤你`,
+            url: `/user/self/follower`,
+            type: 'follow',
+            recipientId: data.followship.followingId
+          })
+        }
 
         if (data.status !== 'success') {
           throw new Error(data.message)
