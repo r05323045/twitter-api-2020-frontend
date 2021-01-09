@@ -215,11 +215,21 @@ export default {
     async addFollowing (userId) {
       try {
         const { data } = await followshipsAPI.addFollowing({ userId })
-
         if (data.status !== 'success') {
           throw new Error(data.message)
         }
         this.user.isFollowed = true
+
+        if (data.followship.followerId > 0 && data.followship.followingId !== this.currentUser.id) {
+          this.$socket.emit('personal notification', {
+            senderId: this.currentUser.id,
+            titleData: `${this.currentUser.name} 開始追蹤你`,
+            url: `/user/self/follower`,
+            type: 'follow',
+            recipientId: data.followship.followingId
+          })
+        }
+        
         this.$bus.$emit('followAction', { type: 'follow', userId: userId, followship: data.followship})
       } catch (error) {
         Toast.fire({
@@ -248,21 +258,12 @@ export default {
       try {
         const { data } = await subscribesAPI.addSubscribe({ userId })
 
-        if (data.followship.followerId > 0 && data.followship.followingId !== this.currentUser.id) {
-          this.$socket.emit('personal notification', {
-            senderId: this.currentUser.id,
-            titleData: `${this.currentUser.name} 開始追蹤你`,
-            url: `/user/self/follower`,
-            type: 'follow',
-            recipientId: data.followship.followingId
-          })
-        }
-
         if (data.status !== 'success') {
           throw new Error(data.message)
         }
         this.user.isSubscribed = true
       } catch (error) {
+        console.log(error)
         Toast.fire({
           icon: 'error',
           title: '無法加入追蹤，請稍後再試'
