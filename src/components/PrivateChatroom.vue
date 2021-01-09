@@ -82,6 +82,7 @@ export default {
   beforeDestroy () {
     this.$socket.emit('leave private chatroom', this.targetChannel)
     this.readMessages(this.userChatTo.id)
+    this.$bus.$off('updateChatUsers')
   },
   computed: {
     ...mapState(['currentUser', 'isAuthenticated'])

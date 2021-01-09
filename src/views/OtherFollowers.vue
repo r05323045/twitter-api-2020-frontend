@@ -39,7 +39,9 @@ export default {
     })
     this.fetchFollowers(this.$route.params.id)
     this.fetchProfile()
-
+  },
+  beforeDestroy () {
+    this.$bus.$off('followAction')
   },
   watch: {
     '$route.path': function () {

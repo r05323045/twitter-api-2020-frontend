@@ -100,6 +100,11 @@ export default {
     this.fetchProfile()
     this.fetchUserLikes()
   },
+  beforeDestroy () {
+    this.$bus.$off('tweetAction')
+    this.$bus.$off('followAction')
+    this.$bus.$off('renewTweets')
+  },
   watch: {
     '$route.params.id': function() {
       this.fetchProfile()
@@ -315,7 +320,7 @@ export default {
     afterClickEditProfile() {
       this.showEditProfileModal = true
     },
-     afterClickCross() {
+    afterClickCross() {
       this.showEditProfileModal = false
     },
     completeEdit (modalData) {
