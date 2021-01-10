@@ -24,6 +24,7 @@ import TweetList from '@/components/TweetList.vue'
 import TweetsAPI from '@/apis/tweets'
 import { Toast } from '@/utils/helpers'
 import { mapState } from 'vuex'
+import _ from 'loadsh'
 export default {
   name: 'Main',
   components: {
@@ -61,14 +62,15 @@ export default {
     this.$bus.$off('renewTweets')
   },
   methods: {
-    checkTextLength () {
+    checkTextLength: _.debounce(function() {
       if (this.tweetDescription.length > 139) {
+        this.tweetDescription = this.tweetDescription.slice(0, 139)
         Toast.fire({
           icon: 'error',
           title: '推文字數已達上限'
         })
       }
-    },
+    }, 1000),
     async fetchTweets () {
       const loader = this.$loading.show({
         isFullPage: true,

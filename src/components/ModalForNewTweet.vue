@@ -19,7 +19,8 @@
 <script>
 
 import { mapState } from 'vuex'
-
+import { Toast } from '@/utils/helpers'
+import _ from 'loadsh'
 export default {
   name: 'ModalForNewTweet',
   data () {
@@ -28,7 +29,21 @@ export default {
       tweetDescription: ''
     }
   },
+  watch: {
+    tweetDescription () {
+      this.checkTextLength()
+    }
+  },
   methods: {
+    checkTextLength: _.debounce(function() {
+      if (this.tweetDescription.length > 139) {
+        this.tweetDescription = this.tweetDescription.slice(0, 139)
+        Toast.fire({
+          icon: 'error',
+          title: '推文字數已達上限'
+        })
+      }
+    }, 1000),
     cancelModalClick() {
       this.$emit('after-click-cross')
     },
