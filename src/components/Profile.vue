@@ -5,7 +5,7 @@
         <div @click="$router.go(-1)" class="icon back"></div>
       </div>
       <div class="simple-info">
-        <div class="name">{{ user.user.name }}</div>
+        <div class="name">{{ user.user ? user.user.name : user.name }}</div>
         <div class="tweet-count">{{ user.tweets ? user.tweets.length : 0 }} 推文</div>
       </div>
     </div>
@@ -29,7 +29,7 @@
         <button v-if="!user.isFollowed" class="btn btn-follow" @click="addFollowing(user.user.id)">跟隨</button>
       </div>
 
-      <div class="name">{{ user.user.name }}</div>
+      <div class="name">{{ user.user ? user.user.name : user.name }}</div>
       <div class="account">{{ user.user ? user.user.account : '' }}</div>
       <div class="intro">{{ user.user ? user.user.introduction : '' }}</div>
       <div class="number-followers">
