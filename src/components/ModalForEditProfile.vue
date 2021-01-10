@@ -57,18 +57,14 @@ export default {
     },
     coverChange() {
       const { files } =  this.$refs.coverFile.files
-      if (files === 0) {
-        this.user.cover = ''
-      } else {
+      if (files !== 0) {
         const coverUrl = window.URL.createObjectURL(this.$refs.coverFile.files[0])
         this.user.cover = coverUrl
       }
     },
     avatarChange() {
       const { files } = this.$refs.avatarFile.files
-      if (files === 0) {
-        this.user.avatar = ''
-      } else {
+      if (files !== 0) {
         const avatarUrl = window.URL.createObjectURL(this.$refs.avatarFile.files[0])
         this.user.avatar = avatarUrl
       }
@@ -101,12 +97,6 @@ export default {
           title: '自我介紹只限160字',
         });
         return;
-      } else if (!this.$refs.avatarFile.files[0] && !this.$refs.coverFile.files[0]) {
-        Toast.fire({
-          icon: 'warning',
-          title: '請上傳圖片',
-        });
-        return;
       }
       const form = e.target;
       const formData = new FormData(form)
@@ -128,6 +118,7 @@ export default {
         }
 
         this.$emit('completeEdit', this.user)
+        await this.$store.dispatch('fetchCurrentUser')
         this.$emit('after-click-cross')
         loader.hide()
       } catch (error) {
