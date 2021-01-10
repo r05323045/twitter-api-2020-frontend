@@ -492,7 +492,6 @@ $bitdark: #657786;
           background-color: $orange;
           .icon.subscribe {
             background-color: #ffffff;
-            mask: url(../assets/icon_subscribed.svg) no-repeat center;
           }
         }
         .icon.subscribe {
