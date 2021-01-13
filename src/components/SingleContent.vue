@@ -137,7 +137,6 @@ export default {
         this.$socket.emit('reply notification', this.replies)
 
         await this.fetchTweet(this.tweetId)
-        this.replies.count += 1
         this.showNewReplyModal = false
       } catch (error) {
         console.log(error)

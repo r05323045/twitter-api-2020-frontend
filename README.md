@@ -1,6 +1,6 @@
 # twitter-api-2020-frontend 
 
-Simple social platform inspire by Twitter (To be honestly, definitely inspired by [ALPHA Camp](https://tw.alphacamp.co/))
+Simple social platform inspired by Twitter (To be honestly, definitely inspired by [ALPHA Camp](https://tw.alphacamp.co/))
 
 <p align="left">
   &#8594; <a  href="https://r05323045.github.io/twitter-api-2020-frontend/">Explore The Website</a>
@@ -17,7 +17,7 @@ Simple social platform inspire by Twitter (To be honestly, definitely inspired b
 
 ## User Interface
 
-**Chatroom**
+**Private Chatroom**
 <br/><br/>
 <p align="center">
   <img src="./public/images/Chatroom.png" />
@@ -45,10 +45,12 @@ As a visitor, you can:
 
 1. Sign up for an account and join this platform
 2. Explore tweets on this platform, including the content tweeted by yourself
-2. Interact with users by Follow, Like, Reply and Chat 
-3. Customize your profile by an avatar, cover, and self-introduction
-4. Chat with users at an online chatroom
-5. Here is a user account you can use
+3. Interact with users by Follow, Like, Reply and Chat 
+4. Customize your profile by an avatar, cover, and self-introduction
+5. Chat with users at an online chatroom
+6. Send private messages to the users
+7. Subscribe users and get notifications when they tweet, also you will receive notifications when your tweets get any response
+8. Here is a user account you can use
 
 |  account   | password  |
 |  ----  | ----  |
@@ -65,11 +67,6 @@ As an admin, you can:
 |  email   | password  |
 |  ----  | ----  |
 | root@example.com  | 12345678 |
-
-**Upcoming Features**
-
-1. Personal message, gossiping is necessary
-2. Notification, things related you will be caught easily
 
 ---
 
