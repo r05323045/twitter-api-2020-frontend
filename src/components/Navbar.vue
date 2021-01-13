@@ -82,9 +82,7 @@ export default {
       this.fetchUnreadMessages()
     })
     this.$socket.on('unread_msg', () => {
-      if (this.$route.path !== '/private') {
-        this.fetchUnreadMessages()
-      }
+      this.fetchUnreadMessages()
     })
     this.$socket.emit('init notification', this.currentUser.id)
 
@@ -148,7 +146,7 @@ export default {
         Promise.all([chatAPI.getUnreadMessages(), subscribeAPI.getNotifications()])
           .then(([data, notiData]) => {
             this.countUnreadNoti = notiData.data ? notiData.data.filter(d => d.isRead === false).length : 0
-            this.countUnreadMessages = data ? data.length : 0
+            this.countUnreadMessages = data.data ? data.data.length : 0
             const scroll = this.$refs.boardWrapper
             if (scroll) {
               scroll.scrollTop = scroll.scrollHeight

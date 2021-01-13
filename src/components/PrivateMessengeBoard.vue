@@ -82,7 +82,6 @@ export default {
     })
     this.$socket.on('unread_msg', (data) => {
       if (data.sendTo === this.currentUser.id && data.UserId !== this.userChatTo.id) {
-        this.$bus.$emit('updateUnreadMessages')
         this.$bus.$emit('updateChatUsers', data)
       }
     })
@@ -116,7 +115,7 @@ export default {
     },
     sendMessage(e) {
       e.preventDefault()
-      if (this.message === '') {
+      if (this.message.trim() === '') {
         Toast.fire({
           icon: 'error',
           title: '請輸入訊息'

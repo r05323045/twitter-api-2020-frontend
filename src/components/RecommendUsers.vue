@@ -59,7 +59,7 @@ export default {
           account: user.account,
           followerCount: user.FollowerCount,
           isFollowed: user.isFollowed
-        })).filter(user => user.id !== this.currentUser.id)
+        })).filter(user => user.id !== this.currentUser.id).slice(0, 8)
         loader.hide()
       } catch (error) {
         console.log(error)
